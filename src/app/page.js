@@ -1308,8 +1308,8 @@ export default function StandaloneShopPage() {
               <span className="text-stone-300">•</span>
               <span>Cash on Delivery</span>
             </div>
-            <p className="text-[10px] text-stone-400">
-              © 2026 COCOON Studio. Handcrafted slow fashion made in Agra, India.
+            <p className="text-[10px] text-stone-400 tracking-wider">
+              © 2026 COCOON India
             </p>
           </div>
         </div>

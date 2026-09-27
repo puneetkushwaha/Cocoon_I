@@ -547,8 +547,8 @@ function ReviewContent() {
           </div>
 
           {/* Bottom Copyright */}
-          <p className="text-[10px] text-stone-400 text-center pt-2 border-t border-[#EAE0D2]/50">
-            © 2026 COCOON Studio. All rights reserved.
+          <p className="text-[10px] text-stone-400 text-center pt-2 border-t border-[#EAE0D2]/50 tracking-wider">
+            © 2026 COCOON India
           </p>
         </div>
       </footer>
