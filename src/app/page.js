@@ -1253,32 +1253,24 @@ export default function StandaloneShopPage() {
 
       {/* LUXURY ARTISANAL BOUTIQUE FOOTER */}
       <footer className="mt-16 border-t border-[#EAE0D2]/70 bg-gradient-to-b from-[#FAF7F2]/40 to-[#F5EFEB]/80 pt-10 pb-12">
-        <div className="max-w-2xl mx-auto px-4 space-y-7">
+        <div className="max-w-2xl mx-auto px-4 space-y-6">
           
-          {/* 3-Pillar Studio Trust Badges */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 py-4 px-3 sm:px-5 bg-white/80 backdrop-blur-xs rounded-2xl border border-[#EAE0D2] shadow-2xs text-center">
-            <div className="space-y-0.5 sm:space-y-1">
-              <span className="text-base sm:text-lg block">🌿</span>
-              <p className="text-[10px] sm:text-xs font-bold text-[#2C2623] tracking-wide">Pure Milk Cotton</p>
-              <p className="text-[9px] text-stone-500 font-serif leading-tight hidden sm:block">Hypoallergenic & soft</p>
+          {/* Cool Auto-Bouncy Wave COCOON Brand */}
+          <div className="text-center py-2 space-y-2">
+            <div className="inline-flex items-center justify-center gap-1 select-none">
+              {"COCOON".split("").map((letter, idx) => (
+                <span
+                  key={idx}
+                  className="font-header text-3xl sm:text-4xl font-light tracking-[0.22em] uppercase inline-block cursor-default transition-all duration-300 hover:scale-125"
+                  style={{
+                    animation: "cocoonWave 2.4s ease-in-out infinite",
+                    animationDelay: `${idx * 0.16}s`,
+                  }}
+                >
+                  {letter}
+                </span>
+              ))}
             </div>
-            <div className="space-y-0.5 sm:space-y-1 border-x border-[#EAE0D2]/70 px-1">
-              <span className="text-base sm:text-lg block">🪡</span>
-              <p className="text-[10px] sm:text-xs font-bold text-[#2C2623] tracking-wide">Handmade in Agra</p>
-              <p className="text-[9px] text-stone-500 font-serif leading-tight hidden sm:block">Crafted knot by knot</p>
-            </div>
-            <div className="space-y-0.5 sm:space-y-1">
-              <span className="text-base sm:text-lg block">📦</span>
-              <p className="text-[10px] sm:text-xs font-bold text-[#2C2623] tracking-wide">Express Delivery</p>
-              <p className="text-[9px] text-stone-500 font-serif leading-tight hidden sm:block">Pan-India doorstep courier</p>
-            </div>
-          </div>
-
-          {/* Studio Brand & Bio */}
-          <div className="text-center space-y-1.5">
-            <span className="font-header text-2xl sm:text-3xl font-light tracking-[0.28em] uppercase text-[#231F20] inline-block">
-              COCOON
-            </span>
             <p className="text-xs text-stone-600 font-serif max-w-md mx-auto leading-relaxed">
               Quiet luxury handcrafted needlework studio. Knitted with care in Agra and packaged plastic-free.
             </p>

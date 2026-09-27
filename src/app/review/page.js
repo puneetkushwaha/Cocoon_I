@@ -505,11 +505,22 @@ function ReviewContent() {
       <footer className="mt-16 border-t border-[#EAE0D2]/70 bg-gradient-to-b from-[#FAF7F2]/40 to-[#F5EFEB]/80 pt-10 pb-12">
         <div className="max-w-xl mx-auto px-4 space-y-6">
           
-          {/* Studio Brand */}
-          <div className="text-center space-y-1">
-            <span className="font-header text-2xl sm:text-3xl font-light tracking-[0.28em] uppercase text-[#231F20] inline-block">
-              COCOON
-            </span>
+          {/* Cool Auto-Bouncy Wave COCOON Brand */}
+          <div className="text-center py-2 space-y-2">
+            <div className="inline-flex items-center justify-center gap-1 select-none">
+              {"COCOON".split("").map((letter, idx) => (
+                <span
+                  key={idx}
+                  className="font-header text-3xl sm:text-4xl font-light tracking-[0.22em] uppercase inline-block cursor-default transition-all duration-300 hover:scale-125"
+                  style={{
+                    animation: "cocoonWave 2.4s ease-in-out infinite",
+                    animationDelay: `${idx * 0.16}s`,
+                  }}
+                >
+                  {letter}
+                </span>
+              ))}
+            </div>
             <p className="text-xs text-stone-600 font-serif max-w-sm mx-auto leading-relaxed">
               100% Organic Milk Cotton • Handcrafted with care in Agra, India
             </p>
