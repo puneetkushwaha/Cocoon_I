@@ -508,13 +508,15 @@ function ReviewContent() {
         <p className="text-[11px] text-stone-500 font-serif">
           100% Organic Milk Cotton • Hypoallergenic & Handmade with Care
         </p>
-        <div className="pt-1 flex items-center justify-center flex-wrap gap-3 sm:gap-4 text-[11px] text-stone-600">
-          <a href="mailto:cocoon.by.mehak@gmail.com" className="hover:text-[#B06B5B] underline">
+        <div className="pt-2 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 text-[11px] text-stone-600">
+          <Link href="/" className="hover:text-[#B06B5B] font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 px-3 py-1 rounded-full border border-stone-200 transition">
+            Shop Catalog
+          </Link>
+          <a href="mailto:cocoon.by.mehak@gmail.com" className="hover:text-[#B06B5B] bg-stone-100/70 hover:bg-stone-200/80 px-3 py-1 rounded-full border border-stone-200/80 transition">
             cocoon.by.mehak@gmail.com
           </a>
-          <span>•</span>
-          <a href="https://www.instagram.com/cocoon._.u/" target="_blank" rel="noreferrer" className="hover:text-[#B06B5B] underline">
-            Instagram @cocoon._.u
+          <a href="https://www.instagram.com/cocoon._.u/" target="_blank" rel="noreferrer" className="hover:text-[#B06B5B] bg-stone-100/70 hover:bg-stone-200/80 px-3 py-1 rounded-full border border-stone-200/80 transition">
+            Instagram @cocoon._.u ↗
           </a>
         </div>
         <p className="text-[10px] text-stone-400 pt-1">

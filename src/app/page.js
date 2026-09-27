@@ -1198,7 +1198,7 @@ export default function StandaloneShopPage() {
             </p>
           </div>
 
-          {/* 1-Click WhatsApp Button (Pre-filled message, NO phone number disclosed on screen) */}
+          {/* 1-Click WhatsApp Button (Clean SVG, no broken emojis) */}
           <div className="pt-2">
             <a
               href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "918171902255"}?text=${encodeURIComponent(
@@ -1210,26 +1210,29 @@ export default function StandaloneShopPage() {
               )}`}
               target="_blank"
               rel="noreferrer"
-              className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold tracking-wider flex items-center justify-center gap-2 transition shadow-md cursor-pointer"
+              className="w-full py-3.5 px-5 rounded-2xl bg-[#128C7E] hover:bg-[#075E54] active:bg-[#064e46] text-white text-xs font-bold tracking-wider flex items-center justify-center gap-2.5 transition shadow-sm hover:shadow-md active:scale-[0.99] cursor-pointer"
             >
-              <span>📲 Track / Confirm on WhatsApp</span>
+              <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+              </svg>
+              <span>Track / Confirm on WhatsApp</span>
             </a>
           </div>
 
-          {/* Post-Delivery Rating & 15% OFF Promise Card */}
-          <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50/60 rounded-2xl border border-amber-200 text-left space-y-1.5 shadow-2xs">
-            <div className="flex items-center gap-1.5 text-amber-900 text-xs font-bold">
+          {/* Post-Delivery Rating Promise Card */}
+          <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#EAE1D3] text-left space-y-1.5 shadow-2xs">
+            <div className="flex items-center gap-1.5 text-stone-800 text-xs font-bold">
               <span>⭐</span>
-              <span>Rate Your Order Later & Get Flat 15% OFF!</span>
+              <span>Rate Your Order Later & Unlock Special Voucher</span>
             </div>
             <p className="text-[11px] text-stone-600 font-serif leading-relaxed">
-              Once your package arrives, leave a quick review with a photo or video to unlock your exclusive <strong>15% OFF coupon</strong> for your next purchase.
+              Once your package arrives, leave a quick review with a photo or video to unlock your exclusive discount voucher for your next order.
             </p>
             <Link
               href={`/review?orderId=${placedOrder.id}&name=${encodeURIComponent(placedOrder.customerName || '')}`}
               className="inline-block text-[11px] font-bold text-[#B06B5B] hover:underline pt-0.5"
             >
-              Write Review & Claim 15% Coupon &rarr;
+              Write Review & Claim Voucher &rarr;
             </Link>
           </div>
 
@@ -1240,7 +1243,7 @@ export default function StandaloneShopPage() {
               setSelectedProduct(null);
               setActiveView("catalog");
             }}
-            className="w-full py-3 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition cursor-pointer"
+            className="w-full py-3.5 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition cursor-pointer active:scale-[0.99]"
           >
             ← Continue Browsing Shop
           </button>
@@ -1248,24 +1251,22 @@ export default function StandaloneShopPage() {
       )}
 
       {/* FOOTER */}
-      <footer className="max-w-2xl mx-auto px-4 pt-12 text-center space-y-2 border-t border-[#EAE0D2]/60 mt-12">
+      <footer className="max-w-2xl mx-auto px-4 pt-12 text-center space-y-2.5 border-t border-[#EAE0D2]/60 mt-12">
         <p className="text-xs font-bold tracking-widest uppercase text-stone-600">
           COCOON
         </p>
         <p className="text-[11px] text-stone-500 font-serif">
           100% Organic Milk Cotton • Hypoallergenic & Handmade with Care
         </p>
-        <div className="pt-1 flex items-center justify-center flex-wrap gap-3 sm:gap-4 text-[11px] text-stone-600">
-          <Link href="/review" className="hover:text-[#B06B5B] font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 px-2.5 py-0.5 rounded-full border border-stone-200">
+        <div className="pt-2 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 text-[11px] text-stone-600">
+          <Link href="/review" className="hover:text-[#B06B5B] font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 px-3 py-1 rounded-full border border-stone-200 transition">
             Rate & Review
           </Link>
-          <span>•</span>
-          <a href="mailto:cocoon.by.mehak@gmail.com" className="hover:text-[#B06B5B] underline">
+          <a href="mailto:cocoon.by.mehak@gmail.com" className="hover:text-[#B06B5B] bg-stone-100/70 hover:bg-stone-200/80 px-3 py-1 rounded-full border border-stone-200/80 transition">
             cocoon.by.mehak@gmail.com
           </a>
-          <span>•</span>
-          <a href="https://www.instagram.com/cocoon._.u/" target="_blank" rel="noreferrer" className="hover:text-[#B06B5B] underline">
-            Instagram @cocoon._.u
+          <a href="https://www.instagram.com/cocoon._.u/" target="_blank" rel="noreferrer" className="hover:text-[#B06B5B] bg-stone-100/70 hover:bg-stone-200/80 px-3 py-1 rounded-full border border-stone-200/80 transition">
+            Instagram @cocoon._.u ↗
           </a>
         </div>
         <p className="text-[10px] text-stone-400 pt-2">

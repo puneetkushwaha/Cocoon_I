@@ -6,8 +6,8 @@ export async function POST(request) {
     const body = await request.json();
     const { amount, receipt, notes } = body;
 
-    const keyId = (process.env.RAZORPAY_KEY_ID || "").trim();
-    const keySecret = (process.env.RAZORPAY_KEY_SECRET || "").trim();
+    const keyId = (process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_live_SKjbolJvdxju2R").trim();
+    const keySecret = (process.env.RAZORPAY_KEY_SECRET || "10mEY4hiJfOEU7ZR5srJGJM0").trim();
 
     if (!keyId || !keySecret) {
       return NextResponse.json(
