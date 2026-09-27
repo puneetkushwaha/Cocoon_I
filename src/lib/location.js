@@ -146,3 +146,32 @@ export async function captureLiveGpsAddress() {
     );
   });
 }
+
+/**
+ * Pincode to City/District lookup using official Postal Pincode API
+ */
+export async function lookupPincode(pincode) {
+  const cleanPin = (pincode || "").toString().replace(/\D/g, "").slice(0, 6);
+  if (cleanPin.length !== 6) return null;
+
+  try {
+    const res = await fetch(`https://api.postalpincode.in/pincode/${cleanPin}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data[0]?.Status === "Success" && data[0]?.PostOffice?.length > 0) {
+        const po = data[0].PostOffice[0];
+        return {
+          success: true,
+          city: po.District || po.Division || po.Block || "",
+          state: po.State || "",
+          district: po.District || "",
+          locality: po.Name || ""
+        };
+      }
+    }
+  } catch (err) {
+    console.warn("Pincode lookup error:", err);
+  }
+  return null;
+}
+

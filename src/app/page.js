@@ -6,7 +6,16 @@ import { PRODUCTS } from "@/data/products";
 import { STORE } from "@/data/store";
 import { initiateRazorpayPayment } from "@/lib/razorpay";
 import { saveOrderToSupabase } from "@/lib/supabase";
-import { captureLiveGpsAddress } from "@/lib/location";
+import { captureLiveGpsAddress, lookupPincode } from "@/lib/location";
+
+const POPULAR_CITIES = [
+  "Agra", "New Delhi", "Delhi", "Noida", "Greater Noida", "Gurugram", "Ghaziabad", "Faridabad",
+  "Lucknow", "Kanpur", "Jaipur", "Mumbai", "Pune", "Bengaluru", "Hyderabad", "Kolkata", "Chennai", 
+  "Ahmedabad", "Surat", "Indore", "Bhopal", "Varanasi", "Prayagraj", "Mathura", "Aligarh", "Firozabad", 
+  "Bareilly", "Meerut", "Moradabad", "Chandigarh", "Ludhiana", "Amritsar", "Dehradun", "Patna", "Ranchi", 
+  "Nagpur", "Nashik", "Vadodara", "Rajkot", "Coimbatore", "Kochi", "Visakhapatnam", "Guwahati", "Bhubaneswar", 
+  "Jodhpur", "Udaipur", "Kota", "Gwalior", "Jabalpur", "Raipur", "Shimla", "Jammu", "Srinagar"
+];
 
 export default function StandaloneShopPage() {
   // Navigation / View State: "catalog" | "checkout" | "success"
@@ -26,6 +35,9 @@ export default function StandaloneShopPage() {
   const [toastMessage, setToastMessage] = useState(null);
   const [isDetectingGps, setIsDetectingGps] = useState(false);
   const [gpsSuccessNote, setGpsSuccessNote] = useState(null);
+  const [gpsErrorNote, setGpsErrorNote] = useState(null);
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
+  const [isLookingUpPincode, setIsLookingUpPincode] = useState(false);
 
   // Customer Form
   const [form, setForm] = useState({
@@ -43,26 +55,73 @@ export default function StandaloneShopPage() {
     setTimeout(() => setToastMessage(null), 3200);
   };
 
-  // Live GPS Address Detection (Auto-triggers on entering checkout)
-  const handleFetchGpsAddress = async () => {
+  // Live GPS Address Detection (Manual Button or Auto-trigger)
+  const handleFetchGpsAddress = async (isManualClick = false) => {
     setIsDetectingGps(true);
+    setGpsErrorNote(null);
 
     try {
       const loc = await captureLiveGpsAddress();
       if (loc && loc.success) {
         setForm((prev) => ({
           ...prev,
-          address: loc.address || prev.address,
+          // Preserve any house number user already typed, or populate with detected locality/road
+          address: prev.address && prev.address.trim().length > 0 ? prev.address : (loc.address || ""),
           city: loc.city || prev.city,
           pincode: loc.pincode || prev.pincode
         }));
-        setGpsSuccessNote(`${loc.city || "Detected"}${loc.pincode ? ` (${loc.pincode})` : ""}`);
+        const label = [loc.city, loc.pincode].filter(Boolean).join(" - ");
+        setGpsSuccessNote(label || "Live Location Detected");
+        triggerToast(`📍 Location detected: ${loc.city || "Success"}`);
+      } else if (isManualClick) {
+        setGpsErrorNote("Could not detect exact coordinates. Please enter manually.");
       }
     } catch (err) {
-      console.warn("Auto GPS detection notice:", err);
+      console.warn("GPS detection notice:", err);
+      if (isManualClick) {
+        setGpsErrorNote(err.message || "Location access unavailable. Please enter address manually.");
+        triggerToast("Location permission unavailable. Enter manually.");
+      }
     } finally {
       setIsDetectingGps(false);
     }
+  };
+
+  // Instant Pincode Lookup (India Post API)
+  const handlePincodeChange = async (val) => {
+    const cleanPin = val.replace(/\D/g, "").slice(0, 6);
+    setForm((prev) => ({ ...prev, pincode: cleanPin }));
+
+    if (cleanPin.length === 6) {
+      setIsLookingUpPincode(true);
+      try {
+        const pinData = await lookupPincode(cleanPin);
+        if (pinData && pinData.city) {
+          setForm((prev) => ({
+            ...prev,
+            city: prev.city && prev.city.trim() ? prev.city : pinData.city
+          }));
+          triggerToast(`City found for ${cleanPin}: ${pinData.city}`);
+        }
+      } catch (e) {
+        console.warn("Pincode lookup error:", e);
+      } finally {
+        setIsLookingUpPincode(false);
+      }
+    }
+  };
+
+  // City Auto-Suggestions Filter
+  const filteredCities = useMemo(() => {
+    if (!form.city || !form.city.trim()) return POPULAR_CITIES.slice(0, 8);
+    const q = form.city.trim().toLowerCase();
+    const matches = POPULAR_CITIES.filter((c) => c.toLowerCase().includes(q));
+    return matches.length > 0 ? matches.slice(0, 8) : POPULAR_CITIES.slice(0, 6);
+  }, [form.city]);
+
+  const handleSelectCity = (cityName) => {
+    setForm((prev) => ({ ...prev, city: cityName }));
+    setShowCitySuggestions(false);
   };
 
   // Pre-load saved customer user if any
@@ -132,13 +191,18 @@ export default function StandaloneShopPage() {
   // Handle Order Submit (Razorpay Online vs COD)
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.phone.trim() || !form.address.trim()) {
-      triggerToast("Please enter your Name, Phone Number, and Address");
+    if (!form.name.trim() || !form.phone.trim() || !form.address.trim() || !form.city.trim() || !form.pincode.trim()) {
+      triggerToast("Please enter Name, WhatsApp, House/Gali, City & Pincode");
       return;
     }
 
     if (form.phone.replace(/\D/g, "").length < 10) {
-      triggerToast("Please enter a valid 10-digit mobile number");
+      triggerToast("Please enter a valid 10-digit WhatsApp number");
+      return;
+    }
+
+    if (form.pincode.replace(/\D/g, "").length < 6) {
+      triggerToast("Please enter a valid 6-digit Pincode");
       return;
     }
 
@@ -600,34 +664,51 @@ export default function StandaloneShopPage() {
           </div>
 
           {/* CUSTOMER DELIVERY DETAILS FORM */}
-          <form onSubmit={handleSubmitOrder} className="bg-white rounded-3xl p-5 border border-[#EAE1D3] shadow-xs space-y-4">
-            <div className="flex items-center justify-between gap-2 pb-2 border-b border-[#FAF4ED]">
+          <form onSubmit={handleSubmitOrder} className="bg-white rounded-3xl p-5 sm:p-6 border border-[#EAE1D3] shadow-xs space-y-4">
+            {/* Header with Detect My Location Button */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#FAF4ED]">
               <div>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-stone-700">
                   Delivery Address & Contact
                 </h3>
                 <p className="text-[10px] text-stone-500 font-serif">
-                  {isDetectingGps ? "Auto-detecting your delivery location via GPS..." : "Auto-detected via GPS • 100% editable"}
+                  Auto-detect location or enter manually with City Auto-Suggest
                 </p>
               </div>
-              {isDetectingGps && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-semibold animate-pulse shrink-0">
-                  <svg className="w-3 h-3 text-emerald-600 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  <span>Locating via GPS...</span>
-                </div>
-              )}
+
+              {/* Detect My Location Button */}
+              <button
+                type="button"
+                onClick={() => handleFetchGpsAddress(true)}
+                disabled={isDetectingGps}
+                className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 hover:from-emerald-100 hover:to-teal-100 text-emerald-900 border border-emerald-300 text-xs font-bold transition shadow-2xs active:scale-98 cursor-pointer disabled:opacity-60 shrink-0"
+                title="Detect City & Pincode using device GPS"
+              >
+                {isDetectingGps ? (
+                  <>
+                    <svg className="w-3.5 h-3.5 text-emerald-700 animate-spin shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>Detecting Location...</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-sm">📍</span>
+                    <span>Detect My Location</span>
+                  </>
+                )}
+              </button>
             </div>
 
+            {/* Success Feedback Banner */}
             {gpsSuccessNote && (
-              <div className="px-3.5 py-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-medium flex items-center justify-between">
+              <div className="px-3.5 py-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-medium flex items-center justify-between animate-fadeIn">
                 <div className="flex items-center gap-2 truncate">
-                  <svg className="w-3.5 h-3.5 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                   </svg>
                   <span className="truncate">
-                    <strong>Location detected:</strong> {gpsSuccessNote} (You can edit below)
+                    <strong>Location detected:</strong> {gpsSuccessNote} — Please enter House/Gali No.
                   </span>
                 </div>
                 <button
@@ -641,6 +722,24 @@ export default function StandaloneShopPage() {
               </div>
             )}
 
+            {/* Error Feedback Banner */}
+            {gpsErrorNote && (
+              <div className="px-3.5 py-2.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 font-medium flex items-center justify-between animate-fadeIn">
+                <div className="flex items-center gap-2 truncate">
+                  <span className="text-amber-600 shrink-0">⚠️</span>
+                  <span className="truncate">{gpsErrorNote}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setGpsErrorNote(null)}
+                  className="text-amber-700 hover:text-amber-900 text-xs font-bold ml-2 cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
+            {/* Full Name */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-stone-700 block">Full Name *</label>
               <input
@@ -653,17 +752,27 @@ export default function StandaloneShopPage() {
               />
             </div>
 
+            {/* WhatsApp Number & Optional Email */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-stone-700 block">WhatsApp / Mobile Number *</label>
-                <input
-                  type="tel"
-                  required
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  placeholder="10-digit mobile number"
-                  className="w-full bg-[#FAF7F2] border border-[#DDD3C4] rounded-xl px-4 py-2.5 text-xs text-[#2C2623] focus:outline-none focus:border-[#B06B5B]"
-                />
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-stone-700 block">WhatsApp Number *</label>
+                  <span className="text-[10px] text-emerald-700 font-semibold">Dispatch Updates</span>
+                </div>
+                <div className="relative flex items-center">
+                  <span className="absolute left-3 text-xs font-bold text-stone-500 select-none">
+                    🇮🇳 +91
+                  </span>
+                  <input
+                    type="tel"
+                    required
+                    maxLength={10}
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, "").slice(0, 10) })}
+                    placeholder="10-digit mobile number"
+                    className="w-full bg-[#FAF7F2] border border-[#DDD3C4] rounded-xl pl-16 pr-4 py-2.5 text-xs text-[#2C2623] focus:outline-none focus:border-[#B06B5B]"
+                  />
+                </div>
               </div>
 
               <div className="space-y-1">
@@ -672,53 +781,133 @@ export default function StandaloneShopPage() {
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  placeholder="For tracking & digital receipt"
+                  placeholder="For digital invoice & receipt"
                   className="w-full bg-[#FAF7F2] border border-[#DDD3C4] rounded-xl px-4 py-2.5 text-xs text-[#2C2623] focus:outline-none focus:border-[#B06B5B]"
                 />
               </div>
             </div>
 
+            {/* Manual Street: House/Flat, Gali/Street */}
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-stone-700 block">Complete Street Address *</label>
-                <span className="text-[10px] text-stone-500 font-serif">Add Flat / House No. or edit anytime</span>
+                <label className="text-xs font-bold text-stone-700 block">
+                  House / Flat No., Gali / Road / Street Address *
+                </label>
+                <span className="text-[10px] text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 font-semibold">
+                  Manual Street
+                </span>
               </div>
               <textarea
                 required
                 rows={2}
                 value={form.address}
                 onChange={(e) => setForm({ ...form, address: e.target.value })}
-                placeholder="House / Flat no, Apartment, Street, Landmark"
+                placeholder="e.g. House No. 42, Gali No. 3, Near Radha Krishna Mandir"
                 className="w-full bg-[#FAF7F2] border border-[#DDD3C4] rounded-xl px-4 py-2.5 text-xs text-[#2C2623] focus:outline-none focus:border-[#B06B5B]"
               />
+              <p className="text-[10px] text-stone-500 font-serif">
+                Enter your exact door number, building, and street/gali for courier delivery.
+              </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-stone-700 block">City *</label>
-                <input
-                  type="text"
-                  required
-                  value={form.city}
-                  onChange={(e) => setForm({ ...form, city: e.target.value })}
-                  placeholder="City"
-                  className="w-full bg-[#FAF7F2] border border-[#DDD3C4] rounded-xl px-4 py-2.5 text-xs text-[#2C2623] focus:outline-none focus:border-[#B06B5B]"
-                />
+            {/* City Auto-Suggest & Pincode */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* City with Auto-Suggest */}
+              <div className="relative space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-stone-700 block">City *</label>
+                  <span className="text-[10px] text-stone-500 font-medium">Auto-Suggest</span>
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    required
+                    value={form.city}
+                    onFocus={() => setShowCitySuggestions(true)}
+                    onChange={(e) => {
+                      setForm({ ...form, city: e.target.value });
+                      setShowCitySuggestions(true);
+                    }}
+                    placeholder="Type or select City"
+                    className="w-full bg-[#FAF7F2] border border-[#DDD3C4] rounded-xl px-4 py-2.5 text-xs text-[#2C2623] focus:outline-none focus:border-[#B06B5B]"
+                    autoComplete="off"
+                  />
+                  {form.city ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForm({ ...form, city: "" });
+                        setShowCitySuggestions(true);
+                      }}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 text-xs p-1"
+                      title="Clear city"
+                    >
+                      ✕
+                    </button>
+                  ) : null}
+                </div>
+
+                {/* Auto-Suggest Dropdown */}
+                {showCitySuggestions && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-20" 
+                      onClick={() => setShowCitySuggestions(false)} 
+                    />
+                    <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-[#EAE0D2] rounded-2xl shadow-xl z-30 max-h-52 overflow-y-auto p-1.5 space-y-0.5">
+                      <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                        Suggested Cities
+                      </div>
+                      {filteredCities.map((cityName) => (
+                        <button
+                          key={cityName}
+                          type="button"
+                          onClick={() => handleSelectCity(cityName)}
+                          className="w-full text-left px-3 py-2 rounded-xl text-xs text-stone-800 hover:bg-[#FAF4ED] hover:text-[#B06B5B] font-medium flex items-center justify-between transition cursor-pointer"
+                        >
+                          <span>{cityName}</span>
+                          {form.city?.toLowerCase() === cityName.toLowerCase() && (
+                            <span className="text-[#B06B5B] text-xs font-bold">✓</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
+
+              {/* Pincode with Auto-Lookup */}
               <div className="space-y-1">
-                <label className="text-xs font-bold text-stone-700 block">Pincode *</label>
-                <input
-                  type="text"
-                  required
-                  maxLength={6}
-                  value={form.pincode}
-                  onChange={(e) => setForm({ ...form, pincode: e.target.value.replace(/\D/g, "") })}
-                  placeholder="6-digit pincode"
-                  className="w-full bg-[#FAF7F2] border border-[#DDD3C4] rounded-xl px-4 py-2.5 text-xs text-[#2C2623] focus:outline-none focus:border-[#B06B5B]"
-                />
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-stone-700 block">Pincode *</label>
+                  {isLookingUpPincode ? (
+                    <span className="text-[10px] text-amber-700 font-semibold animate-pulse">Finding City...</span>
+                  ) : (
+                    <span className="text-[10px] text-stone-500 font-medium">6 Digits</span>
+                  )}
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    value={form.pincode}
+                    onChange={(e) => handlePincodeChange(e.target.value)}
+                    placeholder="6-digit pincode"
+                    className="w-full bg-[#FAF7F2] border border-[#DDD3C4] rounded-xl px-4 py-2.5 text-xs text-[#2C2623] focus:outline-none focus:border-[#B06B5B]"
+                  />
+                  {isLookingUpPincode && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <svg className="w-3.5 h-3.5 text-[#B06B5B] animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
+            {/* Gift Note / Special Instructions */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-stone-700 block">Gift Note / Special Request (Optional)</label>
               <input
