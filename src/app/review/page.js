@@ -508,6 +508,15 @@ function ReviewContent() {
         <p className="text-[11px] text-stone-500 font-serif">
           100% Organic Milk Cotton • Hypoallergenic & Handmade with Care
         </p>
+        <div className="pt-1 flex items-center justify-center flex-wrap gap-3 sm:gap-4 text-[11px] text-stone-600">
+          <a href="mailto:cocoon.by.mehak@gmail.com" className="hover:text-[#B06B5B] underline">
+            cocoon.by.mehak@gmail.com
+          </a>
+          <span>•</span>
+          <a href="https://www.instagram.com/cocoon._.u/" target="_blank" rel="noreferrer" className="hover:text-[#B06B5B] underline">
+            Instagram @cocoon._.u
+          </a>
+        </div>
         <p className="text-[10px] text-stone-400 pt-1">
           © 2026 COCOON. All rights reserved.
         </p>

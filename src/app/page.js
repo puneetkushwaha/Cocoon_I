@@ -1230,6 +1230,10 @@ export default function StandaloneShopPage() {
             Rate & Review
           </Link>
           <span>•</span>
+          <a href="mailto:cocoon.by.mehak@gmail.com" className="hover:text-[#B06B5B] underline">
+            cocoon.by.mehak@gmail.com
+          </a>
+          <span>•</span>
           <a href="https://www.instagram.com/cocoon._.u/" target="_blank" rel="noreferrer" className="hover:text-[#B06B5B] underline">
             Instagram @cocoon._.u
           </a>
