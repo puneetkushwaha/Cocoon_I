@@ -5,7 +5,7 @@ import Link from "next/link";
 import { PRODUCTS } from "@/data/products";
 import { STORE } from "@/data/store";
 import { initiateRazorpayPayment } from "@/lib/razorpay";
-import { saveOrderToSupabase } from "@/lib/supabase";
+import { saveOrderToSupabase, validateCouponFromSupabase, markCouponAsUsedInSupabase } from "@/lib/supabase";
 import { captureLiveGpsAddress, lookupPincode } from "@/lib/location";
 
 const POPULAR_CITIES = [
@@ -38,6 +38,12 @@ export default function StandaloneShopPage() {
   const [gpsErrorNote, setGpsErrorNote] = useState(null);
   const [showCitySuggestions, setShowCitySuggestions] = useState(false);
   const [isLookingUpPincode, setIsLookingUpPincode] = useState(false);
+
+  // 1-Time Review Coupon States
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null); // { code, discountPercent }
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+  const [couponError, setCouponError] = useState(null);
 
   // Customer Form
   const [form, setForm] = useState({
@@ -124,6 +130,60 @@ export default function StandaloneShopPage() {
     setShowCitySuggestions(false);
   };
 
+  // Validate and Apply 1-Time Coupon from Supabase DB / Store
+  const handleApplyCoupon = async (codeOverride = null) => {
+    const targetCode = (codeOverride || couponInput || "").trim().toUpperCase();
+    if (!targetCode) {
+      setCouponError("Please enter a coupon code.");
+      return;
+    }
+
+    setIsValidatingCoupon(true);
+    setCouponError(null);
+
+    try {
+      const res = await validateCouponFromSupabase(targetCode);
+      if (res.valid) {
+        setAppliedCoupon({
+          code: res.code,
+          discountPercent: res.discountPercent || 15
+        });
+        setCouponInput(res.code);
+        setCouponError(null);
+        triggerToast(`✓ 15% OFF Coupon '${res.code}' applied!`);
+      } else {
+        setAppliedCoupon(null);
+        setCouponError(res.error || "Invalid coupon code.");
+        triggerToast(res.error || "Invalid coupon code.");
+      }
+    } catch (e) {
+      console.warn("Coupon check error:", e);
+      setCouponError("Could not validate coupon. Please try again.");
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponInput("");
+    setCouponError(null);
+    triggerToast("Coupon removed.");
+  };
+
+  // Auto-detect coupon from URL query (e.g. from /review redirect)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const urlCoupon = params.get("coupon");
+      if (urlCoupon) {
+        const clean = urlCoupon.trim().toUpperCase();
+        setCouponInput(clean);
+        handleApplyCoupon(clean);
+      }
+    }
+  }, []);
+
   // Pre-load saved customer user if any
   useEffect(() => {
     try {
@@ -181,12 +241,16 @@ export default function StandaloneShopPage() {
     setActiveView("checkout");
   };
 
-  // Pricing Calculations with 10% Online Payment Discount
+  // Pricing Calculations with 15% Review Coupon & 10% Online Payment Discount
   const itemPrice = selectedProduct?.price || 0;
   const subtotal = itemPrice * quantity;
-  const onlineDiscount = paymentMethod === "online" ? Math.round(subtotal * 0.10) : 0;
+  const reviewDiscount = appliedCoupon
+    ? Math.round(subtotal * ((appliedCoupon.discountPercent || 15) / 100))
+    : 0;
+  const amountAfterReviewDiscount = Math.max(0, subtotal - reviewDiscount);
+  const onlineDiscount = paymentMethod === "online" ? Math.round(amountAfterReviewDiscount * 0.10) : 0;
   const shipping = 60; // Flat ₹60 Courier Delivery
-  const grandTotal = Math.max(0, subtotal - onlineDiscount + shipping);
+  const grandTotal = Math.max(0, amountAfterReviewDiscount - onlineDiscount + shipping);
 
   // Handle Order Submit (Razorpay Online vs COD)
   const handleSubmitOrder = async (e) => {
@@ -234,8 +298,14 @@ export default function StandaloneShopPage() {
       customerEmail: form.email.trim() || "",
       address: fullDeliveryAddress,
       items: orderItems,
+      subtotalAmount: subtotal,
+      reviewCoupon: appliedCoupon ? appliedCoupon.code : null,
+      reviewDiscount: reviewDiscount,
+      onlineDiscount: onlineDiscount,
+      shippingAmount: shipping,
       totalAmount: grandTotal,
       notes: (form.notes ? form.notes.trim() + " • " : "") + 
+        (appliedCoupon ? `[1-Time Review Coupon: ${appliedCoupon.code} (-₹${reviewDiscount})] • ` : "") +
         (paymentMethod === "online" ? "10% Online Prepaid Discount" : "Cash on Delivery"),
       timestamp: Date.now()
     };
@@ -265,6 +335,11 @@ export default function StandaloneShopPage() {
         const existing = STORE.getOrders();
         STORE.setOrders([codOrder, ...existing]);
         await saveOrderToSupabase(codOrder);
+
+        // Mark 1-Time Coupon as Used in Supabase & Store (Prevents Reuse)
+        if (appliedCoupon) {
+          await markCouponAsUsedInSupabase(appliedCoupon.code, orderId);
+        }
 
         // Dispatch Email to Customer & Admin
         STORE.dispatchEmailNotification("order_placed", { order: codOrder });
@@ -313,6 +388,11 @@ export default function StandaloneShopPage() {
             const existing = STORE.getOrders();
             STORE.setOrders([onlineOrder, ...existing]);
             await saveOrderToSupabase(onlineOrder);
+
+            // Mark 1-Time Coupon as Used in Supabase & Store (Prevents Reuse)
+            if (appliedCoupon) {
+              await markCouponAsUsedInSupabase(appliedCoupon.code, orderId);
+            }
 
             // Dispatch Email to Customer & Admin
             STORE.dispatchEmailNotification("order_placed", { order: onlineOrder });
@@ -919,12 +999,77 @@ export default function StandaloneShopPage() {
               />
             </div>
 
+            {/* 15% OFF Review Coupon Input Box */}
+            <div className="p-4 bg-gradient-to-r from-amber-50/70 to-orange-50/40 rounded-2xl border border-amber-200/80 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                  <span>🎟️</span>
+                  <span>Have a 15% OFF Review Coupon?</span>
+                </span>
+                {appliedCoupon && (
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300 animate-fadeIn">
+                    ✓ 15% OFF Applied
+                  </span>
+                )}
+              </div>
+
+              {!appliedCoupon ? (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponInput}
+                    onChange={(e) => {
+                      setCouponInput(e.target.value.toUpperCase().trim());
+                      setCouponError(null);
+                    }}
+                    placeholder="Enter coupon (e.g. REV15-XXXXX)"
+                    className="flex-1 bg-white border border-[#DDD3C4] rounded-xl px-3.5 py-2.5 text-xs text-[#2C2623] uppercase font-mono tracking-wider focus:outline-none focus:border-[#B06B5B]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleApplyCoupon()}
+                    disabled={isValidatingCoupon || !couponInput.trim()}
+                    className="px-4 py-2.5 rounded-xl bg-[#2C2623] hover:bg-[#B06B5B] text-white text-xs font-bold tracking-wider uppercase transition shadow-2xs cursor-pointer disabled:opacity-50 shrink-0"
+                  >
+                    {isValidatingCoupon ? "Checking..." : "Apply"}
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between bg-white border border-emerald-300 rounded-xl px-3.5 py-2.5 text-xs text-emerald-900 font-medium shadow-2xs">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-bold text-[#B06B5B] tracking-wider">{appliedCoupon.code}</span>
+                    <span className="text-emerald-700 text-[11px] font-semibold">(Flat 15% Review Discount)</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveCoupon}
+                    className="text-stone-400 hover:text-red-600 text-xs font-bold cursor-pointer transition px-1"
+                    title="Remove coupon"
+                  >
+                    ✕ Remove
+                  </button>
+                </div>
+              )}
+
+              {couponError && (
+                <p className="text-[11px] text-red-600 font-medium animate-fadeIn">
+                  ⚠️ {couponError}
+                </p>
+              )}
+            </div>
+
             {/* Transparent Price Summary Card */}
             <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#EAE1D3] space-y-2 text-xs">
               <div className="flex justify-between text-stone-600">
                 <span>Subtotal ({quantity} item{quantity > 1 ? "s" : ""}):</span>
                 <span>₹{subtotal}</span>
               </div>
+              {reviewDiscount > 0 && (
+                <div className="flex justify-between font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
+                  <span>Review Voucher Discount (15% OFF):</span>
+                  <span>-₹{reviewDiscount}</span>
+                </div>
+              )}
               {paymentMethod === "online" && (
                 <div className="flex justify-between font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
                   <span>10% Instant Online Payment Discount:</span>
@@ -995,6 +1140,12 @@ export default function StandaloneShopPage() {
                 {placedOrder.paymentMethod}
               </span>
             </div>
+            {placedOrder.reviewCoupon && (
+              <div className="flex justify-between items-center text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200 text-[11px] font-semibold">
+                <span>1-Time Review Coupon ({placedOrder.reviewCoupon}):</span>
+                <span>-₹{placedOrder.reviewDiscount || 0}</span>
+              </div>
+            )}
             <div className="flex justify-between items-center text-stone-700 pt-1.5 border-t border-stone-200/60">
               <span className="font-semibold">
                 {placedOrder.paymentMethod === "COD" ? "Payable on Delivery:" : "Amount Paid:"}

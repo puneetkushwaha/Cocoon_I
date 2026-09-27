@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { PRODUCTS } from "@/data/products";
 import { STORE } from "@/data/store";
-import { saveReviewToSupabase, uploadMediaToSupabase } from "@/lib/supabase";
+import { saveReviewToSupabase, uploadMediaToSupabase, saveCouponToSupabase } from "@/lib/supabase";
 
 function ReviewContent() {
   const searchParams = useSearchParams();
@@ -39,6 +39,7 @@ function ReviewContent() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [generatedCoupon, setGeneratedCoupon] = useState("");
   const [couponCopied, setCouponCopied] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -131,11 +132,28 @@ function ReviewContent() {
         status: "Approved"
       };
 
-      // 1. Save to Supabase DB 'reviews'
+      // 1. Generate unique random single-use coupon code
+      const randomSuffix = Math.random().toString(36).substring(2, 7).toUpperCase();
+      const newCouponCode = `REV15-${randomSuffix}`;
+
+      // 2. Save to Supabase DB 'reviews'
       await saveReviewToSupabase(reviewPayload);
 
-      // 2. Save to local STORE for instant availability across the site
+      // 3. Save to local STORE for instant availability across the site
       STORE.addReview(reviewPayload);
+
+      // 4. Register unique 1-time coupon in Supabase DB & Store
+      await saveCouponToSupabase({
+        code: newCouponCode,
+        discountPercent: 15,
+        orderId: orderId.trim() || null,
+        reviewId: reviewPayload.id,
+        customerName: customerName.trim(),
+        customerPhone: customerPhone.trim() || null,
+        createdAt: new Date().toISOString()
+      });
+
+      setGeneratedCoupon(newCouponCode);
 
       // Trigger global update event
       if (typeof window !== "undefined") {
@@ -153,9 +171,10 @@ function ReviewContent() {
   };
 
   const handleCopyCoupon = () => {
-    navigator.clipboard.writeText("COCOON15");
+    const codeToCopy = generatedCoupon || "REV15";
+    navigator.clipboard.writeText(codeToCopy);
     setCouponCopied(true);
-    triggerToast("Coupon code 'COCOON15' copied to clipboard! 🎉");
+    triggerToast(`Coupon code '${codeToCopy}' copied to clipboard! 🎉`);
     setTimeout(() => setCouponCopied(false), 3000);
   };
 
@@ -432,44 +451,49 @@ function ReviewContent() {
 
             {/* EXCLUSIVE 15% OFF COUPON CARD */}
             <div className="p-6 rounded-3xl bg-gradient-to-br from-[#FFF8F5] via-[#FCF3EC] to-[#F7EBE8] border-2 border-dashed border-[#B06B5B]/50 shadow-xs space-y-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#B06B5B] block">
-                Your Exclusive Reward
-              </span>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#B06B5B]">
+                  Your Exclusive Reward
+                </span>
+                <span className="text-[9px] font-black uppercase tracking-wider bg-[#B06B5B] text-white px-2 py-0.5 rounded-full">
+                  1-Time Use Only
+                </span>
+              </div>
               <h3 className="text-lg font-header font-bold text-[#2C2623]">
                 Flat 15% OFF On Your Next Order
               </h3>
               
               <div className="flex items-center justify-center gap-2 max-w-xs mx-auto">
-                <div className="px-5 py-3 rounded-2xl bg-white border border-[#B06B5B] text-base font-black tracking-[0.2em] text-[#B06B5B] shadow-2xs font-mono">
-                  COCOON15
+                <div className="px-5 py-3 rounded-2xl bg-white border border-[#B06B5B] text-base font-black tracking-[0.2em] text-[#B06B5B] shadow-2xs font-mono select-all">
+                  {generatedCoupon || "REV15-XXXXX"}
                 </div>
                 <button
                   type="button"
                   onClick={handleCopyCoupon}
-                  className="px-4 py-3 rounded-2xl bg-[#2C2623] hover:bg-[#B06B5B] text-white text-xs font-bold transition shadow-xs cursor-pointer"
+                  className="px-4 py-3 rounded-2xl bg-[#2C2623] hover:bg-[#B06B5B] text-white text-xs font-bold transition shadow-xs cursor-pointer shrink-0"
                 >
                   {couponCopied ? "✓ Copied!" : "Copy Code"}
                 </button>
               </div>
 
               <p className="text-[11px] text-stone-600 font-serif">
-                Valid for your next order across all handcrafted pieces.
+                This unique voucher is linked to your review and order. Valid for a single checkout across all handcrafted drops.
               </p>
             </div>
 
             {/* ACTION BUTTONS */}
             <div className="space-y-2 pt-2">
               <Link
-                href="/"
+                href={`/?coupon=${encodeURIComponent(generatedCoupon || '')}`}
                 className="w-full py-3.5 rounded-2xl bg-[#B06B5B] hover:bg-[#975647] text-white font-bold text-xs uppercase tracking-wider block transition shadow-md"
               >
-                🛍️ Continue Shopping with 15% Off
+                🛍️ Apply 15% OFF & Continue Shopping &rarr;
               </Link>
               <Link
                 href="/"
                 className="w-full py-3 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs block transition"
               >
-                Visit Full Atelier Website
+                Visit Shop
               </Link>
             </div>
           </div>

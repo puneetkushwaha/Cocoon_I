@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { STORE } from "@/data/store";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://doamshffdcdpwhqcrdvl.supabase.co";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -180,3 +181,126 @@ export async function fetchReviewsFromSupabase(productId = null) {
     return [];
   }
 }
+
+/**
+ * Save a 1-time generated review coupon to Supabase table 'coupons'
+ */
+export async function saveCouponToSupabase(coupon) {
+  try {
+    // 1. Always save in local persistent store
+    STORE.addCoupon({
+      code: coupon.code,
+      discountPercent: coupon.discountPercent || 15,
+      isUsed: false,
+      orderId: coupon.orderId || null,
+      reviewId: coupon.reviewId || null,
+      customerName: coupon.customerName || "",
+      customerPhone: coupon.customerPhone || null,
+      status: "active",
+      createdAt: coupon.createdAt || new Date().toISOString()
+    });
+
+    // 2. Save in Supabase DB 'coupons' table
+    const { data, error } = await supabase.from("coupons").insert([
+      {
+        coupon_code: coupon.code.toUpperCase(),
+        discount_percent: Number(coupon.discountPercent) || 15,
+        is_used: false,
+        order_id: coupon.orderId || null,
+        review_id: coupon.reviewId || null,
+        customer_name: coupon.customerName || null,
+        customer_phone: coupon.customerPhone || null,
+        status: "active",
+        created_at: coupon.createdAt || new Date().toISOString()
+      }
+    ]);
+
+    if (error) {
+      console.warn("Supabase insert coupon notice (using local store fallback):", error.message);
+    }
+    return { success: true, data };
+  } catch (err) {
+    console.warn("Supabase coupon save fallback:", err);
+    return { success: true };
+  }
+}
+
+/**
+ * Validate a 1-time coupon against Supabase DB and local STORE
+ */
+export async function validateCouponFromSupabase(rawCode) {
+  if (!rawCode || !rawCode.trim()) {
+    return { valid: false, error: "Please enter a coupon code." };
+  }
+  const cleanCode = rawCode.trim().toUpperCase();
+
+  try {
+    // 1. Query Supabase 'coupons' table
+    const { data, error } = await supabase
+      .from("coupons")
+      .select("*")
+      .eq("coupon_code", cleanCode)
+      .single();
+
+    if (!error && data) {
+      if (data.is_used || data.status === "redeemed") {
+        return { valid: false, error: "This 15% OFF coupon has already been redeemed." };
+      }
+      return {
+        valid: true,
+        code: data.coupon_code,
+        discountPercent: data.discount_percent || 15,
+        orderId: data.order_id,
+        reviewId: data.review_id
+      };
+    }
+  } catch (err) {
+    console.warn("Supabase coupon lookup notice (checking store fallback):", err);
+  }
+
+  // 2. Check local store fallback
+  const localResult = STORE.validateCoupon(cleanCode);
+  if (localResult.valid) {
+    return {
+      valid: true,
+      code: cleanCode,
+      discountPercent: localResult.discountPercent || 15
+    };
+  }
+
+  return {
+    valid: false,
+    error: localResult.error || "Invalid coupon code. Only verified review coupons are accepted."
+  };
+}
+
+/**
+ * Mark coupon as redeemed in Supabase and local store
+ */
+export async function markCouponAsUsedInSupabase(rawCode, usedOrderId) {
+  if (!rawCode) return;
+  const cleanCode = rawCode.trim().toUpperCase();
+
+  // 1. Mark in local store
+  STORE.markCouponUsed(cleanCode, usedOrderId);
+
+  // 2. Mark in Supabase DB
+  try {
+    const { error } = await supabase
+      .from("coupons")
+      .update({
+        is_used: true,
+        status: "redeemed",
+        used_order_id: usedOrderId || null,
+        used_at: new Date().toISOString()
+      })
+      .eq("coupon_code", cleanCode);
+
+    if (error) {
+      console.warn("Supabase mark coupon notice:", error.message);
+    }
+  } catch (err) {
+    console.warn("Supabase mark coupon error:", err);
+  }
+}
+

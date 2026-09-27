@@ -146,6 +146,7 @@ const STORAGE_KEYS = {
   ORDERS: "cocoon_store_orders",
   CUSTOMIZATIONS: "cocoon_store_customizations",
   REVIEWS: "cocoon_store_reviews",
+  COUPONS: "cocoon_store_coupons",
   RECENTLY_VIEWED: "cocoon_store_recently_viewed",
   SUBSCRIBERS: "cocoon_store_subscribers",
   OFFERS: "cocoon_store_offers",
@@ -282,6 +283,55 @@ export const STORE = {
     const current = getStoredData(STORAGE_KEYS.OFFERS, []);
     const updated = [offer, ...current];
     setStoredData(STORAGE_KEYS.OFFERS, updated);
+    return updated;
+  },
+
+  // 1-Time Unique Review Coupons
+  getCoupons: () => getStoredData(STORAGE_KEYS.COUPONS, []),
+  addCoupon: (coupon) => {
+    const current = getStoredData(STORAGE_KEYS.COUPONS, []);
+    // Prevent duplicate codes
+    const filtered = current.filter((c) => c.code?.toUpperCase() !== coupon.code?.toUpperCase());
+    const updated = [coupon, ...filtered];
+    setStoredData(STORAGE_KEYS.COUPONS, updated);
+    return updated;
+  },
+  validateCoupon: (rawCode) => {
+    if (!rawCode || !rawCode.trim()) {
+      return { valid: false, error: "Please enter a valid coupon code." };
+    }
+    const clean = rawCode.trim().toUpperCase();
+    const all = getStoredData(STORAGE_KEYS.COUPONS, []);
+    const found = all.find((c) => c.code?.toUpperCase() === clean);
+
+    if (!found) {
+      return { valid: false, error: "Invalid coupon code. Please enter a valid review coupon." };
+    }
+    if (found.isUsed) {
+      return { valid: false, error: "This 15% OFF coupon has already been redeemed." };
+    }
+    return {
+      valid: true,
+      coupon: found,
+      discountPercent: found.discountPercent || 15
+    };
+  },
+  markCouponUsed: (rawCode, usedOrderId) => {
+    const clean = (rawCode || "").trim().toUpperCase();
+    const all = getStoredData(STORAGE_KEYS.COUPONS, []);
+    const updated = all.map((c) => {
+      if (c.code?.toUpperCase() === clean) {
+        return {
+          ...c,
+          isUsed: true,
+          status: "redeemed",
+          usedOrderId: usedOrderId || null,
+          usedAt: new Date().toISOString()
+        };
+      }
+      return c;
+    });
+    setStoredData(STORAGE_KEYS.COUPONS, updated);
     return updated;
   },
 
