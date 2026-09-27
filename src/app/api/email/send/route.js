@@ -17,7 +17,7 @@ export async function POST(request) {
       return NextResponse.json({ success: false, error: "Action is required" }, { status: 400 });
     }
 
-    const origin = request.nextUrl.origin || "https://cocoon-crochet.vercel.app";
+    const origin = request.nextUrl.origin || "https://cocoon-psi.vercel.app";
 
     switch (action) {
       case "order_confirmation":

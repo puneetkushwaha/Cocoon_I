@@ -65,7 +65,7 @@ export const initiateRazorpayPayment = async ({
       currency: orderData.currency || "INR",
       name: "COCOON",
       description: "Handcrafted Crochet Order - Agra",
-      image: "https://cocoon-crochet.vercel.app/logo.svg",
+      image: "https://cocoon-psi.vercel.app/logo.svg",
       order_id: orderData.orderId,
       prefill: {
         name: customer?.name || "",
