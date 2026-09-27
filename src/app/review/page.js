@@ -187,7 +187,7 @@ function ReviewContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#2C2623] font-sans antialiased pb-16">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#2C2623] font-sans antialiased">
       {/* Modern Bottom Floating Notification Pill */}
       {toastMessage && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-[90vw] bg-[#2C2623]/95 backdrop-blur-md text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-medium border border-white/10 flex items-center gap-2 animate-fadeIn select-none">
@@ -502,8 +502,8 @@ function ReviewContent() {
       </main>
 
       {/* LUXURY ARTISANAL BOUTIQUE FOOTER */}
-      <footer className="mt-16 border-t border-[#EAE0D2]/70 bg-gradient-to-b from-[#FAF7F2]/40 to-[#F5EFEB]/80 pt-10 pb-12">
-        <div className="max-w-xl mx-auto px-4 space-y-6">
+      <footer className="mt-10 border-t border-[#EAE0D2]/70 bg-gradient-to-b from-[#FAF7F2]/40 to-[#F5EFEB]/80 pt-7 pb-6">
+        <div className="max-w-xl mx-auto px-4 space-y-4">
           
           {/* Normal Static Studio Brand at Top */}
           <div className="text-center space-y-1">

@@ -416,7 +416,7 @@ export default function StandaloneShopPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans antialiased selection:bg-[#F3D5CF] selection:text-[#5B2920] pb-24">
+    <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans antialiased selection:bg-[#F3D5CF] selection:text-[#5B2920]">
       
       {/* Failure Alert Toast (Only displays when an action fails) */}
       {toastMessage && (
@@ -1243,11 +1243,11 @@ export default function StandaloneShopPage() {
       )}
 
       {/* LUXURY ARTISANAL BOUTIQUE FOOTER */}
-      <footer className="mt-16 border-t border-[#EAE0D2]/70 bg-gradient-to-b from-[#FAF7F2]/40 to-[#F5EFEB]/80 pt-10 pb-12">
-        <div className="max-w-2xl mx-auto px-4 space-y-6">
+      <footer className="mt-10 border-t border-[#EAE0D2]/70 bg-gradient-to-b from-[#FAF7F2]/40 to-[#F5EFEB]/80 pt-7 pb-6">
+        <div className="max-w-2xl mx-auto px-4 space-y-4">
           
           {/* Normal Static Studio Brand & Bio at Top */}
-          <div className="text-center space-y-1.5">
+          <div className="text-center space-y-1">
             <span className="font-header text-2xl sm:text-3xl font-light tracking-[0.28em] uppercase text-[#231F20] inline-block">
               COCOON
             </span>
@@ -1298,7 +1298,7 @@ export default function StandaloneShopPage() {
           </div>
 
           {/* Payment Trust Strip & Copyright */}
-          <div className="pt-4 border-t border-[#EAE0D2]/60 text-center space-y-1.5">
+          <div className="pt-3 border-t border-[#EAE0D2]/60 text-center space-y-1">
             <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-3 text-[10px] text-stone-500 font-semibold tracking-wider uppercase">
               <span>UPI</span>
               <span className="text-stone-300">•</span>
