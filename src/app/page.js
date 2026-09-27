@@ -1312,19 +1312,6 @@ export default function StandaloneShopPage() {
               © 2026 COCOON Studio. Handcrafted slow fashion made in Agra, India.
             </p>
           </div>
-
-          {/* BILKUL BOTTOM ME: Cool Independent Bouncy Letters */}
-          <div className="pt-6 pb-2 text-center select-none overflow-hidden border-t border-[#EAE0D2]/30">
-            <div className="inline-flex items-center justify-center gap-2 sm:gap-3 text-3xl sm:text-5xl font-header font-light tracking-[0.25em] text-[#2C2623]">
-              <span className="bouncy-letter-c1 inline-block cursor-pointer hover:text-[#B06B5B] transition-colors" title="C">C</span>
-              <span className="bouncy-letter-o1 inline-block cursor-pointer hover:text-[#B06B5B] transition-colors" title="O">O</span>
-              <span className="bouncy-letter-c2 inline-block cursor-pointer hover:text-[#B06B5B] transition-colors" title="C">C</span>
-              <span className="bouncy-letter-o2 inline-block cursor-pointer hover:text-[#B06B5B] transition-colors" title="O">O</span>
-              <span className="bouncy-letter-o3 inline-block cursor-pointer hover:text-[#B06B5B] transition-colors" title="O">O</span>
-              <span className="bouncy-letter-n inline-block cursor-pointer hover:text-[#B06B5B] transition-colors" title="N">N</span>
-            </div>
-          </div>
-
         </div>
       </footer>
 
