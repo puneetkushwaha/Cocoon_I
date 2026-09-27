@@ -150,7 +150,7 @@ export default function StandaloneShopPage() {
         });
         setCouponInput(res.code);
         setCouponError(null);
-        triggerToast(`✓ 15% OFF Coupon '${res.code}' applied!`);
+        triggerToast(`✓ Coupon '${res.code}' applied!`);
       } else {
         setAppliedCoupon(null);
         setCouponError(res.error || "Invalid coupon code.");
@@ -999,16 +999,16 @@ export default function StandaloneShopPage() {
               />
             </div>
 
-            {/* 15% OFF Review Coupon Input Box */}
+            {/* Coupon Code Input Box */}
             <div className="p-4 bg-gradient-to-r from-amber-50/70 to-orange-50/40 rounded-2xl border border-amber-200/80 space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
                   <span>🎟️</span>
-                  <span>Have a 15% OFF Review Coupon?</span>
+                  <span>Have a Coupon Code?</span>
                 </span>
                 {appliedCoupon && (
                   <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300 animate-fadeIn">
-                    ✓ 15% OFF Applied
+                    ✓ Coupon Applied
                   </span>
                 )}
               </div>
@@ -1022,7 +1022,7 @@ export default function StandaloneShopPage() {
                       setCouponInput(e.target.value.toUpperCase().trim());
                       setCouponError(null);
                     }}
-                    placeholder="Enter coupon (e.g. REV15-XXXXX)"
+                    placeholder="Enter coupon code"
                     className="flex-1 bg-white border border-[#DDD3C4] rounded-xl px-3.5 py-2.5 text-xs text-[#2C2623] uppercase font-mono tracking-wider focus:outline-none focus:border-[#B06B5B]"
                   />
                   <button
@@ -1038,7 +1038,7 @@ export default function StandaloneShopPage() {
                 <div className="flex items-center justify-between bg-white border border-emerald-300 rounded-xl px-3.5 py-2.5 text-xs text-emerald-900 font-medium shadow-2xs">
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-bold text-[#B06B5B] tracking-wider">{appliedCoupon.code}</span>
-                    <span className="text-emerald-700 text-[11px] font-semibold">(Flat 15% Review Discount)</span>
+                    <span className="text-emerald-700 text-[11px] font-semibold">(Coupon Discount Applied)</span>
                   </div>
                   <button
                     type="button"
@@ -1066,7 +1066,7 @@ export default function StandaloneShopPage() {
               </div>
               {reviewDiscount > 0 && (
                 <div className="flex justify-between font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
-                  <span>Review Voucher Discount (15% OFF):</span>
+                  <span>Coupon Discount:</span>
                   <span>-₹{reviewDiscount}</span>
                 </div>
               )}
@@ -1142,7 +1142,7 @@ export default function StandaloneShopPage() {
             </div>
             {placedOrder.reviewCoupon && (
               <div className="flex justify-between items-center text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200 text-[11px] font-semibold">
-                <span>1-Time Review Coupon ({placedOrder.reviewCoupon}):</span>
+                <span>Coupon Applied ({placedOrder.reviewCoupon}):</span>
                 <span>-₹{placedOrder.reviewDiscount || 0}</span>
               </div>
             )}
@@ -1227,7 +1227,7 @@ export default function StandaloneShopPage() {
         </p>
         <div className="pt-1 flex items-center justify-center flex-wrap gap-3 sm:gap-4 text-[11px] text-stone-600">
           <Link href="/review" className="hover:text-[#B06B5B] font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 px-2.5 py-0.5 rounded-full border border-stone-200">
-            Rate & Review (15% Off)
+            Rate & Review
           </Link>
           <span>•</span>
           <a href="https://www.instagram.com/cocoon._.u/" target="_blank" rel="noreferrer" className="hover:text-[#B06B5B] underline">
