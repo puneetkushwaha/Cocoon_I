@@ -78,7 +78,6 @@ export default function StandaloneShopPage() {
         }));
         const label = [loc.city, loc.pincode].filter(Boolean).join(" - ");
         setGpsSuccessNote(label || "Live Location Detected");
-        triggerToast(`📍 Location detected: ${loc.city || "Success"}`);
       } else if (isManualClick) {
         setGpsErrorNote("Could not detect exact coordinates. Please enter manually.");
       }
@@ -86,7 +85,6 @@ export default function StandaloneShopPage() {
       console.warn("GPS detection notice:", err);
       if (isManualClick) {
         setGpsErrorNote(err.message || "Location access unavailable. Please enter address manually.");
-        triggerToast("Location permission unavailable. Enter manually.");
       }
     } finally {
       setIsDetectingGps(false);
@@ -107,7 +105,6 @@ export default function StandaloneShopPage() {
             ...prev,
             city: prev.city && prev.city.trim() ? prev.city : pinData.city
           }));
-          triggerToast(`City found for ${cleanPin}: ${pinData.city}`);
         }
       } catch (e) {
         console.warn("Pincode lookup error:", e);
@@ -150,7 +147,6 @@ export default function StandaloneShopPage() {
         });
         setCouponInput(res.code);
         setCouponError(null);
-        triggerToast(`✓ Coupon '${res.code}' applied!`);
       } else {
         setAppliedCoupon(null);
         setCouponError(res.error || "Invalid coupon code.");
@@ -168,7 +164,6 @@ export default function StandaloneShopPage() {
     setAppliedCoupon(null);
     setCouponInput("");
     setCouponError(null);
-    triggerToast("Coupon removed.");
   };
 
   // Auto-detect coupon from URL query (e.g. from /review redirect)
@@ -347,7 +342,6 @@ export default function StandaloneShopPage() {
         setIsSubmitting(false);
         setPlacedOrder(codOrder);
         setActiveView("success");
-        triggerToast("Order placed successfully via Cash on Delivery!");
       } catch (err) {
         console.error("COD save error:", err);
         setIsSubmitting(false);
@@ -358,7 +352,6 @@ export default function StandaloneShopPage() {
 
     // 2. ONLINE PAYMENT FLOW VIA RAZORPAY (10% DISCOUNTED)
     try {
-      triggerToast("Opening secure Razorpay gateway (10% OFF applied)...");
       await initiateRazorpayPayment({
         amount: grandTotal,
         customer: {
@@ -400,7 +393,6 @@ export default function StandaloneShopPage() {
             setIsSubmitting(false);
             setPlacedOrder(onlineOrder);
             setActiveView("success");
-            triggerToast("Payment Verified! Order confirmed with 10% discount.");
           } catch (saveErr) {
             console.error("Order save error:", saveErr);
             setIsSubmitting(false);
@@ -414,23 +406,22 @@ export default function StandaloneShopPage() {
         },
         onDismiss: () => {
           setIsSubmitting(false);
-          triggerToast("Payment cancelled. You can retry anytime.");
         }
       });
     } catch (payErr) {
       console.error(payErr);
       setIsSubmitting(false);
-      triggerToast("Error launching payment gateway.");
+      triggerToast("Payment gateway could not be launched. Please try again.");
     }
   };
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans antialiased selection:bg-[#F3D5CF] selection:text-[#5B2920] pb-24">
       
-      {/* Modern Bottom Floating Notification Pill (Never blocks header) */}
+      {/* Failure Alert Toast (Only displays when an action fails) */}
       {toastMessage && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-[90vw] bg-[#2C2623]/95 backdrop-blur-md text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-medium border border-white/10 flex items-center gap-2 animate-fadeIn select-none">
-          <span className="text-[#E0A899]">ℹ️</span>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-[90vw] bg-[#2C2623]/95 backdrop-blur-md text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-medium border border-red-400/40 flex items-center gap-2 animate-fadeIn select-none">
+          <span className="text-amber-400">⚠️</span>
           <span>{toastMessage}</span>
         </div>
       )}
