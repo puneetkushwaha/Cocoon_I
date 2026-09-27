@@ -2,9 +2,22 @@ import { createClient } from "@supabase/supabase-js";
 import { STORE } from "@/data/store";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://doamshffdcdpwhqcrdvl.supabase.co";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+// Safe fallback string prevents Next.js "supabaseKey is required." prerender crash during Vercel build
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "public-anon-key-placeholder";
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const isSupabaseConfigured = () => {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "public-anon-key-placeholder"
+  );
+};
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false
+  }
+});
 
 /**
  * Upload image or video to Supabase Storage bucket ('cocoon-media')
@@ -13,27 +26,29 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export async function uploadMediaToSupabase(file, bucket = "cocoon-media") {
   if (!file) return null;
 
-  try {
-    const ext = file.name.split(".").pop();
-    const cleanName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
-    const filePath = `uploads/${cleanName}`;
+  if (isSupabaseConfigured()) {
+    try {
+      const ext = file.name.split(".").pop();
+      const cleanName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
+      const filePath = `uploads/${cleanName}`;
 
-    const { data, error } = await supabase.storage.from(bucket).upload(filePath, file, {
-      cacheControl: "3600",
-      upsert: false
-    });
+      const { data, error } = await supabase.storage.from(bucket).upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false
+      });
 
-    if (!error) {
-      const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(filePath);
-      if (publicData?.publicUrl) return publicData.publicUrl;
-    } else {
-      console.warn("Supabase storage upload notice:", error.message);
+      if (!error) {
+        const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(filePath);
+        if (publicData?.publicUrl) return publicData.publicUrl;
+      } else {
+        console.warn("Supabase storage upload notice:", error.message);
+      }
+    } catch (err) {
+      console.warn("Storage upload fallback:", err);
     }
-  } catch (err) {
-    console.warn("Storage upload fallback:", err);
   }
 
-  // Fallback: convert file to Base64 data URL so it persists in the database even without cloud storage!
+  // Fallback: convert file to Base64 data URL so it persists even without cloud storage!
   return new Promise((resolve) => {
     try {
       const reader = new FileReader();
@@ -50,6 +65,9 @@ export async function uploadMediaToSupabase(file, bucket = "cocoon-media") {
  * Save an order to Supabase table 'orders'
  */
 export async function saveOrderToSupabase(order) {
+  if (!isSupabaseConfigured()) {
+    return { data: null, error: null };
+  }
   try {
     const { data, error } = await supabase.from("orders").insert([
       {
@@ -80,6 +98,9 @@ export async function saveOrderToSupabase(order) {
  * Save a custom heirloom inquiry slip to Supabase table 'customizations'
  */
 export async function saveCustomizationToSupabase(inquiry) {
+  if (!isSupabaseConfigured()) {
+    return { data: null, error: null };
+  }
   try {
     const { data, error } = await supabase.from("customizations").insert([
       {
@@ -114,6 +135,9 @@ export async function saveCustomizationToSupabase(inquiry) {
  * Save a customer review to Supabase table 'reviews'
  */
 export async function saveReviewToSupabase(review) {
+  if (!isSupabaseConfigured()) {
+    return { data: null, error: null };
+  }
   try {
     const { data, error } = await supabase.from("reviews").insert([
       {
@@ -145,6 +169,9 @@ export async function saveReviewToSupabase(review) {
  * Fetch approved customer reviews from Supabase table 'reviews'
  */
 export async function fetchReviewsFromSupabase(productId = null) {
+  if (!isSupabaseConfigured()) {
+    return [];
+  }
   try {
     let query = supabase
       .from("reviews")
