@@ -500,28 +500,56 @@ function ReviewContent() {
         )}
       </main>
 
-      {/* FOOTER */}
-      <footer className="max-w-xl mx-auto px-4 pt-12 text-center space-y-2 border-t border-[#EAE0D2]/60 mt-12">
-        <p className="text-xs font-bold tracking-widest uppercase text-stone-600">
-          COCOON
-        </p>
-        <p className="text-[11px] text-stone-500 font-serif">
-          100% Organic Milk Cotton • Hypoallergenic & Handmade with Care
-        </p>
-        <div className="pt-2 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 text-[11px] text-stone-600">
-          <Link href="/" className="hover:text-[#B06B5B] font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 px-3 py-1 rounded-full border border-stone-200 transition">
-            Shop Catalog
-          </Link>
-          <a href="mailto:cocoon.by.mehak@gmail.com" className="hover:text-[#B06B5B] bg-stone-100/70 hover:bg-stone-200/80 px-3 py-1 rounded-full border border-stone-200/80 transition">
-            cocoon.by.mehak@gmail.com
-          </a>
-          <a href="https://www.instagram.com/cocoon._.u/" target="_blank" rel="noreferrer" className="hover:text-[#B06B5B] bg-stone-100/70 hover:bg-stone-200/80 px-3 py-1 rounded-full border border-stone-200/80 transition">
-            Instagram @cocoon._.u ↗
-          </a>
+      {/* LUXURY ARTISANAL BOUTIQUE FOOTER */}
+      <footer className="mt-16 border-t border-[#EAE0D2]/70 bg-gradient-to-b from-[#FAF7F2]/40 to-[#F5EFEB]/80 pt-10 pb-12">
+        <div className="max-w-xl mx-auto px-4 space-y-6">
+          
+          {/* Studio Brand */}
+          <div className="text-center space-y-1">
+            <span className="font-header text-2xl sm:text-3xl font-light tracking-[0.28em] uppercase text-[#231F20] inline-block">
+              COCOON
+            </span>
+            <p className="text-xs text-stone-600 font-serif max-w-sm mx-auto leading-relaxed">
+              100% Organic Milk Cotton • Handcrafted with care in Agra, India
+            </p>
+          </div>
+
+          {/* Quick Contact & Action Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 text-xs">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white hover:bg-stone-50 text-stone-800 font-medium border border-[#DDD3C4] shadow-2xs hover:border-[#B06B5B] hover:text-[#B06B5B] transition active:scale-95"
+            >
+              <span>←</span>
+              <span>Shop Catalog</span>
+            </Link>
+
+            <a
+              href="mailto:cocoon.by.mehak@gmail.com"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white hover:bg-stone-50 text-stone-800 font-medium border border-[#DDD3C4] shadow-2xs hover:border-[#B06B5B] hover:text-[#B06B5B] transition active:scale-95"
+            >
+              <span>✉️</span>
+              <span>cocoon.by.mehak@gmail.com</span>
+            </a>
+
+            <a
+              href="https://www.instagram.com/cocoon._.u/"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white hover:bg-stone-50 text-stone-800 font-medium border border-[#DDD3C4] shadow-2xs hover:border-[#B06B5B] hover:text-[#B06B5B] transition active:scale-95"
+            >
+              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+              <span>@cocoon._.u</span>
+            </a>
+          </div>
+
+          {/* Bottom Copyright */}
+          <p className="text-[10px] text-stone-400 text-center pt-2 border-t border-[#EAE0D2]/50">
+            © 2026 COCOON Studio. All rights reserved.
+          </p>
         </div>
-        <p className="text-[10px] text-stone-400 pt-1">
-          © 2026 COCOON. All rights reserved.
-        </p>
       </footer>
     </div>
   );
