@@ -10,7 +10,7 @@ A high-converting, dedicated single-page storefront crafted exclusively for Inst
 - **10% Instant Online Discount:** Flat 10% instant discount auto-calculated on Razorpay online payments (UPI, Cards, NetBanking).
 - **Cash on Delivery (COD):** Available across India with flat ₹60 express courier delivery.
 - **Auto-GPS Location:** Automatic locality & pincode detection via device geolocation.
-- **Dual Email Notification:** Instant automated order confirmation receipts dispatched to both customer and studio (`cocoon.by.mehak@gmail.com`) via Resend.
+- **Dual Email Notification:** Instant automated order confirmation receipts dispatched to both customer and studio desk via Resend.
 - **1-Click WhatsApp Tracking:** Pre-filled order confirmation button without publicly exposing personal contact details.
 - **Verified Review & Feedback System (`/review`):** 
   - Supports 1-5 star ratings, text feedback, plus **Photo & Video upload support**.
