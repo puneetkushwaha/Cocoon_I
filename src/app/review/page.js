@@ -188,10 +188,11 @@ function ReviewContent() {
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2C2623] font-sans antialiased pb-16">
-      {/* Toast */}
+      {/* Modern Bottom Floating Notification Pill */}
       {toastMessage && (
-        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-[#2C2623] text-white text-xs px-4 py-2.5 rounded-full shadow-lg border border-[#EAE0D2]/20 animate-bounce">
-          {toastMessage}
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-[90vw] bg-[#2C2623]/95 backdrop-blur-md text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-medium border border-white/10 flex items-center gap-2 animate-fadeIn select-none">
+          <span className="text-[#E0A899]">ℹ️</span>
+          <span>{toastMessage}</span>
         </div>
       )}
 

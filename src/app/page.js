@@ -427,10 +427,11 @@ export default function StandaloneShopPage() {
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans antialiased selection:bg-[#F3D5CF] selection:text-[#5B2920] pb-24">
       
-      {/* Toast Notification */}
+      {/* Modern Bottom Floating Notification Pill (Never blocks header) */}
       {toastMessage && (
-        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-[#2C2623] text-white px-5 py-2.5 rounded-full shadow-2xl text-xs font-serif border border-stone-700 animate-fadeIn">
-          {toastMessage}
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-[90vw] bg-[#2C2623]/95 backdrop-blur-md text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-medium border border-white/10 flex items-center gap-2 animate-fadeIn select-none">
+          <span className="text-[#E0A899]">ℹ️</span>
+          <span>{toastMessage}</span>
         </div>
       )}
 
