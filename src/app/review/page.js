@@ -505,22 +505,11 @@ function ReviewContent() {
       <footer className="mt-16 border-t border-[#EAE0D2]/70 bg-gradient-to-b from-[#FAF7F2]/40 to-[#F5EFEB]/80 pt-10 pb-12">
         <div className="max-w-xl mx-auto px-4 space-y-6">
           
-          {/* Cool Auto-Bouncy Wave COCOON Brand */}
-          <div className="text-center py-2 space-y-2">
-            <div className="inline-flex items-center justify-center gap-1 select-none">
-              {"COCOON".split("").map((letter, idx) => (
-                <span
-                  key={idx}
-                  className="font-header text-3xl sm:text-4xl font-light tracking-[0.22em] uppercase inline-block cursor-default transition-all duration-300 hover:scale-125"
-                  style={{
-                    animation: "cocoonWave 2.4s ease-in-out infinite",
-                    animationDelay: `${idx * 0.16}s`,
-                  }}
-                >
-                  {letter}
-                </span>
-              ))}
-            </div>
+          {/* Normal Static Studio Brand at Top */}
+          <div className="text-center space-y-1">
+            <span className="font-header text-2xl sm:text-3xl font-light tracking-[0.28em] uppercase text-[#231F20] inline-block">
+              COCOON
+            </span>
             <p className="text-xs text-stone-600 font-serif max-w-sm mx-auto leading-relaxed">
               100% Organic Milk Cotton • Handcrafted with care in Agra, India
             </p>
@@ -561,6 +550,18 @@ function ReviewContent() {
           <p className="text-[10px] text-stone-400 text-center pt-2 border-t border-[#EAE0D2]/50">
             © 2026 COCOON Studio. All rights reserved.
           </p>
+
+          {/* BILKUL BOTTOM ME: Cool Independent Bouncy Letters */}
+          <div className="pt-4 pb-2 text-center select-none overflow-hidden">
+            <div className="inline-flex items-center justify-center gap-2 sm:gap-3 text-3xl sm:text-5xl font-header font-light tracking-[0.25em] text-[#2C2623]">
+              <span className="bouncy-letter-c1 inline-block cursor-pointer hover:text-[#B06B5B] transition-colors" title="C">C</span>
+              <span className="bouncy-letter-o1 inline-block cursor-pointer hover:text-[#B06B5B] transition-colors" title="O">O</span>
+              <span className="bouncy-letter-c2 inline-block cursor-pointer hover:text-[#B06B5B] transition-colors" title="C">C</span>
+              <span className="bouncy-letter-o2 inline-block cursor-pointer hover:text-[#B06B5B] transition-colors" title="O">O</span>
+              <span className="bouncy-letter-o3 inline-block cursor-pointer hover:text-[#B06B5B] transition-colors" title="O">O</span>
+              <span className="bouncy-letter-n inline-block cursor-pointer hover:text-[#B06B5B] transition-colors" title="N">N</span>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
