@@ -636,20 +636,22 @@ export default function StandaloneShopPage() {
               <div className="flex items-center justify-between pt-1">
                 <span className="text-sm font-bold text-[#2C2623]">₹{selectedProduct.price} each</span>
                 
-                {/* Quantity Controls */}
-                <div className="flex items-center gap-2.5 bg-[#FAF7F2] rounded-xl border border-stone-300 px-2.5 py-1">
+                {/* Modern Pill Quantity Stepper */}
+                <div className="flex items-center bg-[#F5EFEB] rounded-full p-1 border border-[#DDD3C4]/90 shadow-2xs">
                   <button
                     type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="text-sm font-bold text-stone-600 hover:text-stone-900 w-4 text-center cursor-pointer"
+                    className="w-7 h-7 rounded-full bg-white hover:bg-[#EAE0D4] text-stone-700 flex items-center justify-center font-bold text-sm transition shadow-2xs cursor-pointer active:scale-90"
+                    title="Decrease quantity"
                   >
-                    -
+                    −
                   </button>
-                  <span className="text-xs font-bold text-[#2C2623]">{quantity}</span>
+                  <span className="w-7 text-center text-xs font-bold text-[#2C2623] select-none">{quantity}</span>
                   <button
                     type="button"
                     onClick={() => setQuantity(quantity + 1)}
-                    className="text-sm font-bold text-stone-600 hover:text-stone-900 w-4 text-center cursor-pointer"
+                    className="w-7 h-7 rounded-full bg-white hover:bg-[#EAE0D4] text-stone-700 flex items-center justify-center font-bold text-sm transition shadow-2xs cursor-pointer active:scale-90"
+                    title="Increase quantity"
                   >
                     +
                   </button>
@@ -659,11 +661,11 @@ export default function StandaloneShopPage() {
               {/* Colorway Selection */}
               {selectedProduct.colors && selectedProduct.colors.length > 1 && (
                 <div className="text-[11px] text-stone-600 flex items-center gap-2 pt-1">
-                  <span className="font-semibold">Color:</span>
+                  <span className="font-semibold text-stone-700">Color:</span>
                   <select
                     value={selectedColor}
                     onChange={(e) => setSelectedColor(e.target.value)}
-                    className="bg-[#FAF7F2] border border-stone-300 rounded-lg px-2 py-1 text-xs text-stone-800"
+                    className="bg-[#FAF7F2] border border-[#DDD3C4] rounded-full px-3 py-1 text-xs text-stone-800 font-medium focus:outline-none focus:border-[#B06B5B] cursor-pointer shadow-2xs"
                   >
                     {selectedProduct.colors.map((c) => (
                       <option key={c} value={c}>{c}</option>
@@ -685,59 +687,63 @@ export default function StandaloneShopPage() {
               onClick={() => setPaymentMethod("online")}
               className={`p-4 rounded-2xl border-2 transition cursor-pointer flex items-start gap-3.5 ${
                 paymentMethod === "online"
-                  ? "bg-emerald-50/60 border-emerald-600 shadow-xs"
-                  : "bg-[#FAF7F2] border-stone-200 hover:border-stone-300"
+                  ? "bg-emerald-50/50 border-emerald-600/90 shadow-2xs ring-1 ring-emerald-600/20"
+                  : "bg-[#FAF7F2] border-[#E5DDD2] hover:border-stone-300"
               }`}
             >
-              <input
-                type="radio"
-                name="payment"
-                checked={paymentMethod === "online"}
-                onChange={() => setPaymentMethod("online")}
-                className="mt-1 accent-emerald-600 w-4 h-4 cursor-pointer"
-              />
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs sm:text-sm text-[#2C2623]">
-                    Online Payment (UPI, Cards, NetBanking)
+              <div className="pt-0.5">
+                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition ${
+                  paymentMethod === "online" ? "border-emerald-600 bg-white" : "border-stone-400 bg-white"
+                }`}>
+                  {paymentMethod === "online" && (
+                    <div className="w-2 h-2 rounded-full bg-emerald-600"></div>
+                  )}
+                </div>
+              </div>
+              <div className="flex-1 min-w-0 space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold text-xs sm:text-sm text-[#2C2623] truncate">
+                    Online Payment (UPI, Cards)
                   </span>
-                  <span className="text-[10px] font-black uppercase text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
+                  <span className="shrink-0 whitespace-nowrap text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2.5 py-0.5 rounded-full border border-emerald-300">
                     10% Instant Off
                   </span>
                 </div>
-                <p className="text-xs text-stone-600 font-serif">
-                  Pay securely via Razorpay and get flat <strong>10% instant discount</strong> on your total.
+                <p className="text-xs text-stone-600 font-serif leading-relaxed">
+                  Pay securely via Razorpay and enjoy flat <strong>10% instant discount</strong> automatically applied.
                 </p>
               </div>
             </div>
 
-            {/* Cash on Delivery (COD) Option (Clean, no negative text) */}
+            {/* Cash on Delivery (COD) Option */}
             <div
               onClick={() => setPaymentMethod("cod")}
               className={`p-4 rounded-2xl border-2 transition cursor-pointer flex items-start gap-3.5 ${
                 paymentMethod === "cod"
-                  ? "bg-amber-50/60 border-amber-600 shadow-xs"
-                  : "bg-[#FAF7F2] border-stone-200 hover:border-stone-300"
+                  ? "bg-amber-50/40 border-[#B06B5B] shadow-2xs ring-1 ring-[#B06B5B]/20"
+                  : "bg-[#FAF7F2] border-[#E5DDD2] hover:border-stone-300"
               }`}
             >
-              <input
-                type="radio"
-                name="payment"
-                checked={paymentMethod === "cod"}
-                onChange={() => setPaymentMethod("cod")}
-                className="mt-1 accent-amber-600 w-4 h-4 cursor-pointer"
-              />
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs sm:text-sm text-[#2C2623]">
+              <div className="pt-0.5">
+                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition ${
+                  paymentMethod === "cod" ? "border-[#B06B5B] bg-white" : "border-stone-400 bg-white"
+                }`}>
+                  {paymentMethod === "cod" && (
+                    <div className="w-2 h-2 rounded-full bg-[#B06B5B]"></div>
+                  )}
+                </div>
+              </div>
+              <div className="flex-1 min-w-0 space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold text-xs sm:text-sm text-[#2C2623] truncate">
                     Cash on Delivery (COD)
                   </span>
-                  <span className="text-[10px] text-stone-600 bg-stone-100 px-2 py-0.5 rounded-full border border-stone-200">
+                  <span className="shrink-0 whitespace-nowrap text-[10px] font-medium uppercase tracking-wider text-stone-600 bg-white px-2.5 py-0.5 rounded-full border border-[#DDD3C4]">
                     Pay on Arrival
                   </span>
                 </div>
-                <p className="text-xs text-stone-600 font-serif">
-                  Pay in cash or via UPI directly to the courier partner upon doorstep delivery.
+                <p className="text-xs text-stone-600 font-serif leading-relaxed">
+                  Pay with cash or UPI directly to the delivery partner when your parcel arrives.
                 </p>
               </div>
             </div>
@@ -761,12 +767,12 @@ export default function StandaloneShopPage() {
                 type="button"
                 onClick={() => handleFetchGpsAddress(true)}
                 disabled={isDetectingGps}
-                className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 hover:from-emerald-100 hover:to-teal-100 text-emerald-900 border border-emerald-300 text-xs font-bold transition shadow-2xs active:scale-98 cursor-pointer disabled:opacity-60 shrink-0"
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#FAF5EE] hover:bg-[#F3ECE1] text-[#2C2623] border border-[#DDD3C4] text-xs font-semibold tracking-wide transition shadow-2xs active:scale-95 cursor-pointer disabled:opacity-50 shrink-0"
                 title="Detect City & Pincode using device GPS"
               >
                 {isDetectingGps ? (
                   <>
-                    <svg className="w-3.5 h-3.5 text-emerald-700 animate-spin shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-3.5 h-3.5 text-[#B06B5B] animate-spin shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                     <span>Detecting Location...</span>
@@ -1000,14 +1006,14 @@ export default function StandaloneShopPage() {
             </div>
 
             {/* Coupon Code Input Box */}
-            <div className="p-4 bg-gradient-to-r from-amber-50/70 to-orange-50/40 rounded-2xl border border-amber-200/80 space-y-2.5">
+            <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#EAE1D3] space-y-3 shadow-2xs">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
-                  <span>🎟️</span>
+                  <span className="text-sm">🏷️</span>
                   <span>Have a Coupon Code?</span>
                 </span>
                 {appliedCoupon && (
-                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300 animate-fadeIn">
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300 animate-fadeIn">
                     ✓ Coupon Applied
                   </span>
                 )}
@@ -1023,27 +1029,28 @@ export default function StandaloneShopPage() {
                       setCouponError(null);
                     }}
                     placeholder="Enter coupon code"
-                    className="flex-1 bg-white border border-[#DDD3C4] rounded-xl px-3.5 py-2.5 text-xs text-[#2C2623] uppercase font-mono tracking-wider focus:outline-none focus:border-[#B06B5B]"
+                    className="flex-1 bg-white border border-[#DDD3C4] rounded-xl px-4 py-2.5 text-xs text-[#2C2623] placeholder:text-stone-400 placeholder:normal-case font-mono uppercase tracking-wider focus:outline-none focus:border-[#B06B5B] focus:ring-1 focus:ring-[#B06B5B]/30 transition"
                   />
                   <button
                     type="button"
                     onClick={() => handleApplyCoupon()}
                     disabled={isValidatingCoupon || !couponInput.trim()}
-                    className="px-4 py-2.5 rounded-xl bg-[#2C2623] hover:bg-[#B06B5B] text-white text-xs font-bold tracking-wider uppercase transition shadow-2xs cursor-pointer disabled:opacity-50 shrink-0"
+                    className="px-5 py-2.5 rounded-xl bg-[#2C2623] hover:bg-[#B06B5B] text-white text-xs font-bold tracking-wider uppercase transition shadow-2xs hover:shadow-xs cursor-pointer active:scale-95 disabled:bg-[#EAE0D4] disabled:text-stone-400 disabled:cursor-not-allowed disabled:shadow-none shrink-0"
                   >
                     {isValidatingCoupon ? "Checking..." : "Apply"}
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center justify-between bg-white border border-emerald-300 rounded-xl px-3.5 py-2.5 text-xs text-emerald-900 font-medium shadow-2xs">
+                <div className="flex items-center justify-between bg-white border border-emerald-300/80 rounded-xl px-4 py-2.5 text-xs text-emerald-950 font-medium shadow-2xs">
                   <div className="flex items-center gap-2">
+                    <span className="text-emerald-600 font-bold">✓</span>
                     <span className="font-mono font-bold text-[#B06B5B] tracking-wider">{appliedCoupon.code}</span>
                     <span className="text-emerald-700 text-[11px] font-semibold">(Coupon Discount Applied)</span>
                   </div>
                   <button
                     type="button"
                     onClick={handleRemoveCoupon}
-                    className="text-stone-400 hover:text-red-600 text-xs font-bold cursor-pointer transition px-1"
+                    className="text-stone-400 hover:text-red-600 text-xs font-bold cursor-pointer transition px-2 py-0.5 rounded-md hover:bg-red-50"
                     title="Remove coupon"
                   >
                     ✕ Remove
@@ -1059,45 +1066,68 @@ export default function StandaloneShopPage() {
             </div>
 
             {/* Transparent Price Summary Card */}
-            <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#EAE1D3] space-y-2 text-xs">
-              <div className="flex justify-between text-stone-600">
+            <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#EAE1D3] space-y-2.5 text-xs">
+              <div className="flex justify-between items-center text-stone-600">
                 <span>Subtotal ({quantity} item{quantity > 1 ? "s" : ""}):</span>
-                <span>₹{subtotal}</span>
+                <span className="font-semibold text-stone-800 shrink-0 whitespace-nowrap">₹{subtotal}</span>
               </div>
               {reviewDiscount > 0 && (
-                <div className="flex justify-between font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
+                <div className="flex justify-between items-center font-bold text-emerald-800 bg-emerald-50/90 px-3 py-1.5 rounded-xl border border-emerald-200/80">
                   <span>Coupon Discount:</span>
-                  <span>-₹{reviewDiscount}</span>
+                  <span className="shrink-0 whitespace-nowrap font-bold text-emerald-700">-₹{reviewDiscount}</span>
                 </div>
               )}
               {paymentMethod === "online" && (
-                <div className="flex justify-between font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
-                  <span>10% Instant Online Payment Discount:</span>
-                  <span>-₹{onlineDiscount}</span>
+                <div className="flex justify-between items-center font-bold text-emerald-800 bg-emerald-50/90 px-3 py-1.5 rounded-xl border border-emerald-200/80">
+                  <span>10% Instant Online Discount:</span>
+                  <span className="shrink-0 whitespace-nowrap font-bold text-emerald-700">-₹{onlineDiscount}</span>
                 </div>
               )}
-              <div className="flex justify-between text-stone-600">
+              <div className="flex justify-between items-center text-stone-600">
                 <span>Express Courier Delivery:</span>
-                <span>{shipping === 0 ? "FREE" : `₹${shipping}`}</span>
+                <span className="font-semibold text-stone-800 shrink-0 whitespace-nowrap">
+                  {shipping === 0 ? <span className="text-emerald-700 font-bold uppercase tracking-wider text-[11px]">FREE</span> : `₹${shipping}`}
+                </span>
               </div>
-              <div className="flex justify-between font-bold text-sm text-[#2C2623] pt-2 border-t border-stone-200">
+              <div className="flex justify-between items-center font-bold text-sm text-[#2C2623] pt-2.5 border-t border-stone-200">
                 <span>Total Amount Payable:</span>
-                <span className="text-base text-[#2C2623]">₹{grandTotal}</span>
+                <span className="text-base sm:text-lg text-[#2C2623] font-bold shrink-0 whitespace-nowrap">₹{grandTotal}</span>
               </div>
             </div>
 
-            {/* Big Action Submit CTA Button */}
+            {/* Premium High-Converting Checkout CTA Button */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-4 rounded-2xl bg-[#B06B5B] hover:bg-[#975647] text-white font-bold text-xs uppercase tracking-wider transition shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer text-center"
+              className="w-full py-4 px-6 rounded-2xl bg-[#B06B5B] hover:bg-[#9E5A4B] active:bg-[#8D4B3C] text-white font-bold transition-all duration-200 shadow-[0_8px_20px_rgba(176,107,91,0.25)] hover:shadow-[0_12px_28px_rgba(176,107,91,0.35)] active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer text-center"
             >
               {isSubmitting ? (
-                "Processing Your Order..."
+                <div className="flex items-center justify-center gap-2 text-xs font-bold tracking-wider uppercase">
+                  <svg className="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>Processing Order...</span>
+                </div>
               ) : paymentMethod === "online" ? (
-                `Pay ₹${grandTotal} via Razorpay (10% Discount Applied)`
+                <div className="flex flex-col items-center justify-center gap-0.5">
+                  <div className="flex items-center justify-center gap-2 text-sm sm:text-base font-bold tracking-wide">
+                    <span>Pay ₹{grandTotal} via Razorpay</span>
+                    <span className="text-xs">→</span>
+                  </div>
+                  <span className="text-[11px] font-normal tracking-wide text-white/90">
+                    🔒 100% Secure UPI / Cards • 10% Discount Applied
+                  </span>
+                </div>
               ) : (
-                `Confirm Cash on Delivery Order (₹${grandTotal})`
+                <div className="flex flex-col items-center justify-center gap-0.5">
+                  <div className="flex items-center justify-center gap-2 text-sm sm:text-base font-bold tracking-wide">
+                    <span>Confirm Cash on Delivery • ₹{grandTotal}</span>
+                    <span className="text-xs">→</span>
+                  </div>
+                  <span className="text-[11px] font-normal tracking-wide text-white/90">
+                    📦 Pay via cash or UPI upon doorstep delivery
+                  </span>
+                </div>
               )}
             </button>
           </form>
