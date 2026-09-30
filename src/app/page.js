@@ -4,7 +4,6 @@ import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { PRODUCTS } from "@/data/products";
 import { STORE } from "@/data/store";
-import { initiateRazorpayPayment } from "@/lib/razorpay";
 import { saveOrderToSupabase, validateCouponFromSupabase, markCouponAsUsedInSupabase } from "@/lib/supabase";
 import { captureLiveGpsAddress, lookupPincode } from "@/lib/location";
 
@@ -28,8 +27,8 @@ export default function StandaloneShopPage() {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState("");
 
-  // Payment & Checkout States
-  const [paymentMethod, setPaymentMethod] = useState("online"); // "online" (10% OFF) or "cod"
+  // Payment & Checkout States (Cash on Delivery Only)
+  const [paymentMethod, setPaymentMethod] = useState("cod");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [placedOrder, setPlacedOrder] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
@@ -236,18 +235,17 @@ export default function StandaloneShopPage() {
     setActiveView("checkout");
   };
 
-  // Pricing Calculations with 15% Review Coupon & 10% Online Payment Discount
+  // Pricing Calculations with 15% Review Coupon
   const itemPrice = selectedProduct?.price || 0;
   const subtotal = itemPrice * quantity;
   const reviewDiscount = appliedCoupon
     ? Math.round(subtotal * ((appliedCoupon.discountPercent || 15) / 100))
     : 0;
   const amountAfterReviewDiscount = Math.max(0, subtotal - reviewDiscount);
-  const onlineDiscount = paymentMethod === "online" ? Math.round(amountAfterReviewDiscount * 0.10) : 0;
   const shipping = 60; // Flat ₹60 Courier Delivery
-  const grandTotal = Math.max(0, amountAfterReviewDiscount - onlineDiscount + shipping);
+  const grandTotal = Math.max(0, amountAfterReviewDiscount + shipping);
 
-  // Handle Order Submit (Razorpay Online vs COD)
+  // Handle Order Submit (Cash on Delivery)
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
     if (!form.name.trim() || !form.phone.trim() || !form.address.trim() || !form.city.trim() || !form.pincode.trim()) {
@@ -296,12 +294,11 @@ export default function StandaloneShopPage() {
       subtotalAmount: subtotal,
       reviewCoupon: appliedCoupon ? appliedCoupon.code : null,
       reviewDiscount: reviewDiscount,
-      onlineDiscount: onlineDiscount,
       shippingAmount: shipping,
       totalAmount: grandTotal,
       notes: (form.notes ? form.notes.trim() + " • " : "") + 
         (appliedCoupon ? `[1-Time Review Coupon: ${appliedCoupon.code} (-₹${reviewDiscount})] • ` : "") +
-        (paymentMethod === "online" ? "10% Online Prepaid Discount" : "Cash on Delivery"),
+        "Cash on Delivery",
       timestamp: Date.now()
     };
 
@@ -317,101 +314,34 @@ export default function StandaloneShopPage() {
       }));
     } catch (e) {}
 
-    // 1. CASH ON DELIVERY (COD) FLOW
-    if (paymentMethod === "cod") {
-      try {
-        const codOrder = {
-          ...baseOrderPayload,
-          paymentMethod: "COD",
-          paymentStatus: "Pending (Pay on Delivery)",
-          status: "Processing"
-        };
-
-        const existing = STORE.getOrders();
-        STORE.setOrders([codOrder, ...existing]);
-        await saveOrderToSupabase(codOrder);
-
-        // Mark 1-Time Coupon as Used in Supabase & Store (Prevents Reuse)
-        if (appliedCoupon) {
-          await markCouponAsUsedInSupabase(appliedCoupon.code, orderId);
-        }
-
-        // Dispatch Email to Customer & Admin
-        STORE.dispatchEmailNotification("order_placed", { order: codOrder });
-
-        setIsSubmitting(false);
-        setPlacedOrder(codOrder);
-        setActiveView("success");
-      } catch (err) {
-        console.error("COD save error:", err);
-        setIsSubmitting(false);
-        triggerToast("Error placing order. Please try again.");
-      }
-      return;
-    }
-
-    // 2. ONLINE PAYMENT FLOW VIA RAZORPAY (10% DISCOUNTED)
+    // CASH ON DELIVERY (COD) ORDER PLACEMENT
     try {
-      await initiateRazorpayPayment({
-        amount: grandTotal,
-        customer: {
-          name: form.name.trim(),
-          phone: form.phone.trim(),
-          email: form.email.trim(),
-          address: fullDeliveryAddress,
-          city: form.city.trim()
-        },
-        notes: {
-          itemsSummary: `${selectedProduct.name} (x${quantity})`,
-          customerNotes: form.notes || "None",
-          discount: "10% Online Prepaid Discount"
-        },
-        onSuccess: async (paymentResult) => {
-          try {
-            const onlineOrder = {
-              ...baseOrderPayload,
-              paymentMethod: "Razorpay (Online 10% OFF)",
-              paymentStatus: "Paid Online",
-              status: "Processing (Paid)",
-              razorpayPaymentId: paymentResult.paymentId,
-              razorpayOrderId: paymentResult.orderId,
-              notes: baseOrderPayload.notes + ` • Razorpay ID: ${paymentResult.paymentId}`
-            };
+      const codOrder = {
+        ...baseOrderPayload,
+        paymentMethod: "COD",
+        paymentStatus: "Pending (Pay on Delivery)",
+        status: "Processing"
+      };
 
-            const existing = STORE.getOrders();
-            STORE.setOrders([onlineOrder, ...existing]);
-            await saveOrderToSupabase(onlineOrder);
+      const existing = STORE.getOrders();
+      STORE.setOrders([codOrder, ...existing]);
+      await saveOrderToSupabase(codOrder);
 
-            // Mark 1-Time Coupon as Used in Supabase & Store (Prevents Reuse)
-            if (appliedCoupon) {
-              await markCouponAsUsedInSupabase(appliedCoupon.code, orderId);
-            }
+      // Mark 1-Time Coupon as Used in Supabase & Store (Prevents Reuse)
+      if (appliedCoupon) {
+        await markCouponAsUsedInSupabase(appliedCoupon.code, orderId);
+      }
 
-            // Dispatch Email to Customer & Admin
-            STORE.dispatchEmailNotification("order_placed", { order: onlineOrder });
+      // Dispatch Email to Customer & Admin
+      STORE.dispatchEmailNotification("order_placed", { order: codOrder });
 
-            setIsSubmitting(false);
-            setPlacedOrder(onlineOrder);
-            setActiveView("success");
-          } catch (saveErr) {
-            console.error("Order save error:", saveErr);
-            setIsSubmitting(false);
-            setPlacedOrder(baseOrderPayload);
-            setActiveView("success");
-          }
-        },
-        onFailure: (errMsg) => {
-          setIsSubmitting(false);
-          triggerToast(errMsg || "Payment was not completed. Please try again.");
-        },
-        onDismiss: () => {
-          setIsSubmitting(false);
-        }
-      });
-    } catch (payErr) {
-      console.error(payErr);
       setIsSubmitting(false);
-      triggerToast("Payment gateway could not be launched. Please try again.");
+      setPlacedOrder(codOrder);
+      setActiveView("success");
+    } catch (err) {
+      console.error("COD save error:", err);
+      setIsSubmitting(false);
+      triggerToast("Error placing order. Please try again.");
     }
   };
 
@@ -455,17 +385,17 @@ export default function StandaloneShopPage() {
       {/* ========================================================================= */}
       {activeView === "catalog" && (
         <div className="animate-fadeIn">
-          {/* SPECIAL 10% DISCOUNT HERO BANNER */}
+          {/* SPECIAL ARTISANAL HERO BANNER */}
           <div className="max-w-2xl mx-auto px-4 pt-4">
             <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#F7EBE8] via-[#FAF3ED] to-[#F1E9DF] border border-[#E8D4CC] shadow-xs text-center space-y-1.5">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#B06B5B] text-white text-[10px] font-bold uppercase tracking-wider shadow-2xs">
-                Limited Time Offer
+                Handcrafted Slow Fashion
               </div>
               <h2 className="text-base sm:text-lg font-header font-bold text-[#2C2623]">
-                Instant 10% OFF on Online Payments
+                Pure Milk Cotton Crochet Creations
               </h2>
               <p className="text-xs text-stone-600 font-serif leading-relaxed">
-                Pay online via UPI, Cards, or NetBanking to claim <strong>flat 10% off</strong> on your order. Cash on Delivery (COD) is also available across India!
+                Knitted with care in Agra and packaged plastic-free. <strong>Cash on Delivery (COD)</strong> available across all pin codes in India!
               </p>
             </div>
           </div>
@@ -515,13 +445,12 @@ export default function StandaloneShopPage() {
             <div className="flex items-center justify-between text-xs text-stone-500 pb-2">
               <span>Showing {filteredProducts.length} handcrafted treasures</span>
               <span className="text-[11px] text-emerald-800 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                10% Off Online Active
+                Cash on Delivery (COD) Available
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-1">
               {filteredProducts.map((product) => {
-                const onlinePrice = Math.round(product.price * 0.90);
                 return (
                   <div
                     key={product.id}
@@ -549,17 +478,15 @@ export default function StandaloneShopPage() {
                           {product.desc}
                         </p>
 
-                        {/* Dual Pricing Display */}
-                        <div className="pt-1.5 space-y-0.5">
-                          <div className="flex items-baseline gap-1.5">
-                            <span className="text-sm font-bold text-[#2C2623]">₹{product.price}</span>
-                            {product.originalPrice && (
-                              <span className="text-[11px] text-stone-400 line-through">₹{product.originalPrice}</span>
-                            )}
-                          </div>
-                          <div className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded inline-block">
-                            ₹{onlinePrice} with 10% Online OFF
-                          </div>
+                        {/* Pricing Display */}
+                        <div className="pt-1.5 flex items-baseline gap-1.5">
+                          <span className="text-sm font-bold text-[#2C2623]">₹{product.price}</span>
+                          {product.originalPrice && (
+                            <span className="text-[11px] text-stone-400 line-through">₹{product.originalPrice}</span>
+                          )}
+                          <span className="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded ml-auto">
+                            COD
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -668,61 +595,17 @@ export default function StandaloneShopPage() {
             </div>
           </div>
 
-          {/* PAYMENT METHOD SELECTOR (WITH 10% DISCOUNT ON ONLINE) */}
+          {/* PAYMENT METHOD (CASH ON DELIVERY ONLY) */}
           <div className="bg-white rounded-3xl p-5 border border-[#EAE1D3] shadow-xs space-y-3">
             <h3 className="text-xs font-bold uppercase tracking-wider text-stone-700">
-              Select Payment Method
+              Payment Method
             </h3>
 
-            {/* Online Payment Option (10% OFF Applied) */}
-            <div
-              onClick={() => setPaymentMethod("online")}
-              className={`p-4 rounded-2xl border-2 transition cursor-pointer flex items-start gap-3.5 ${
-                paymentMethod === "online"
-                  ? "bg-emerald-50/50 border-emerald-600/90 shadow-2xs ring-1 ring-emerald-600/20"
-                  : "bg-[#FAF7F2] border-[#E5DDD2] hover:border-stone-300"
-              }`}
-            >
+            {/* Cash on Delivery (COD) Only */}
+            <div className="p-4 rounded-2xl border-2 border-[#B06B5B] bg-amber-50/40 shadow-2xs ring-1 ring-[#B06B5B]/20 flex items-start gap-3.5">
               <div className="pt-0.5">
-                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition ${
-                  paymentMethod === "online" ? "border-emerald-600 bg-white" : "border-stone-400 bg-white"
-                }`}>
-                  {paymentMethod === "online" && (
-                    <div className="w-2 h-2 rounded-full bg-emerald-600"></div>
-                  )}
-                </div>
-              </div>
-              <div className="flex-1 min-w-0 space-y-1">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-bold text-xs sm:text-sm text-[#2C2623] truncate">
-                    Online Payment (UPI, Cards)
-                  </span>
-                  <span className="shrink-0 whitespace-nowrap text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2.5 py-0.5 rounded-full border border-emerald-300">
-                    10% Instant Off
-                  </span>
-                </div>
-                <p className="text-xs text-stone-600 font-serif leading-relaxed">
-                  Pay securely via Razorpay and enjoy flat <strong>10% instant discount</strong> automatically applied.
-                </p>
-              </div>
-            </div>
-
-            {/* Cash on Delivery (COD) Option */}
-            <div
-              onClick={() => setPaymentMethod("cod")}
-              className={`p-4 rounded-2xl border-2 transition cursor-pointer flex items-start gap-3.5 ${
-                paymentMethod === "cod"
-                  ? "bg-amber-50/40 border-[#B06B5B] shadow-2xs ring-1 ring-[#B06B5B]/20"
-                  : "bg-[#FAF7F2] border-[#E5DDD2] hover:border-stone-300"
-              }`}
-            >
-              <div className="pt-0.5">
-                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition ${
-                  paymentMethod === "cod" ? "border-[#B06B5B] bg-white" : "border-stone-400 bg-white"
-                }`}>
-                  {paymentMethod === "cod" && (
-                    <div className="w-2 h-2 rounded-full bg-[#B06B5B]"></div>
-                  )}
+                <div className="w-4 h-4 rounded-full border border-[#B06B5B] bg-white flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-full bg-[#B06B5B]"></div>
                 </div>
               </div>
               <div className="flex-1 min-w-0 space-y-1">
@@ -730,12 +613,12 @@ export default function StandaloneShopPage() {
                   <span className="font-bold text-xs sm:text-sm text-[#2C2623] truncate">
                     Cash on Delivery (COD)
                   </span>
-                  <span className="shrink-0 whitespace-nowrap text-[10px] font-medium uppercase tracking-wider text-stone-600 bg-white px-2.5 py-0.5 rounded-full border border-[#DDD3C4]">
-                    Pay on Arrival
+                  <span className="shrink-0 whitespace-nowrap text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                    Active
                   </span>
                 </div>
                 <p className="text-xs text-stone-600 font-serif leading-relaxed">
-                  Pay with cash or UPI directly to the delivery partner when your parcel arrives.
+                  Pay with cash or UPI directly to the delivery partner when your parcel arrives at your doorstep.
                 </p>
               </div>
             </div>
@@ -1069,12 +952,6 @@ export default function StandaloneShopPage() {
                   <span className="shrink-0 whitespace-nowrap font-bold text-emerald-700">-₹{reviewDiscount}</span>
                 </div>
               )}
-              {paymentMethod === "online" && (
-                <div className="flex justify-between items-center font-bold text-emerald-800 bg-emerald-50/90 px-3 py-1.5 rounded-xl border border-emerald-200/80">
-                  <span>10% Instant Online Discount:</span>
-                  <span className="shrink-0 whitespace-nowrap font-bold text-emerald-700">-₹{onlineDiscount}</span>
-                </div>
-              )}
               <div className="flex justify-between items-center text-stone-600">
                 <span>Express Courier Delivery:</span>
                 <span className="font-semibold text-stone-800 shrink-0 whitespace-nowrap">
@@ -1098,17 +975,7 @@ export default function StandaloneShopPage() {
                   <svg className="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
-                  <span>Processing Order...</span>
-                </div>
-              ) : paymentMethod === "online" ? (
-                <div className="flex flex-col items-center justify-center gap-0.5">
-                  <div className="flex items-center justify-center gap-2 text-sm sm:text-base font-bold tracking-wide">
-                    <span>Pay ₹{grandTotal} via Razorpay</span>
-                    <span className="text-xs">→</span>
-                  </div>
-                  <span className="text-[11px] font-normal tracking-wide text-white/90">
-                    🔒 100% Secure UPI / Cards • 10% Discount Applied
-                  </span>
+                  <span>Placing Order...</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center gap-0.5">
@@ -1300,13 +1167,11 @@ export default function StandaloneShopPage() {
           {/* Payment Trust Strip & Copyright */}
           <div className="pt-3 border-t border-[#EAE0D2]/60 text-center space-y-1">
             <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-3 text-[10px] text-stone-500 font-semibold tracking-wider uppercase">
-              <span>UPI</span>
-              <span className="text-stone-300">•</span>
-              <span>Cards</span>
-              <span className="text-stone-300">•</span>
-              <span>NetBanking</span>
-              <span className="text-stone-300">•</span>
               <span>Cash on Delivery</span>
+              <span className="text-stone-300">•</span>
+              <span>100% Handcrafted</span>
+              <span className="text-stone-300">•</span>
+              <span>Plastic-Free Packaging</span>
             </div>
             <p className="text-[10px] text-stone-400 tracking-wider">
               © 2026 COCOON India
