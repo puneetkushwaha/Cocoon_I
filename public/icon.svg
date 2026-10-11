@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Luxury Artisan Terracotta Circular Seal -->
+  <circle cx="32" cy="32" r="30" fill="#B06B5B" stroke="#8E4A49" stroke-width="1.5"/>
+  
+  <!-- Subtle Handcrafted Running Stitch Inner Ring -->
+  <circle cx="32" cy="32" r="26" fill="none" stroke="#FAF6F0" stroke-width="1.2" stroke-dasharray="3 2" opacity="0.75"/>
+
+  <!-- Atelier Monogram 'C' in High-Contrast Warm Linen Ivory -->
+  <text 
+    x="31" 
+    y="41" 
+    text-anchor="middle" 
+    font-family="'Cormorant Garamond', Georgia, serif" 
+    font-size="34" 
+    font-weight="600" 
+    fill="#FAF6F0"
+  >
+    C
+  </text>
+
+  <!-- Dainty Handcrafted Yarn Knot / Stitch Accent Dot -->
+  <circle cx="43" cy="22" r="2.8" fill="#F6D8C6"/>
+</svg>

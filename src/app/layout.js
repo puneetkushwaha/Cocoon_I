@@ -6,9 +6,12 @@ export const metadata = {
   description: "Discover slow-crafted organic milk cotton crochet essentials, handbags, apparel, and bespoke heirloom accessories handmade knot-by-knot.",
   metadataBase: new URL("https://gococoon.store"),
   icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg",
-    apple: "/icon.svg",
+    icon: [
+      { url: "/icon.svg?v=3", type: "image/svg+xml" },
+      { url: "/favicon.ico?v=3", sizes: "32x32" },
+    ],
+    shortcut: "/favicon.ico?v=3",
+    apple: "/icon.svg?v=3",
   },
   openGraph: {
     title: "COCOON | Luxury Handcrafted Crochet Boutique",
@@ -47,6 +50,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="max-w-full overflow-x-hidden overflow-x-clip">
       <head>
+        <link rel="icon" type="image/svg+xml" href="/icon.svg?v=3" />
+        <link rel="alternate icon" href="/favicon.ico?v=3" />
+        <link rel="apple-touch-icon" href="/icon.svg?v=3" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
