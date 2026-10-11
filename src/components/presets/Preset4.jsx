@@ -97,7 +97,11 @@ export default function Preset4() {
     };
     syncData();
     window.addEventListener("cocoon_store_update", syncData);
-    return () => window.removeEventListener("cocoon_store_update", syncData);
+    window.addEventListener("storage", syncData);
+    return () => {
+      window.removeEventListener("cocoon_store_update", syncData);
+      window.removeEventListener("storage", syncData);
+    };
   }, []);
 
   const triggerToast = (msg) => {
