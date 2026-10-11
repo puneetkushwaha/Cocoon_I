@@ -135,6 +135,7 @@ export default function CartPage() {
 
     loadCartData();
     loadUserData();
+    STORE.fetchServerStoreData();
 
     // Check if viewInvoice or orderId is in URL to preview tax invoice
     if (typeof window !== "undefined") {

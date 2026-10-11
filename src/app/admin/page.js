@@ -193,6 +193,16 @@ export default function AdminPage() {
     setSubscribers(STORE.getSubscribers());
     setIsCodEnabled(STORE.isCodEnabled());
 
+    // Sync live store data from backend API
+    try {
+      const serverData = await STORE.fetchServerStoreData();
+      if (serverData && serverData.success) {
+        if (serverData.products) setProducts(serverData.products);
+        if (serverData.categories) setCategories(serverData.categories);
+        if (serverData.coupons) setCoupons(serverData.coupons);
+      }
+    } catch (e) {}
+
     // 2. Fetch live orders from Supabase across all devices
     try {
       const res = await fetch("/api/admin/orders");

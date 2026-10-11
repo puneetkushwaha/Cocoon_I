@@ -245,6 +245,27 @@ export const setStoredData = (key, data) => {
     setTimeout(() => {
       window.dispatchEvent(new Event("cocoon_store_update"));
     }, 0);
+
+    // Automatically sync to backend API & Database across devices
+    if (key === STORAGE_KEYS.PRODUCTS) {
+      fetch("/api/store/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: "products", data })
+      }).catch(() => {});
+    } else if (key === STORAGE_KEYS.CATEGORIES) {
+      fetch("/api/store/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: "categories", data })
+      }).catch(() => {});
+    } else if (key === STORAGE_KEYS.COUPONS) {
+      fetch("/api/store/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: "coupons", data })
+      }).catch(() => {});
+    }
   } catch (e) {
     console.error("Error writing localStorage:", e);
   }
@@ -252,6 +273,31 @@ export const setStoredData = (key, data) => {
 
 export const STORE = {
   getKeys: () => STORAGE_KEYS,
+
+  fetchServerStoreData: async () => {
+    if (typeof window === "undefined") return null;
+    try {
+      const res = await fetch("/api/store/data");
+      const json = await res.json();
+      if (json && json.success) {
+        if (Array.isArray(json.products) && json.products.length > 0) {
+          localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(json.products));
+        }
+        if (Array.isArray(json.categories) && json.categories.length > 0) {
+          localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(json.categories));
+        }
+        if (Array.isArray(json.coupons) && json.coupons.length > 0) {
+          localStorage.setItem(STORAGE_KEYS.COUPONS, JSON.stringify(json.coupons));
+        }
+        window.dispatchEvent(new Event("cocoon_store_update"));
+        return json;
+      }
+    } catch (e) {
+      // server fetch fallback
+    }
+    return null;
+  },
+
   getProducts: () => {
     const stored = getStoredData(STORAGE_KEYS.PRODUCTS, PRODUCTS);
     if (Array.isArray(stored) && stored.length < PRODUCTS.length) {

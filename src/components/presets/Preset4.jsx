@@ -96,6 +96,7 @@ export default function Preset4() {
       } catch (e) {}
     };
     syncData();
+    STORE.fetchServerStoreData();
     window.addEventListener("cocoon_store_update", syncData);
     window.addEventListener("storage", syncData);
     return () => {
