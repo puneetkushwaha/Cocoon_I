@@ -275,13 +275,13 @@ export default function Preset4() {
 
               <div className="pt-2 flex flex-wrap items-center gap-4">
                 <a
-                  href="#p4-treasures"
+                  href="#shop"
                   className="px-8 py-3.5 rounded-full bg-[#B06B5B] hover:bg-[#975647] text-white font-sans text-xs uppercase tracking-[0.2em] font-bold shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
                 >
                   Shop the Treasures &rarr;
                 </a>
                 <a
-                  href="#p4-commission-slip"
+                  href="#our-story"
                   className="px-7 py-3.5 rounded-full bg-white hover:bg-[#FAF4EF] text-[#2C2623] font-sans text-xs uppercase tracking-[0.2em] font-bold border border-[#DDD3C4] shadow-xs hover:border-[#B06B5B] transition-all cursor-pointer"
                 >
                   Our Story
@@ -332,7 +332,7 @@ export default function Preset4() {
                         <p className="text-[11px] font-sans font-bold text-[#B06B5B]">{storeHeroCards[1].subtitle}</p>
                       </div>
                       <a
-                        href="#p4-treasures"
+                        href="#shop"
                         className="px-4 py-2 rounded-full bg-[#526B57] hover:bg-[#435747] text-white text-[11px] font-sans uppercase tracking-wider font-bold transition cursor-pointer shadow-sm hover:scale-105"
                       >
                         Explore &rarr;
@@ -389,7 +389,8 @@ export default function Preset4() {
       </section>
 
       {/* 4. SHOP BY CATEGORY (Dynamic from Admin) */}
-      <section id="p4-chapters" className="py-16 bg-[#FAF7F2] border-b border-[#EFE8DD]">
+      <section id="categories" className="py-16 bg-[#FAF7F2] border-b border-[#EFE8DD] relative">
+        <span id="p4-chapters" className="sr-only" />
         <div className="max-w-7xl mx-auto px-6 sm:px-10">
           
           <div className="flex items-center justify-between mb-10 pb-4 border-b border-[#EAE0D2]">
@@ -398,7 +399,7 @@ export default function Preset4() {
               <h2 className="text-3xl sm:text-4xl font-light font-header text-[#2C2623] mt-1">Shop Our Categories</h2>
             </div>
             <button
-              onClick={() => { setActiveCategory("all"); document.getElementById("p4-treasures")?.scrollIntoView({ behavior: "smooth" }); }}
+              onClick={() => { setActiveCategory("all"); (document.getElementById("shop") || document.getElementById("p4-treasures"))?.scrollIntoView({ behavior: "smooth" }); }}
               className="text-xs font-bold uppercase tracking-widest text-[#2C2623] hover:text-[#B06B5B] transition flex items-center gap-1 cursor-pointer"
             >
               <span>View All ({storeProducts.length})</span>
@@ -410,7 +411,7 @@ export default function Preset4() {
             {storeCategories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => { setActiveCategory(cat.id); document.getElementById("p4-treasures")?.scrollIntoView({ behavior: "smooth" }); }}
+                onClick={() => { setActiveCategory(cat.id); (document.getElementById("shop") || document.getElementById("p4-treasures"))?.scrollIntoView({ behavior: "smooth" }); }}
                 className="group flex flex-col items-center text-center cursor-pointer transition-transform hover:-translate-y-1"
               >
                 <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-[#F5EFEB] border-2 border-[#EFE8DE] group-hover:border-[#B06B5B] shadow-sm group-hover:shadow-md transition-all duration-300 p-1">
@@ -526,7 +527,8 @@ export default function Preset4() {
       </section>
 
       {/* 5. MAIN CATALOG: "What's New in the Shop" */}
-      <section id="p4-treasures" className="py-20">
+      <section id="shop" className="py-20 relative">
+        <span id="p4-treasures" className="sr-only" />
         <div className="max-w-7xl mx-auto px-6 sm:px-10">
           
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 text-left border-b border-[#EFE8DD] pb-6">
@@ -661,7 +663,8 @@ export default function Preset4() {
       </section>
 
       {/* 6. A LETTER FROM THE MAKER (Minimalist Luxury • Zara / Jacquemus Vibe) */}
-      <section id="p4-maker-letter" className="py-24 sm:py-32 bg-[#FAF7F2] border-y border-[#EAE3D6] relative overflow-hidden text-left">
+      <section id="our-story" className="py-24 sm:py-32 bg-[#FAF7F2] border-y border-[#EAE3D6] relative overflow-hidden text-left">
+        <span id="p4-maker-letter" className="sr-only" />
         <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
@@ -700,7 +703,7 @@ export default function Preset4() {
                 </div>
 
                 <a
-                  href="#p4-commission-slip"
+                  href="#custom-order"
                   className="inline-flex items-center gap-2 text-xs font-sans font-bold uppercase tracking-widest text-[#221F1F] hover:text-[#B06B5B] transition-colors group cursor-pointer"
                 >
                   <span>Request a Custom Piece</span>
@@ -737,7 +740,8 @@ export default function Preset4() {
       </section>
 
       {/* 7. BESPOKE STUDIO ORDER: COMMISSION A CUSTOM HEIRLOOM */}
-      <section id="p4-commission-slip" className="py-20 bg-gradient-to-b from-[#FAF7F2] via-[#FAF5EE] to-[#FAF7F2] border-t border-[#EAE0D2] relative overflow-hidden">
+      <section id="custom-order" className="py-20 bg-gradient-to-b from-[#FAF7F2] via-[#FAF5EE] to-[#FAF7F2] border-t border-[#EAE0D2] relative overflow-hidden">
+        <span id="p4-commission-slip" className="sr-only" />
         <div className="absolute top-10 right-10 w-96 h-96 bg-[#F8E5E1]/50 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-10 left-10 w-96 h-96 bg-[#EDF3EE]/50 rounded-full blur-3xl pointer-events-none" />
 

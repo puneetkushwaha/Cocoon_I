@@ -282,7 +282,7 @@ export const STORE = {
         badge: "Special Welcome Gift",
         description: "Receive a complimentary handcrafted crochet rose bud with your first order.",
         couponCode: "COCOONFIRST",
-        link: "/#p4-treasures",
+        link: "/#shop",
         date: "2026-09-24T12:00:00.000Z"
       }
     ]),

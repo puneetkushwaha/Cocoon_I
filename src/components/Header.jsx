@@ -132,16 +132,16 @@ export default function Header({ onOpenCart, cartCountOverride }) {
 
             {/* Nav links with Glass Pill container */}
             <nav className="hidden md:flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#2C2623] bg-white/40 backdrop-blur-md p-1.5 rounded-full border border-white/70 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
-              <Link href="/#p4-treasures" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
+              <Link href="/#shop" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
                 All Drops
               </Link>
-              <Link href="/#p4-chapters" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
+              <Link href="/#categories" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
                 Categories
               </Link>
-              <Link href="/#p4-commission-slip" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
+              <Link href="/#custom-order" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
                 Custom Order
               </Link>
-              <Link href="/#p4-maker-letter" className="px-4 py-2 rounded-full hover:bg-white/80 text-[#B06B5B] transition-all duration-200 flex items-center gap-1">
+              <Link href="/#our-story" className="px-4 py-2 rounded-full hover:bg-white/80 text-[#B06B5B] transition-all duration-200 flex items-center gap-1">
                 Letter from Mehak
               </Link>
             </nav>
@@ -291,7 +291,7 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                   Shop By Category
                 </span>
                 <Link
-                  href="/#p4-treasures"
+                  href="/#shop"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="text-[11px] font-sans font-bold text-stone-500 hover:text-[#B06B5B] tracking-wide"
                 >
@@ -310,11 +310,11 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                 ]).map((cat) => (
                   <Link
                     key={cat.id}
-                    href="/#p4-treasures"
+                    href="/#shop"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       try {
-                        const target = document.getElementById("p4-treasures");
+                        const target = document.getElementById("shop") || document.getElementById("p4-treasures");
                         if (target) target.scrollIntoView({ behavior: "smooth" });
                       } catch (e) {}
                     }}
@@ -347,7 +347,7 @@ export default function Header({ onOpenCart, cartCountOverride }) {
 
               <div className="space-y-2">
                 <Link
-                  href="/#p4-treasures"
+                  href="/#shop"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-[#EAE0D2] hover:border-[#B06B5B]/40 transition-all shadow-2xs group"
                 >
@@ -370,7 +370,7 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                 </Link>
 
                 <Link
-                  href="/#p4-commission-slip"
+                  href="/#custom-order"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-[#EAE0D2] hover:border-[#B06B5B]/40 transition-all shadow-2xs group"
                 >
@@ -393,7 +393,7 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                 </Link>
 
                 <Link
-                  href="/#p4-maker-letter"
+                  href="/#our-story"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF0ED]/60 border border-[#F3D5CF] hover:border-[#B06B5B] transition-all shadow-2xs group"
                 >

@@ -54,22 +54,22 @@ export default function Footer() {
             </h5>
             <ul className="space-y-2.5 text-sm text-[#2C2623]/75 font-serif">
               <li>
-                <Link href="/#p4-treasures" className="hover:text-[#B06B5B] transition">
+                <Link href="/#shop" className="hover:text-[#B06B5B] transition">
                   All Drops
                 </Link>
               </li>
               <li>
-                <Link href="/#p4-chapters" className="hover:text-[#B06B5B] transition">
+                <Link href="/#categories" className="hover:text-[#B06B5B] transition">
                   Handbags & Totes
                 </Link>
               </li>
               <li>
-                <Link href="/#p4-chapters" className="hover:text-[#B06B5B] transition">
+                <Link href="/#categories" className="hover:text-[#B06B5B] transition">
                   Everlasting Flowers
                 </Link>
               </li>
               <li>
-                <Link href="/#p4-chapters" className="hover:text-[#B06B5B] transition">
+                <Link href="/#categories" className="hover:text-[#B06B5B] transition">
                   Wearables & Cardigans
                 </Link>
               </li>
