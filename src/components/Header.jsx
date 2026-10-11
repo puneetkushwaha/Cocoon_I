@@ -204,27 +204,15 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                 )}
               </Link>
 
-              {/* Customer Account / Login Link (Desktop Only) */}
-              {customerUser ? (
-                <Link
-                  href="/profile"
-                  className="hidden md:flex w-10 h-10 rounded-full bg-[#B06B5B]/90 backdrop-blur-md hover:bg-[#975647] text-white items-center justify-center font-bold text-sm shadow-xs transition-all hover:scale-105 cursor-pointer border border-white/30"
-                  title={`My Account (${customerUser.name || "Customer"})`}
-                  aria-label="My Account"
-                >
-                  <span className="leading-none font-header">
-                    {(customerUser.name?.trim() || customerUser.email?.trim() || "P").charAt(0).toUpperCase()}
-                  </span>
-                </Link>
-              ) : (
-                <Link
-                  href="/login"
-                  className="hidden md:flex items-center px-4 py-2 rounded-full bg-white/50 backdrop-blur-md hover:bg-white/80 text-[#2C2623] hover:text-[#B06B5B] border border-white/70 text-xs font-bold uppercase tracking-wider transition-all shadow-xs"
-                  title="Sign In"
-                >
-                  <span>Login</span>
-                </Link>
-              )}
+              {/* Admin Portal Link (Desktop Only) */}
+              <Link
+                href="/admin"
+                className="hidden md:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#231F20] hover:bg-[#B06B5B] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-xs"
+                title="Admin Studio Portal"
+              >
+                <span className="text-[11px]">👑</span>
+                <span>Admin</span>
+              </Link>
 
               {/* Mobile Luxury Minimalist Menu Pill Button (Mobile Phone Only) */}
               <button
@@ -465,18 +453,16 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                 </Link>
               </div>
 
-              {/* Account / Login Pill */}
+              {/* Admin Portal Pill */}
               <Link
-                href={customerUser ? "/profile" : "/login"}
+                href="/admin"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="w-full p-3.5 rounded-2xl bg-[#231F20] hover:bg-[#B06B5B] text-white flex items-center justify-between transition-colors shadow-xs"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">
-                    {(customerUser?.name?.trim() || customerUser?.email?.trim() || "C").charAt(0).toUpperCase()}
-                  </div>
+                  <span className="text-sm">👑</span>
                   <span className="text-xs font-sans font-bold uppercase tracking-wider">
-                    {customerUser ? `Account (${customerUser.name || "Customer"})` : "Sign In / Register"}
+                    Studio Admin Portal
                   </span>
                 </div>
                 <span className="text-sm font-sans font-bold">&rarr;</span>
