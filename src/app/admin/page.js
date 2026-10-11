@@ -61,7 +61,25 @@ export default function AdminPage() {
     badge: "Special Studio Offer",
     description: "",
     couponCode: "",
-    link: "/#p4-treasures"
+    link: "/#shop"
+  });
+
+  // Coupons & Promo Engine State (Percentage, Flat, BOGO)
+  const [coupons, setCoupons] = useState([]);
+  const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
+  const [editingCoupon, setEditingCoupon] = useState(null);
+  const [couponForm, setCouponForm] = useState({
+    id: "",
+    code: "",
+    title: "",
+    type: "percentage", // "percentage" | "flat" | "bogo"
+    discountPercent: 15,
+    discountAmount: 100,
+    bogoBuyQty: 1,
+    bogoFreeQty: 1,
+    minOrderValue: 0,
+    maxDiscount: 0,
+    isActive: true
   });
 
   // COD setting state
@@ -171,6 +189,7 @@ export default function AdminPage() {
     setTickerList(STORE.getTicker());
     setReviews(STORE.getReviews());
     setOffers(STORE.getOffers());
+    setCoupons(STORE.getCoupons());
     setSubscribers(STORE.getSubscribers());
     setIsCodEnabled(STORE.isCodEnabled());
 
@@ -688,6 +707,82 @@ export default function AdminPage() {
     triggerToast(`Bestseller slot ${idx + 1} updated to "${foundProd.name}"!`);
   };
 
+  // COUPON & DISCOUNT ENGINE ACTIONS
+  const handleOpenAddCoupon = () => {
+    setEditingCoupon(null);
+    setCouponForm({
+      id: "",
+      code: "",
+      title: "",
+      type: "percentage",
+      discountPercent: 15,
+      discountAmount: 100,
+      bogoBuyQty: 1,
+      bogoFreeQty: 1,
+      minOrderValue: 0,
+      maxDiscount: 0,
+      isActive: true
+    });
+    setIsCouponModalOpen(true);
+  };
+
+  const handleEditCoupon = (cpn) => {
+    setEditingCoupon(cpn);
+    setCouponForm({
+      id: cpn.id,
+      code: cpn.code,
+      title: cpn.title || "",
+      type: cpn.type || "percentage",
+      discountPercent: cpn.discountPercent || 15,
+      discountAmount: cpn.discountAmount || 100,
+      bogoBuyQty: cpn.bogoBuyQty || 1,
+      bogoFreeQty: cpn.bogoFreeQty || 1,
+      minOrderValue: cpn.minOrderValue || 0,
+      maxDiscount: cpn.maxDiscount || 0,
+      isActive: cpn.isActive !== false
+    });
+    setIsCouponModalOpen(true);
+  };
+
+  const handleSaveCoupon = (e) => {
+    if (e) e.preventDefault();
+    const cleanCode = (couponForm.code || "").trim().toUpperCase();
+    if (!cleanCode) {
+      triggerToast("Please enter a valid coupon code");
+      return;
+    }
+
+    const updated = STORE.addCoupon({
+      ...couponForm,
+      code: cleanCode,
+      title: couponForm.title.trim() || `${cleanCode} Special Discount`,
+      discountPercent: Number(couponForm.discountPercent) || 0,
+      discountAmount: Number(couponForm.discountAmount) || 0,
+      bogoBuyQty: Number(couponForm.bogoBuyQty) || 1,
+      bogoFreeQty: Number(couponForm.bogoFreeQty) || 1,
+      minOrderValue: Number(couponForm.minOrderValue) || 0,
+      maxDiscount: Number(couponForm.maxDiscount) || 0
+    });
+
+    setCoupons(updated);
+    setIsCouponModalOpen(false);
+    triggerToast(`✓ Coupon "${cleanCode}" saved and published!`);
+  };
+
+  const handleDeleteCoupon = (id, code) => {
+    if (confirm(`Are you sure you want to delete coupon ${code}?`)) {
+      const updated = STORE.deleteCoupon(id);
+      setCoupons(updated);
+      triggerToast(`Coupon ${code} removed.`);
+    }
+  };
+
+  const handleToggleCoupon = (id) => {
+    const updated = STORE.toggleCoupon(id);
+    setCoupons(updated);
+    triggerToast("Coupon active status updated.");
+  };
+
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-4 text-xs font-serif text-stone-500">
@@ -758,6 +853,7 @@ export default function AdminPage() {
           {[
             { id: "dashboard", label: "Dashboard & Analytics", icon: "" },
             { id: "orders", label: `Orders (${orders.length})`, icon: "" },
+            { id: "coupons", label: `Coupons & BOGO (${coupons.length})`, icon: "🏷️" },
             { id: "reviews", label: `Reviews (${reviews.length})`, icon: "⭐" },
             { id: "customizations", label: `Custom Slips (${customizations.length})`, icon: "" },
             { id: "products", label: `Products (${products.length})`, icon: "" },
@@ -1990,9 +2086,444 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* ================= TAB 11: COUPONS & BOGO DISCOUNT ENGINE ================= */}
+        {activeTab === "coupons" && (
+          <div className="space-y-8 animate-fadeIn text-left">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E8DFC9] pb-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">🏷️</span>
+                  <h2 className="text-2xl font-header font-bold text-[#2C2623]">Coupons & Promotional Engine</h2>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase tracking-wider">
+                    {coupons.filter((c) => c.isActive).length} Active
+                  </span>
+                </div>
+                <p className="text-xs text-[#2C2623]/60 mt-1">
+                  Create Flat ₹ Off, Percentage % Off, and Buy 1 Get 1 / Buy 2 Get 1 (BOGO) automated discounts for your patrons.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleOpenAddCoupon}
+                className="px-5 py-2.5 rounded-xl bg-[#B06B5B] hover:bg-[#964B44] text-white text-xs font-bold uppercase tracking-wider shadow-sm transition flex items-center gap-2 cursor-pointer active:scale-95 shrink-0"
+              >
+                <span>+ Create New Coupon</span>
+              </button>
+            </div>
+
+            {/* Quick Summary Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
+              <div className="bg-white p-4 rounded-2xl border border-[#E8DFC9] shadow-2xs">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400">Total Vouchers</span>
+                <p className="text-2xl font-bold font-mono text-[#2C2623] mt-0.5">{coupons.length}</p>
+                <p className="text-[11px] text-stone-500 font-serif mt-1">Across all promo campaigns</p>
+              </div>
+              <div className="bg-white p-4 rounded-2xl border border-[#E8DFC9] shadow-2xs">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Active Coupons</span>
+                <p className="text-2xl font-bold font-mono text-emerald-700 mt-0.5">
+                  {coupons.filter((c) => c.isActive).length}
+                </p>
+                <p className="text-[11px] text-stone-500 font-serif mt-1">Ready for customer checkout</p>
+              </div>
+              <div className="bg-white p-4 rounded-2xl border border-[#E8DFC9] shadow-2xs">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#B06B5B]">Supported Types</span>
+                <div className="flex gap-1.5 mt-2 flex-wrap">
+                  <span className="text-[10px] bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-md font-bold">Flat ₹ Off</span>
+                  <span className="text-[10px] bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded-md font-bold">% Off</span>
+                  <span className="text-[10px] bg-rose-50 text-rose-800 border border-rose-200 px-2 py-0.5 rounded-md font-bold">BOGO Free</span>
+                </div>
+              </div>
+            </div>
+
+            {/* COUPONS LIST GRID */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-header font-bold text-lg text-[#2C2623]">Active & Configured Coupons</h3>
+                <span className="text-xs text-stone-400 font-serif">Click any code to copy</span>
+              </div>
+
+              {coupons.length === 0 ? (
+                <div className="bg-white rounded-3xl p-12 border border-[#E8DFC9] text-center space-y-3">
+                  <span className="text-3xl">🏷️</span>
+                  <h4 className="font-header text-lg font-bold text-stone-800">No Coupons Created Yet</h4>
+                  <p className="text-xs text-stone-500 max-w-sm mx-auto font-serif">
+                    Reward your buyers with special discounts! Click "Create New Coupon" to set up your first Flat ₹ Off, % Off, or Buy 1 Get 1 Free offer.
+                  </p>
+                  <button
+                    onClick={handleOpenAddCoupon}
+                    className="px-4 py-2 rounded-xl bg-[#2C2623] text-white text-xs font-bold uppercase tracking-wider"
+                  >
+                    + Create First Coupon
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {coupons.map((cpn) => (
+                    <div
+                      key={cpn.id}
+                      className={`bg-white rounded-2xl p-5 border transition-all flex flex-col justify-between space-y-4 shadow-2xs hover:shadow-sm ${
+                        cpn.isActive ? "border-[#E8DFC9]" : "border-stone-200 opacity-70 bg-stone-50/50"
+                      }`}
+                    >
+                      <div className="space-y-3">
+                        {/* Top Row: Type Badge + Status */}
+                        <div className="flex items-center justify-between gap-2">
+                          {cpn.type === "bogo" ? (
+                            <span className="text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-800 px-2.5 py-1 rounded-full border border-rose-200 flex items-center gap-1">
+                              <span>🎁</span>
+                              <span>Buy {cpn.bogoBuyQty || 1} Get {cpn.bogoFreeQty || 1} FREE</span>
+                            </span>
+                          ) : cpn.type === "flat" ? (
+                            <span className="text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 px-2.5 py-1 rounded-full border border-amber-200 flex items-center gap-1">
+                              <span>💰</span>
+                              <span>Flat ₹{cpn.discountAmount} OFF</span>
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-black uppercase tracking-wider bg-blue-100 text-blue-900 px-2.5 py-1 rounded-full border border-blue-200 flex items-center gap-1">
+                              <span>🏷️</span>
+                              <span>{cpn.discountPercent}% OFF</span>
+                            </span>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={() => handleToggleCoupon(cpn.id)}
+                            className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition cursor-pointer ${
+                              cpn.isActive
+                                ? "bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200"
+                                : "bg-stone-200 text-stone-600 border border-stone-300 hover:bg-stone-300"
+                            }`}
+                            title="Click to toggle Active/Inactive"
+                          >
+                            {cpn.isActive ? "● Active" : "○ Inactive"}
+                          </button>
+                        </div>
+
+                        {/* Coupon Code Block */}
+                        <div className="bg-[#FAF7F2] p-3 rounded-xl border border-dashed border-[#DDD3C4] flex items-center justify-between">
+                          <div>
+                            <span className="text-[9px] uppercase font-bold text-stone-400 block tracking-wider">Coupon Code</span>
+                            <span className="font-mono text-base font-extrabold text-[#2C2623] tracking-widest select-all">
+                              {cpn.code}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              try {
+                                navigator.clipboard.writeText(cpn.code);
+                                triggerToast(`Copied code: ${cpn.code}`);
+                              } catch (e) {
+                                triggerToast(`Code: ${cpn.code}`);
+                              }
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-white border border-stone-300 hover:border-[#B06B5B] text-stone-700 hover:text-[#B06B5B] text-[10px] font-bold transition shadow-2xs cursor-pointer active:scale-95"
+                          >
+                            Copy
+                          </button>
+                        </div>
+
+                        {/* Title & Conditions */}
+                        <div>
+                          <h4 className="font-header font-bold text-base text-[#2C2623] leading-snug">
+                            {cpn.title}
+                          </h4>
+                          <div className="mt-2 space-y-1 text-[11px] text-stone-500 font-serif">
+                            {cpn.type === "bogo" && (
+                              <p className="text-[#B06B5B] font-sans font-bold">
+                                ✨ Lowest priced {cpn.bogoFreeQty || 1} item(s) free per {Number(cpn.bogoBuyQty || 1) + Number(cpn.bogoFreeQty || 1)} items
+                              </p>
+                            )}
+                            {cpn.minOrderValue > 0 ? (
+                              <p>• Min Order: ₹{cpn.minOrderValue}</p>
+                            ) : (
+                              <p>• No minimum order required</p>
+                            )}
+                            {cpn.type === "percentage" && cpn.maxDiscount > 0 && (
+                              <p>• Max discount cap: ₹{cpn.maxDiscount}</p>
+                            )}
+                            <p>• Redeemed {cpn.usedCount || 0} times</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Card Action Footer */}
+                      <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
+                        <button
+                          type="button"
+                          onClick={() => handleEditCoupon(cpn)}
+                          className="font-bold text-[#B06B5B] hover:underline cursor-pointer"
+                        >
+                          Edit Settings
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteCoupon(cpn.id, cpn.code)}
+                          className="text-stone-400 hover:text-rose-600 transition cursor-pointer"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
       </main>
 
       {/* 4. MODALS FOR EDITING */}
+      {/* C. COUPON CREATION & EDIT MODAL */}
+      {isCouponModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-fadeIn">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 text-left space-y-5 max-h-[92vh] overflow-y-auto shadow-2xl border border-[#EAE0D2]">
+            <div className="flex items-center justify-between border-b pb-3">
+              <div>
+                <h3 className="font-header font-bold text-xl text-[#2C2623]">
+                  {editingCoupon ? "Edit Coupon & Offer" : "Create New Coupon & Promo"}
+                </h3>
+                <p className="text-[11px] text-stone-500 font-serif">
+                  Set up percentage discount, flat ₹ off, or Buy 1 Get 1 (BOGO)
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsCouponModalOpen(false)}
+                className="text-stone-400 hover:text-stone-800 text-lg cursor-pointer p-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCoupon} className="space-y-4 text-xs">
+              {/* 1. Coupon Code */}
+              <div>
+                <label className="font-bold text-stone-700 block mb-1">
+                  Coupon Code * <span className="text-stone-400 font-normal">(What customer enters at checkout)</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={couponForm.code}
+                  onChange={(e) => setCouponForm({ ...couponForm, code: e.target.value.toUpperCase().replace(/\s+/g, "") })}
+                  placeholder="e.g. BOGO, FLAT100, MEHAK20"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 font-mono font-bold uppercase text-sm tracking-wider focus:outline-none focus:border-[#B06B5B]"
+                />
+              </div>
+
+              {/* 2. Title */}
+              <div>
+                <label className="font-bold text-stone-700 block mb-1">
+                  Offer Title / Description *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={couponForm.title}
+                  onChange={(e) => setCouponForm({ ...couponForm, title: e.target.value })}
+                  placeholder="e.g. Buy 1 Get 1 Free Special or Flat ₹100 Off"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 focus:outline-none focus:border-[#B06B5B]"
+                />
+              </div>
+
+              {/* 3. Discount Type Selector */}
+              <div>
+                <label className="font-bold text-stone-700 block mb-1.5">
+                  Choose Discount Type *
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCouponForm({ ...couponForm, type: "percentage" })}
+                    className={`p-3 rounded-xl border text-center transition cursor-pointer flex flex-col items-center gap-1 ${
+                      couponForm.type === "percentage"
+                        ? "bg-[#FAF4ED] border-[#B06B5B] ring-2 ring-[#B06B5B]/20 text-[#B06B5B]"
+                        : "bg-stone-50 border-stone-200 hover:bg-stone-100 text-stone-700"
+                    }`}
+                  >
+                    <span className="text-lg">🏷️</span>
+                    <span className="font-bold text-xs">% Off</span>
+                    <span className="text-[9px] text-stone-500">e.g. 15% / 20%</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCouponForm({ ...couponForm, type: "flat" })}
+                    className={`p-3 rounded-xl border text-center transition cursor-pointer flex flex-col items-center gap-1 ${
+                      couponForm.type === "flat"
+                        ? "bg-[#FAF4ED] border-[#B06B5B] ring-2 ring-[#B06B5B]/20 text-[#B06B5B]"
+                        : "bg-stone-50 border-stone-200 hover:bg-stone-100 text-stone-700"
+                    }`}
+                  >
+                    <span className="text-lg">💰</span>
+                    <span className="font-bold text-xs">Flat ₹ Off</span>
+                    <span className="text-[9px] text-stone-500">e.g. ₹100 Off</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCouponForm({ ...couponForm, type: "bogo" })}
+                    className={`p-3 rounded-xl border text-center transition cursor-pointer flex flex-col items-center gap-1 ${
+                      couponForm.type === "bogo"
+                        ? "bg-[#FAF4ED] border-[#B06B5B] ring-2 ring-[#B06B5B]/20 text-[#B06B5B]"
+                        : "bg-stone-50 border-stone-200 hover:bg-stone-100 text-stone-700"
+                    }`}
+                  >
+                    <span className="text-lg">🎁</span>
+                    <span className="font-bold text-xs">BOGO Free</span>
+                    <span className="text-[9px] text-stone-500">Buy X Get Y</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 4. Type Specific Dynamic Inputs */}
+              {couponForm.type === "percentage" && (
+                <div className="grid grid-cols-2 gap-3 p-3.5 bg-blue-50/60 rounded-2xl border border-blue-200">
+                  <div>
+                    <label className="font-bold text-blue-950 block mb-1">Discount Percentage (%) *</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={100}
+                      required
+                      value={couponForm.discountPercent}
+                      onChange={(e) => setCouponForm({ ...couponForm, discountPercent: Number(e.target.value) })}
+                      placeholder="e.g. 15"
+                      className="w-full bg-white border border-blue-200 rounded-xl p-2.5 font-bold focus:outline-none focus:border-[#B06B5B]"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-bold text-blue-950 block mb-1">Max Discount Cap (₹) <span className="font-normal">(Optional)</span></label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={couponForm.maxDiscount}
+                      onChange={(e) => setCouponForm({ ...couponForm, maxDiscount: Number(e.target.value) })}
+                      placeholder="0 = No limit"
+                      className="w-full bg-white border border-blue-200 rounded-xl p-2.5 focus:outline-none focus:border-[#B06B5B]"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {couponForm.type === "flat" && (
+                <div className="grid grid-cols-2 gap-3 p-3.5 bg-amber-50/60 rounded-2xl border border-amber-200">
+                  <div>
+                    <label className="font-bold text-amber-950 block mb-1">Discount Amount (₹) *</label>
+                    <input
+                      type="number"
+                      min={1}
+                      required
+                      value={couponForm.discountAmount}
+                      onChange={(e) => setCouponForm({ ...couponForm, discountAmount: Number(e.target.value) })}
+                      placeholder="e.g. 100"
+                      className="w-full bg-white border border-amber-200 rounded-xl p-2.5 font-bold focus:outline-none focus:border-[#B06B5B]"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-bold text-amber-950 block mb-1">Min Order Value (₹)</label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={couponForm.minOrderValue}
+                      onChange={(e) => setCouponForm({ ...couponForm, minOrderValue: Number(e.target.value) })}
+                      placeholder="e.g. 499 (0 = No min)"
+                      className="w-full bg-white border border-amber-200 rounded-xl p-2.5 focus:outline-none focus:border-[#B06B5B]"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {couponForm.type === "bogo" && (
+                <div className="p-3.5 bg-rose-50/70 rounded-2xl border border-rose-200 space-y-2.5">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="font-bold text-rose-950 block mb-1">Buy Quantity (X) *</label>
+                      <select
+                        value={couponForm.bogoBuyQty}
+                        onChange={(e) => setCouponForm({ ...couponForm, bogoBuyQty: Number(e.target.value) })}
+                        className="w-full bg-white border border-rose-200 rounded-xl p-2.5 font-bold focus:outline-none focus:border-[#B06B5B]"
+                      >
+                        <option value={1}>Buy 1</option>
+                        <option value={2}>Buy 2</option>
+                        <option value={3}>Buy 3</option>
+                        <option value={4}>Buy 4</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="font-bold text-rose-950 block mb-1">Get Free Quantity (Y) *</label>
+                      <select
+                        value={couponForm.bogoFreeQty}
+                        onChange={(e) => setCouponForm({ ...couponForm, bogoFreeQty: Number(e.target.value) })}
+                        className="w-full bg-white border border-rose-200 rounded-xl p-2.5 font-bold focus:outline-none focus:border-[#B06B5B]"
+                      >
+                        <option value={1}>Get 1 Free</option>
+                        <option value={2}>Get 2 Free</option>
+                        <option value={3}>Get 3 Free</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="bg-white/80 p-2.5 rounded-xl border border-rose-200/80 text-[11px] text-rose-900 font-serif leading-relaxed">
+                    💡 <strong>How it works:</strong> Customer adds at least ({couponForm.bogoBuyQty || 1} + {couponForm.bogoFreeQty || 1}) items to their basket, and the system automatically makes the lowest priced {couponForm.bogoFreeQty || 1} item(s) 100% free!
+                  </div>
+                </div>
+              )}
+
+              {/* 5. Minimum Order Requirement (for non-flat types) */}
+              {couponForm.type !== "flat" && (
+                <div>
+                  <label className="font-bold text-stone-700 block mb-1">
+                    Minimum Order Value (₹) <span className="font-normal text-stone-400">(0 = No minimum required)</span>
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={couponForm.minOrderValue}
+                    onChange={(e) => setCouponForm({ ...couponForm, minOrderValue: Number(e.target.value) })}
+                    placeholder="0"
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 focus:outline-none focus:border-[#B06B5B]"
+                  />
+                </div>
+              )}
+
+              {/* 6. Active Toggle */}
+              <div className="pt-2 border-t border-stone-100 flex items-center justify-between">
+                <div>
+                  <span className="font-bold text-stone-800 block">Active Status</span>
+                  <span className="text-[11px] text-stone-500 font-serif">Allow customers to redeem this code immediately</span>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={couponForm.isActive}
+                  onChange={(e) => setCouponForm({ ...couponForm, isActive: e.target.checked })}
+                  className="accent-[#B06B5B] w-5 h-5 rounded cursor-pointer"
+                />
+              </div>
+
+              {/* Buttons */}
+              <div className="pt-3 flex items-center justify-end gap-3 border-t">
+                <button
+                  type="button"
+                  onClick={() => setIsCouponModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl bg-[#B06B5B] hover:bg-[#964B44] text-white font-bold tracking-wider uppercase transition shadow-md cursor-pointer"
+                >
+                  Save & Publish Coupon &rarr;
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       {/* A. PRODUCT EDIT MODAL */}
       {editingProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-fadeIn">

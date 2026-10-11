@@ -137,6 +137,56 @@ export const INITIAL_REVIEWS = [
   }
 ];
 
+export const INITIAL_COUPONS = [
+  {
+    id: "CPN-101",
+    code: "COCOON10",
+    title: "Welcome Special",
+    type: "percentage",
+    discountPercent: 10,
+    minOrderValue: 0,
+    maxDiscount: 0,
+    isActive: true,
+    usedCount: 0,
+    createdAt: "2026-10-01T00:00:00.000Z"
+  },
+  {
+    id: "CPN-102",
+    code: "FLAT100",
+    title: "Flat ₹100 Off Festive Offer",
+    type: "flat",
+    discountAmount: 100,
+    minOrderValue: 499,
+    isActive: true,
+    usedCount: 0,
+    createdAt: "2026-10-01T00:00:00.000Z"
+  },
+  {
+    id: "CPN-103",
+    code: "BOGO",
+    title: "Buy 1 Get 1 Free (Lowest Price Free)",
+    type: "bogo",
+    bogoBuyQty: 1,
+    bogoFreeQty: 1,
+    minOrderValue: 0,
+    isActive: true,
+    usedCount: 0,
+    createdAt: "2026-10-01T00:00:00.000Z"
+  },
+  {
+    id: "CPN-104",
+    code: "B2G1",
+    title: "Buy 2 Get 1 Free Special",
+    type: "bogo",
+    bogoBuyQty: 2,
+    bogoFreeQty: 1,
+    minOrderValue: 0,
+    isActive: true,
+    usedCount: 0,
+    createdAt: "2026-10-01T00:00:00.000Z"
+  }
+];
+
 const STORAGE_KEYS = {
   PRODUCTS: "cocoon_store_products",
   CATEGORIES: "cocoon_store_categories",
@@ -294,47 +344,170 @@ export const STORE = {
     return updated;
   },
 
-  // 1-Time Unique Review Coupons
-  getCoupons: () => getStoredData(STORAGE_KEYS.COUPONS, []),
+  // Master Coupon & Promotional Engine (Flat, Percentage, BOGO)
+  getCoupons: () => getStoredData(STORAGE_KEYS.COUPONS, INITIAL_COUPONS),
+  setCoupons: (data) => setStoredData(STORAGE_KEYS.COUPONS, data),
   addCoupon: (coupon) => {
-    const current = getStoredData(STORAGE_KEYS.COUPONS, []);
-    // Prevent duplicate codes
-    const filtered = current.filter((c) => c.code?.toUpperCase() !== coupon.code?.toUpperCase());
-    const updated = [coupon, ...filtered];
+    const current = getStoredData(STORAGE_KEYS.COUPONS, INITIAL_COUPONS);
+    const cleanCode = (coupon.code || "").trim().toUpperCase();
+    const filtered = current.filter((c) => c.code?.toUpperCase() !== cleanCode && c.id !== coupon.id);
+    const newCoupon = {
+      id: coupon.id || `CPN-${Date.now()}`,
+      code: cleanCode,
+      title: coupon.title || `${cleanCode} Special Discount`,
+      type: coupon.type || "percentage", // "percentage" | "flat" | "bogo"
+      discountPercent: coupon.type === "percentage" ? Number(coupon.discountPercent || 15) : undefined,
+      discountAmount: coupon.type === "flat" ? Number(coupon.discountAmount || 100) : undefined,
+      bogoBuyQty: coupon.type === "bogo" ? Number(coupon.bogoBuyQty || 1) : undefined,
+      bogoFreeQty: coupon.type === "bogo" ? Number(coupon.bogoFreeQty || 1) : undefined,
+      minOrderValue: Number(coupon.minOrderValue || 0),
+      maxDiscount: Number(coupon.maxDiscount || 0),
+      isActive: coupon.isActive !== false,
+      usedCount: Number(coupon.usedCount || 0),
+      createdAt: coupon.createdAt || new Date().toISOString()
+    };
+    const updated = [newCoupon, ...filtered];
     setStoredData(STORAGE_KEYS.COUPONS, updated);
     return updated;
   },
-  validateCoupon: (rawCode) => {
+  deleteCoupon: (id) => {
+    const current = getStoredData(STORAGE_KEYS.COUPONS, INITIAL_COUPONS);
+    const updated = current.filter((c) => c.id !== id && c.code !== id);
+    setStoredData(STORAGE_KEYS.COUPONS, updated);
+    return updated;
+  },
+  toggleCoupon: (id) => {
+    const current = getStoredData(STORAGE_KEYS.COUPONS, INITIAL_COUPONS);
+    const updated = current.map((c) => (c.id === id ? { ...c, isActive: !c.isActive } : c));
+    setStoredData(STORAGE_KEYS.COUPONS, updated);
+    return updated;
+  },
+
+  // Calculate discount for any coupon type given cart items & subtotal
+  calculateCouponDiscount: (coupon, cart = [], subtotal = 0) => {
+    if (!coupon) return { valid: false, error: "No coupon provided." };
+    if (!coupon.isActive) return { valid: false, error: `Coupon ${coupon.code} is currently inactive.` };
+    if (coupon.isUsed) return { valid: false, error: "This single-use coupon has already been redeemed." };
+
+    const minOrder = Number(coupon.minOrderValue || 0);
+    if (minOrder > 0 && subtotal < minOrder) {
+      return {
+        valid: false,
+        error: `Minimum order of ₹${minOrder} required for ${coupon.code}. (Your basket is ₹${subtotal})`
+      };
+    }
+
+    // 1. FLAT ₹ OFF
+    if (coupon.type === "flat") {
+      const discount = Math.min(Number(coupon.discountAmount || 0), subtotal);
+      return {
+        valid: true,
+        coupon,
+        discount,
+        type: "flat",
+        message: `Flat ₹${discount} OFF applied!`
+      };
+    }
+
+    // 2. PERCENTAGE % OFF
+    if (coupon.type === "percentage" || coupon.discountPercent) {
+      const pct = Number(coupon.discountPercent || 15);
+      let discount = Math.round(subtotal * (pct / 100));
+      const maxDiscount = Number(coupon.maxDiscount || 0);
+      if (maxDiscount > 0 && discount > maxDiscount) {
+        discount = maxDiscount;
+      }
+      return {
+        valid: true,
+        coupon,
+        discount,
+        type: "percentage",
+        message: `${pct}% OFF applied! (-₹${discount})`
+      };
+    }
+
+    // 3. BOGO (Buy X Get Y Free)
+    if (coupon.type === "bogo") {
+      const buyQty = Number(coupon.bogoBuyQty || 1);
+      const freeQty = Number(coupon.bogoFreeQty || 1);
+      const bundleSize = buyQty + freeQty;
+
+      // Expand all cart items into individual unit prices
+      const unitPrices = [];
+      for (const item of cart) {
+        const qty = Number(item.quantity) || 1;
+        const price = Number(item.price) || 0;
+        for (let i = 0; i < qty; i++) {
+          unitPrices.push(price);
+        }
+      }
+
+      if (unitPrices.length < bundleSize) {
+        return {
+          valid: false,
+          error: `Buy ${buyQty} Get ${freeQty} Free requires at least ${bundleSize} items in your basket. Add ${bundleSize - unitPrices.length} more item(s) to claim your free gift!`
+        };
+      }
+
+      // Sort prices ascending (lowest priced items are granted 100% free)
+      unitPrices.sort((a, b) => a - b);
+      const qualifyingSets = Math.floor(unitPrices.length / bundleSize);
+      const freeItemCount = qualifyingSets * freeQty;
+      const discount = unitPrices.slice(0, freeItemCount).reduce((sum, p) => sum + p, 0);
+
+      return {
+        valid: true,
+        coupon,
+        discount,
+        type: "bogo",
+        freeItemCount,
+        message: `Buy ${buyQty} Get ${freeQty} Free applied! ${freeItemCount} free item(s) (-₹${discount})`
+      };
+    }
+
+    return { valid: false, error: "Invalid coupon configuration." };
+  },
+
+  validateCoupon: (rawCode, cart = [], subtotal = 0) => {
     if (!rawCode || !rawCode.trim()) {
       return { valid: false, error: "Please enter a valid coupon code." };
     }
     const clean = rawCode.trim().toUpperCase();
-    const all = getStoredData(STORAGE_KEYS.COUPONS, []);
+    const all = getStoredData(STORAGE_KEYS.COUPONS, INITIAL_COUPONS);
     const found = all.find((c) => c.code?.toUpperCase() === clean);
 
     if (!found) {
-      return { valid: false, error: "Invalid coupon code. Please enter a valid review coupon." };
+      if (clean === "COCOON15") {
+        return STORE.calculateCouponDiscount(
+          { id: "SYS-15", code: "COCOON15", title: "Flat 15% Off", type: "percentage", discountPercent: 15, isActive: true },
+          cart,
+          subtotal
+        );
+      }
+      if (clean === "COCOONFIRST") {
+        return STORE.calculateCouponDiscount(
+          { id: "SYS-FIRST", code: "COCOONFIRST", title: "Welcome 10% Off", type: "percentage", discountPercent: 10, isActive: true },
+          cart,
+          subtotal
+        );
+      }
+      return { valid: false, error: "Invalid coupon code. Please verify the code and try again." };
     }
-    if (found.isUsed) {
-      return { valid: false, error: "This 15% OFF coupon has already been redeemed." };
-    }
-    return {
-      valid: true,
-      coupon: found,
-      discountPercent: found.discountPercent || 15
-    };
+
+    return STORE.calculateCouponDiscount(found, cart, subtotal);
   },
+
   markCouponUsed: (rawCode, usedOrderId) => {
     const clean = (rawCode || "").trim().toUpperCase();
-    const all = getStoredData(STORAGE_KEYS.COUPONS, []);
+    const all = getStoredData(STORAGE_KEYS.COUPONS, INITIAL_COUPONS);
     const updated = all.map((c) => {
       if (c.code?.toUpperCase() === clean) {
         return {
           ...c,
-          isUsed: true,
-          status: "redeemed",
-          usedOrderId: usedOrderId || null,
-          usedAt: new Date().toISOString()
+          usedCount: (Number(c.usedCount) || 0) + 1,
+          isUsed: c.isOneTime ? true : c.isUsed,
+          lastUsedOrderId: usedOrderId || null,
+          lastUsedAt: new Date().toISOString()
         };
       }
       return c;

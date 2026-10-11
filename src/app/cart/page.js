@@ -267,9 +267,15 @@ export default function CartPage() {
     return cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
   }, [cart]);
 
-  const couponDiscount = appliedCoupon
-    ? Math.round(subtotal * (Number(appliedCoupon.discountPercent || 15) / 100))
-    : 0;
+  // Dynamic coupon discount calculation (Percentage, Flat, BOGO)
+  const couponDiscount = useMemo(() => {
+    if (!appliedCoupon) return 0;
+    const calc = STORE.calculateCouponDiscount(appliedCoupon, cart, subtotal);
+    if (calc && calc.valid) {
+      return Number(calc.discount || 0);
+    }
+    return 0;
+  }, [appliedCoupon, cart, subtotal]);
 
   const shippingCost = (subtotal - couponDiscount) >= 999 || subtotal === 0 ? 0 : 80;
   const grandTotal = Math.max(0, subtotal - couponDiscount + shippingCost);
@@ -284,27 +290,36 @@ export default function CartPage() {
     }
     setCouponError("");
 
-    if (raw === "COCOON15") {
-      setAppliedCoupon({ code: "COCOON15", discountPercent: 15 });
-      triggerToast("✓ Coupon COCOON15 applied! Flat 15% discount.");
-      return;
-    }
-    if (raw === "COCOONFIRST") {
-      setAppliedCoupon({ code: "COCOONFIRST", discountPercent: 10 });
-      triggerToast("✓ Coupon COCOONFIRST applied! Flat 10% discount.");
+    // 1. Validate with central coupon engine (Supports Flat, %, BOGO)
+    const result = STORE.validateCoupon(raw, cart, subtotal);
+    if (result && result.valid) {
+      setAppliedCoupon({
+        ...result.coupon,
+        discount: result.discount,
+        type: result.type,
+        message: result.message
+      });
+      triggerToast(`✓ ${result.message}`);
       return;
     }
 
+    // 2. Fallback: check 1-time review coupons from Supabase
     try {
       const res = await validateCouponFromSupabase(raw);
       if (res && res.valid) {
-        setAppliedCoupon({ code: raw, discountPercent: res.discountPercent || 15 });
+        const discountVal = Math.round(subtotal * (Number(res.discountPercent || 15) / 100));
+        setAppliedCoupon({
+          code: raw,
+          discountPercent: res.discountPercent || 15,
+          discount: discountVal,
+          type: "percentage"
+        });
         triggerToast(`✓ Coupon ${raw} applied! Flat ${res.discountPercent || 15}% OFF`);
       } else {
-        setCouponError(res?.error || "Invalid or already used coupon code.");
+        setCouponError(result?.error || res?.error || "Invalid coupon code.");
       }
     } catch (err) {
-      setCouponError("Could not validate coupon. Please try again.");
+      setCouponError(result?.error || "Invalid or ineligible coupon code.");
     }
   };
 
@@ -1153,7 +1168,14 @@ export default function CartPage() {
                   {appliedCoupon ? (
                     <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl text-xs text-emerald-900">
                       <div>
-                        <strong>{appliedCoupon.code}</strong> (Flat {appliedCoupon.discountPercent}% OFF)
+                        <strong>{appliedCoupon.code}</strong>{" "}
+                        <span className="text-[11px] font-sans text-emerald-700">
+                          {appliedCoupon.type === "bogo"
+                            ? `(BOGO: -₹${couponDiscount})`
+                            : appliedCoupon.type === "flat"
+                            ? `(Flat ₹${appliedCoupon.discountAmount || couponDiscount} OFF)`
+                            : `(Flat ${appliedCoupon.discountPercent}% OFF)`}
+                        </span>
                       </div>
                       <button
                         type="button"
@@ -1172,7 +1194,7 @@ export default function CartPage() {
                           setCouponInput(e.target.value.toUpperCase());
                           setCouponError("");
                         }}
-                        placeholder="Try COCOON15 or COCOONFIRST"
+                        placeholder="e.g. BOGO, FLAT100, COCOON10"
                         className="flex-1 bg-white border border-[#DDD3C4] rounded-xl px-3 py-1.5 text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-[#B06B5B]"
                       />
                       <button
