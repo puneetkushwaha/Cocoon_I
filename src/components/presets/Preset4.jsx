@@ -535,19 +535,19 @@ export default function Preset4() {
               <p className="text-xs font-serif text-[#2C2623]/60 mt-1">Explore all {filteredProducts.length} handmade heirloom pieces created by Mehak</p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 w-full sm:w-auto">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products..."
-                className="px-4 py-2 rounded-full bg-white border border-[#DDD3C4] text-xs font-sans focus:outline-none focus:border-[#B06B5B] w-48 sm:w-60"
+                className="w-full sm:w-56 px-4 py-2 rounded-full bg-white border border-[#DDD3C4] text-xs font-sans focus:outline-none focus:border-[#B06B5B] shadow-2xs"
               />
 
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2 rounded-full bg-white border border-[#DDD3C4] text-xs font-sans text-[#2C2623] focus:outline-none cursor-pointer"
+                className="w-full sm:w-auto px-4 py-2 rounded-full bg-white border border-[#DDD3C4] text-xs font-sans text-[#2C2623] focus:outline-none cursor-pointer shadow-2xs"
               >
                 <option value="featured">Featured Treasures</option>
                 <option value="price-low">Price: Low to High</option>
@@ -558,15 +558,26 @@ export default function Preset4() {
           </div>
 
           {/* Category Filter Chips */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-10 scrollbar-none font-sans text-xs">
-            <button onClick={() => setActiveCategory("all")} className={`px-4 py-2 rounded-full transition cursor-pointer ${activeCategory === "all" ? "bg-[#B06B5B] text-white shadow-xs" : "bg-white text-[#2C2623]/70 hover:bg-[#FAF0ED]"}`}>
+          <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-10 scrollbar-none font-sans text-xs max-w-full">
+            <button
+              onClick={() => setActiveCategory("all")}
+              className={`px-4 py-2 rounded-full whitespace-nowrap shrink-0 transition-all font-medium cursor-pointer ${
+                activeCategory === "all"
+                  ? "bg-[#B06B5B] text-white shadow-xs font-bold"
+                  : "bg-white text-[#2C2623]/75 border border-[#EAE0D2] hover:bg-[#FAF0ED]"
+              }`}
+            >
               All Treasures ({storeProducts.length})
             </button>
             {storeCategories.map((c) => (
               <button
                 key={c.id}
                 onClick={() => setActiveCategory(c.id)}
-                className={`px-4 py-2 rounded-full transition cursor-pointer ${activeCategory === c.id ? "bg-[#B06B5B] text-white shadow-xs" : "bg-white text-[#2C2623]/70 hover:bg-[#FAF0ED]"}`}
+                className={`px-4 py-2 rounded-full whitespace-nowrap shrink-0 transition-all font-medium cursor-pointer ${
+                  activeCategory === c.id
+                    ? "bg-[#B06B5B] text-white shadow-xs font-bold"
+                    : "bg-white text-[#2C2623]/75 border border-[#EAE0D2] hover:bg-[#FAF0ED]"
+                }`}
               >
                 {c.name}
               </button>
@@ -574,68 +585,70 @@ export default function Preset4() {
           </div>
 
           {/* 4-Column Product Cards Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-7 text-left">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6 text-left">
             {filteredProducts.map((product) => {
               const isFav = wishlist.includes(product.id);
 
               return (
                 <div
                   key={product.id}
-                  className="bg-white rounded-2xl p-4 border border-[#EAE1D3] shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
+                  className="bg-white rounded-2xl p-3 sm:p-4 border border-[#EAE1D3] shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
                 >
-                  <div className="relative aspect-square rounded-xl overflow-hidden bg-[#FAF6F0] mb-3">
-                    <button
-                      onClick={() => toggleWishlist(product)}
-                      className={`absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer ${
-                        isFav ? "bg-[#B06B5B] text-white" : "bg-white/90 text-stone-500 hover:text-[#B06B5B]"
-                      }`}
-                    >
-                      ♥
-                    </button>
+                  <div>
+                    <div className="relative aspect-square rounded-xl overflow-hidden bg-[#FAF6F0] mb-2.5">
+                      <button
+                        onClick={() => toggleWishlist(product)}
+                        className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer backdrop-blur-xs shadow-xs ${
+                          isFav ? "bg-[#B06B5B] text-white" : "bg-white/90 text-stone-500 hover:text-[#B06B5B]"
+                        }`}
+                      >
+                        ♥
+                      </button>
 
-                    {product.badge && (
-                      <span className="absolute top-2.5 left-2.5 z-10 bg-[#F8E5E1] text-[#7A3F34] border border-[#ECCEC7] text-[9px] font-sans font-bold uppercase px-2.5 py-0.5 rounded-full">
-                        {product.badge}
+                      {product.badge && (
+                        <span className="absolute top-2 left-2 z-10 bg-[#F8E5E1]/95 backdrop-blur-xs text-[#7A3F34] border border-[#ECCEC7] text-[8px] sm:text-[9px] font-sans font-bold uppercase px-2 py-0.5 rounded-full shadow-2xs">
+                          {product.badge}
+                        </span>
+                      )}
+
+                      <img
+                        src={product.imgUrl}
+                        alt={product.name}
+                        onClick={() => openQuickView(product)}
+                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase text-[#B06B5B] tracking-wider block">
+                        {product.subcategory ? product.subcategory.replace('-', ' ') : product.category}
                       </span>
-                    )}
-
-                    <img
-                      src={product.imgUrl}
-                      alt={product.name}
-                      onClick={() => openQuickView(product)}
-                      className="w-full h-full object-cover transform group-hover:scale-106 transition-transform duration-500 cursor-pointer"
-                    />
+                      <h3
+                        onClick={() => openQuickView(product)}
+                        className="font-header font-bold text-xs sm:text-base text-[#2C2623] line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] leading-snug group-hover:text-[#B06B5B] transition cursor-pointer"
+                        title={product.name}
+                      >
+                        {product.name}
+                      </h3>
+                      <p className="text-[10px] sm:text-[11px] font-sans text-[#2C2623]/60 truncate hidden sm:block">
+                        {product.materials || "Handcrafted Milk Cotton"}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-sans font-bold uppercase text-[#B06B5B] tracking-wider block">
-                      {product.subcategory ? product.subcategory.replace('-', ' ') : product.category}
-                    </span>
-                    <h3
-                      onClick={() => openQuickView(product)}
-                      className="font-header font-bold text-sm sm:text-base text-[#2C2623] truncate group-hover:text-[#B06B5B] transition cursor-pointer"
-                      title={product.name}
-                    >
-                      {product.name}
-                    </h3>
-                    <p className="text-[11px] font-sans text-[#2C2623]/60 truncate">
-                      {product.materials || "Handcrafted Milk Cotton"}
-                    </p>
-                  </div>
-
-                  <div className="pt-3 border-t border-[#FAF6F0] flex items-center justify-between mt-3">
-                    <div>
-                      <span className="font-sans font-bold text-base text-[#2C2623]">Rs. {product.price}</span>
+                  <div className="pt-2.5 border-t border-[#FAF6F0] flex flex-col gap-2 mt-2.5">
+                    <div className="flex items-baseline gap-1.5 flex-wrap">
+                      <span className="font-sans font-extrabold text-sm sm:text-base text-[#2C2623]">Rs. {product.price}</span>
                       {product.originalPrice > product.price && (
-                        <span className="text-[10px] font-sans text-stone-400 line-through ml-1.5">Rs. {product.originalPrice}</span>
+                        <span className="text-[10px] sm:text-xs font-sans text-stone-400 line-through">Rs. {product.originalPrice}</span>
                       )}
                     </div>
 
                     <button
                       onClick={() => addToCart(product)}
-                      className="px-3 py-1.5 rounded-md bg-[#DDD3C4] hover:bg-[#B06B5B] text-[#2C2623] hover:text-white font-sans text-[10px] uppercase font-bold tracking-wider transition cursor-pointer"
+                      className="w-full py-2 px-3 rounded-xl bg-[#FAF5EE] hover:bg-[#B06B5B] text-[#2C2623] hover:text-white border border-[#E0D5C1] hover:border-[#B06B5B] font-sans text-[11px] font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs active:scale-95"
                     >
-                      Add to Cart
+                      <span>+ Add to Cart</span>
                     </button>
                   </div>
                 </div>
@@ -1046,12 +1059,12 @@ export default function Preset4() {
                   <select
                     value={formData.budget}
                     onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                    className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-3.5 py-2.5 text-xs font-sans text-[#2C2623] focus:outline-none shadow-xs cursor-pointer"
+                    className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-3.5 py-2.5 text-xs font-sans text-[#2C2623] focus:outline-none shadow-2xs cursor-pointer truncate"
                   >
-                    <option value="Under Rs. 1,000">Under Rs. 1,000 (Small Accessories & Charms)</option>
-                    <option value="Rs. 1,000 - Rs. 2,000">Rs. 1,000 - Rs. 2,000 (Bandanas, Sleeves & Belts)</option>
-                    <option value="Rs. 2,000 - Rs. 3,500">Rs. 2,000 - Rs. 3,500 (Detailed Handbags & Totes)</option>
-                    <option value="Above Rs. 3,500">Above Rs. 3,500 (Bespoke Luxury Sets & Wardrobe)</option>
+                    <option value="Under Rs. 1,000">Under ₹1,000 (Charms & Ties)</option>
+                    <option value="Rs. 1,000 - Rs. 2,000">₹1,000 - ₹2,000 (Bandanas & Belts)</option>
+                    <option value="Rs. 2,000 - Rs. 3,500">₹2,000 - ₹3,500 (Handbags & Totes)</option>
+                    <option value="Above Rs. 3,500">Above ₹3,500 (Bespoke Luxury Sets)</option>
                     <option value="Flexible / As Quoted">Flexible / Discuss with Mehak</option>
                   </select>
                 </div>
@@ -1134,12 +1147,12 @@ export default function Preset4() {
                     setShowSuccessModal(true);
                     triggerToast("Inquiry saved & email confirmation sent.");
                   }}
-                  className="w-full py-4 rounded-2xl bg-[#B06B5B] hover:bg-[#975647] text-white font-sans text-xs uppercase tracking-wider font-bold shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3.5 px-4 rounded-2xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-sans text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2.5 cursor-pointer text-center"
                 >
-                  <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24">
                     <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
                   </svg>
-                  <span>Send Custom Order on WhatsApp</span>
+                  <span>Order via WhatsApp</span>
                 </button>
 
                 <button
@@ -1181,9 +1194,9 @@ export default function Preset4() {
                     setShowSuccessModal(true);
                     triggerToast("Custom Order Request Saved & Email Confirmation Sent.");
                   }}
-                  className="w-full py-3 rounded-2xl bg-white hover:bg-[#FAF4ED] text-[#2C2623] border border-[#DDD3C4] font-sans text-xs uppercase tracking-wider font-semibold transition cursor-pointer"
+                  className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-[#FAF4ED] text-[#2C2623] border border-[#DDD3C4] hover:border-[#B06B5B] font-sans text-xs uppercase tracking-wider font-bold transition cursor-pointer shadow-2xs"
                 >
-                  Submit Custom Order
+                  Submit Order Inquiry Online
                 </button>
               </div>
 
