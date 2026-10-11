@@ -1,19 +1,5 @@
-import { Cormorant_Garamond, Nunito_Sans } from "next/font/google";
 import { ReactLenis } from "lenis/react";
 import "./globals.css";
-
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"]
-});
-
-const nunitoSans = Nunito_Sans({
-  variable: "--font-nunito-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "600", "700"],
-});
 
 export const metadata = {
   title: "COCOON | Luxury Handcrafted Crochet Boutique",
@@ -47,11 +33,15 @@ import CookieConsent from "@/components/CookieConsent";
 
 export default function RootLayout({ children }) {
   return (
-    <html
-      lang="en"
-      className={`${cormorant.variable} ${nunitoSans.variable} scroll-smooth`}
-      data-scroll-behavior="smooth"
-    >
+    <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Nunito+Sans:wght@300;400;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="min-h-screen flex flex-col bg-[#FAF6F0] text-[#221F1F] antialiased">
         <ReactLenis root>
           {children}

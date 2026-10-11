@@ -6,8 +6,8 @@
 }
 
 @theme {
-  --font-sans: var(--font-nunito-sans), sans-serif;
-  --font-header: var(--font-cormorant), serif;
+  --font-sans: 'Nunito Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-header: 'Cormorant Garamond', Georgia, serif;
   
   --color-brand-linen: #FAF6F0;
   --color-brand-forest: #2E4836;
