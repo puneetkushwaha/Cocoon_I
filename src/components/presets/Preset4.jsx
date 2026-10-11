@@ -63,6 +63,7 @@ export default function Preset4() {
     notes: ""
   });
   const [placedOrderSummary, setPlacedOrderSummary] = useState(null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // Sync customer session
   useEffect(() => {
@@ -1307,10 +1308,23 @@ export default function Preset4() {
                 <form
                   onSubmit={async (e) => {
                     e.preventDefault();
-                    if (!customerForm.name || !customerForm.phone || !customerForm.address) {
+                    if (cart.length === 0) {
+                      triggerToast("Your basket is empty");
+                      return;
+                    }
+
+                    if (!customerForm.name?.trim() || !customerForm.phone?.trim() || !customerForm.address?.trim()) {
                       triggerToast("Please fill in your name, phone, and delivery address");
                       return;
                     }
+
+                    if (customerForm.phone.replace(/\D/g, "").length < 10) {
+                      triggerToast("Please enter a valid 10-digit mobile number");
+                      return;
+                    }
+
+                    setIsProcessingPayment(true);
+                    triggerToast("Opening secure payment gateway... 🔒");
 
                     const custData = {
                       name: customerForm.name.trim(),
@@ -1322,37 +1336,147 @@ export default function Preset4() {
                       notes: customerForm.notes.trim()
                     };
 
-                    // Save customer profile locally
                     setCustomerUser(custData);
                     try {
                       localStorage.setItem("cocoon_customer_user", JSON.stringify(custData));
                     } catch (err) {}
 
-                    // Build order
-                    const newOrder = {
-                      id: generateOrderId(),
-                      date: new Date().toISOString(),
-                      customerName: custData.name,
-                      customerPhone: custData.phone,
-                      customerEmail: custData.email || "",
-                      address: `${custData.address}, ${custData.city} - ${custData.pincode}`,
-                      items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, color: i.color })),
-                      totalAmount: subtotal,
-                      status: "Processing",
-                      paymentMethod: "UPI",
-                      paymentStatus: "Payment Submitted (8171902255@ibl)",
-                      notes: (custData.notes ? custData.notes + " • " : "") + "Direct UPI to 8171902255@ibl"
-                    };
+                    // Load Razorpay Checkout dynamically
+                    const isLoaded = await new Promise((resolve) => {
+                      if (typeof window === "undefined") return resolve(false);
+                      if (window.Razorpay) return resolve(true);
+                      const script = document.createElement("script");
+                      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+                      script.onload = () => resolve(true);
+                      script.onerror = () => resolve(false);
+                      document.body.appendChild(script);
+                    });
 
-                    const existingOrders = STORE.getOrders();
-                    STORE.setOrders([newOrder, ...existingOrders]);
-                    await saveOrderToSupabase(newOrder);
-                    STORE.sendWhatsAppNotification("order", newOrder);
+                    if (!isLoaded) {
+                      setIsProcessingPayment(false);
+                      triggerToast("Failed to load payment gateway. Please check your internet connection.");
+                      return;
+                    }
 
-                    setPlacedOrderSummary(newOrder);
-                    setCart([]);
-                    setIsAuthModalOpen(false);
-                    triggerToast(`Order confirmed for ${custData.name}! Alert sent to WhatsApp (8171902255)`);
+                    try {
+                      // 1. Create Order on Razorpay Server
+                      const res = await fetch("/api/payment/create-order", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          amount: subtotal,
+                          receipt: "rcpt_" + Date.now(),
+                          notes: {
+                            customerName: custData.name,
+                            customerPhone: custData.phone,
+                            itemsCount: cart.length
+                          }
+                        })
+                      });
+
+                      const orderData = await res.json();
+                      if (!orderData.success || !orderData.orderId) {
+                        setIsProcessingPayment(false);
+                        triggerToast(orderData.error || "Unable to initiate payment. Please try again.");
+                        return;
+                      }
+
+                      // 2. Open Razorpay Checkout Modal
+                      const options = {
+                        key: orderData.keyId,
+                        amount: orderData.amount,
+                        currency: orderData.currency || "INR",
+                        name: "COCOON",
+                        description: `Order of ${totalQty} Handcrafted Treasures`,
+                        image: "https://www.gococoon.store/icon.svg",
+                        order_id: orderData.orderId,
+                        prefill: {
+                          name: custData.name,
+                          contact: custData.phone,
+                          email: custData.email || ""
+                        },
+                        theme: {
+                          color: "#B06B5B"
+                        },
+                        handler: async function (response) {
+                          try {
+                            triggerToast("Verifying payment with bank... ⏳");
+                            // 3. Verify Payment Signature on Server
+                            const verifyRes = await fetch("/api/payment/verify", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature
+                              })
+                            });
+
+                            const verifyData = await verifyRes.json();
+                            if (!verifyData.success) {
+                              setIsProcessingPayment(false);
+                              triggerToast("Payment verification failed. Please contact support.");
+                              return;
+                            }
+
+                            // 4. Payment is 100% verified & received! Save Order
+                            const newOrder = {
+                              id: generateOrderId(),
+                              date: new Date().toISOString(),
+                              customerName: custData.name,
+                              customerPhone: custData.phone,
+                              customerEmail: custData.email || "",
+                              address: `${custData.address}, ${custData.city} - ${custData.pincode}`,
+                              items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, color: i.color })),
+                              totalAmount: subtotal,
+                              status: "Processing",
+                              paymentMethod: "Razorpay (Online UPI / Cards)",
+                              paymentStatus: "Paid (Verified Online)",
+                              paymentId: response.razorpay_payment_id,
+                              notes: (custData.notes ? custData.notes + " • " : "") + `Razorpay Payment ID: ${response.razorpay_payment_id}`
+                            };
+
+                            const existingOrders = STORE.getOrders();
+                            STORE.setOrders([newOrder, ...existingOrders]);
+                            await saveOrderToSupabase(newOrder);
+
+                            // Dispatch Confirmation Email via Resend
+                            STORE.dispatchEmailNotification("order_placed", { order: newOrder });
+
+                            // WhatsApp Notification to Mehak (+91 8171902255)
+                            STORE.sendWhatsAppNotification("order", newOrder);
+
+                            setIsProcessingPayment(false);
+                            setPlacedOrderSummary(newOrder);
+                            setCart([]);
+                            persistCart([]);
+                            setIsAuthModalOpen(false);
+                            triggerToast(`Payment successful! Order confirmed for ${custData.name}.`);
+                          } catch (verErr) {
+                            console.error("Payment verification error:", verErr);
+                            setIsProcessingPayment(false);
+                            triggerToast("Error verifying payment. If amount was deducted, our team will confirm within 1 hour.");
+                          }
+                        },
+                        modal: {
+                          ondismiss: function () {
+                            setIsProcessingPayment(false);
+                            triggerToast("Payment was not completed. Order has NOT been placed.");
+                          }
+                        }
+                      };
+
+                      const rzp = new window.Razorpay(options);
+                      rzp.on("payment.failed", function (failRes) {
+                        setIsProcessingPayment(false);
+                        triggerToast(`Payment failed: ${failRes.error?.description || "Transaction declined."}`);
+                      });
+                      rzp.open();
+                    } catch (err) {
+                      console.error("Razorpay initiation error:", err);
+                      setIsProcessingPayment(false);
+                      triggerToast("Error opening payment window. Please try again.");
+                    }
                   }}
                   className="space-y-3"
                 >
@@ -1441,10 +1565,21 @@ export default function Preset4() {
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-2xl bg-[#526B57] hover:bg-[#405444] text-white text-xs font-bold uppercase tracking-wider transition shadow-md cursor-pointer mt-2"
+                    disabled={isProcessingPayment}
+                    className="w-full py-3.5 rounded-2xl bg-[#B06B5B] hover:bg-[#975647] text-white text-xs font-bold uppercase tracking-wider transition shadow-md cursor-pointer mt-2 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    Confirm Order & Send to WhatsApp (8171902255)
+                    {isProcessingPayment ? (
+                      <span>Opening Secure Gateway... 🔒</span>
+                    ) : (
+                      <span>🔒 Pay Rs. {subtotal} via UPI / Card & Confirm Order</span>
+                    )}
                   </button>
+
+                  <div className="flex items-center justify-center gap-2 text-[10px] text-stone-500 pt-1">
+                    <span className="text-emerald-700 font-bold">100% Secure Payment</span>
+                    <span>•</span>
+                    <span>GPay, PhonePe, Paytm, Cards & UPI</span>
+                  </div>
                 </form>
               </div>
             )}
