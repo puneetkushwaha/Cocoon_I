@@ -249,15 +249,15 @@ export default function Preset4() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans antialiased selection:bg-[#F3D5CF] selection:text-[#5B2920]">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden overflow-x-clip bg-[#FDFBF7] text-[#2C2623] font-sans antialiased selection:bg-[#F3D5CF] selection:text-[#5B2920]">
       
       {/* 1 & 2. UNIFIED MASTER ATELIER HEADER & TICKER */}
       <Header cartCountOverride={totalQty} />
 
       {/* 3. HERO: VINTAGE COTTAGE SCRAPBOOK & NEEDLEWORK */}
-      <section className="py-14 lg:py-20 border-b border-[#EFE8DD] relative overflow-hidden bg-gradient-to-b from-[#FDFBF7] via-[#FAF4EE] to-[#FDFBF7]">
-        <div className="absolute top-10 left-10 w-96 h-96 rounded-full bg-[#FCEEEA]/70 filter blur-3xl pointer-events-none -z-0"></div>
-        <div className="absolute bottom-10 right-10 w-80 h-80 rounded-full bg-[#EDF3EE]/70 filter blur-3xl pointer-events-none -z-0"></div>
+      <section className="py-14 lg:py-20 border-b border-[#EFE8DD] relative overflow-hidden bg-gradient-to-b from-[#FDFBF7] via-[#FAF4EE] to-[#FDFBF7] max-w-full" style={{ contain: "paint" }}>
+        <div className="absolute top-10 left-10 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-[#FCEEEA]/70 filter blur-3xl pointer-events-none -z-0"></div>
+        <div className="absolute bottom-10 right-0 sm:right-10 w-64 sm:w-80 h-64 sm:h-80 rounded-full bg-[#EDF3EE]/70 filter blur-3xl pointer-events-none -z-0"></div>
 
         <div className="max-w-7xl mx-auto px-6 sm:px-10 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -293,7 +293,7 @@ export default function Preset4() {
             </div>
 
             {/* Right Side: Polaroid Vintage Scrapbook Collage (3 Cards from Admin) */}
-            <div className="lg:col-span-6 relative flex justify-center py-6">
+            <div className="lg:col-span-6 relative flex justify-center py-6 max-w-full overflow-hidden sm:overflow-visible">
               <div className="relative w-full max-w-md">
                 
                 {/* Clothespin */}
@@ -304,10 +304,10 @@ export default function Preset4() {
                 </div>
 
                 {/* Wax Seal */}
-                <div className="absolute -top-7 -right-5 sm:-right-8 z-30 w-22 h-22 rounded-full bg-[#B06B5B] text-[#FFFDF9] p-2 shadow-xl flex items-center justify-center border-4 border-[#FAF5EE] pointer-events-none">
+                <div className="absolute -top-5 right-1 sm:-right-8 z-30 w-16 h-16 sm:w-22 sm:h-22 rounded-full bg-[#B06B5B] text-[#FFFDF9] p-1.5 sm:p-2 shadow-xl flex items-center justify-center border-2 sm:border-4 border-[#FAF5EE] pointer-events-none">
                   <div className="w-full h-full rounded-full border border-dashed border-[#F3D5CF] flex flex-col items-center justify-center">
-                    <span className="text-[8px] font-black uppercase tracking-widest text-center leading-none">HANDMADE</span>
-                    <span className="text-[7px] tracking-widest text-center leading-none mt-1">COCOON</span>
+                    <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-center leading-none">HANDMADE</span>
+                    <span className="text-[6px] sm:text-[7px] tracking-widest text-center leading-none mt-0.5 sm:mt-1">COCOON</span>
                   </div>
                 </div>
 
@@ -342,7 +342,7 @@ export default function Preset4() {
 
                 {/* 2. Bottom Right Card */}
                 {storeHeroCards[2] && (
-                  <div className="absolute -bottom-8 -right-4 sm:-right-8 w-48 sm:w-56 bg-white p-3 rounded-2xl shadow-2xl border border-[#EAE1D3] transform rotate-6 hover:rotate-2 transition-transform duration-500 select-none">
+                  <div className="absolute -bottom-6 right-1 sm:-bottom-8 sm:-right-8 w-36 sm:w-56 bg-white p-2.5 sm:p-3 rounded-2xl shadow-2xl border border-[#EAE1D3] transform rotate-1 sm:rotate-6 hover:rotate-2 transition-transform duration-500 select-none">
                     <div className="aspect-square rounded-lg overflow-hidden bg-[#FAF6F0] mb-2 shadow-inner">
                       <img
                         src={storeHeroCards[2].imgUrl}
@@ -380,8 +380,8 @@ export default function Preset4() {
           </div>
         </div>
 
-        <div className="w-full overflow-hidden mt-12 py-2 flex items-center justify-center">
-          <svg className="w-full h-3 max-w-7xl px-6 sm:px-10 overflow-visible" preserveAspectRatio="none">
+        <div className="w-full max-w-full overflow-hidden mt-12 py-2 flex items-center justify-center" style={{ contain: "paint" }}>
+          <svg className="w-full h-3 max-w-7xl px-6 sm:px-10 overflow-hidden" preserveAspectRatio="none">
             <line x1="0" y1="2" x2="100%" y2="2" stroke="#B06B5B" strokeWidth="2.5" strokeDasharray="10 8" className="running-stitch opacity-60" />
           </svg>
         </div>

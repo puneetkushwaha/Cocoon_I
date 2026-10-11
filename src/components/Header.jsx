@@ -107,7 +107,7 @@ export default function Header({ onOpenCart, cartCountOverride }) {
   return (
     <>
       {/* 1. MASTER ANNOUNCEMENT TICKER (Consistent Across All Pages) */}
-      <div className="bg-[#221F1F] text-white py-2 overflow-hidden whitespace-nowrap text-[11px] font-semibold tracking-wider relative z-50">
+      <div className="w-full max-w-full overflow-hidden bg-[#221F1F] text-white py-2 whitespace-nowrap text-[11px] font-semibold tracking-wider relative z-50" style={{ contain: "paint" }}>
         <div className="animate-marquee inline-flex items-center gap-10">
           {tickerList.map((msg, idx) => (
             <span key={idx} className="inline-flex items-center gap-10">

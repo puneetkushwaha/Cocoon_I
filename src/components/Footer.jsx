@@ -4,13 +4,13 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#FAF5EE] border-t border-[#EAE0D2] pt-20 pb-16 sm:pb-20 relative overflow-hidden text-left font-sans mt-20">
+    <footer className="bg-[#FAF5EE] border-t border-[#EAE0D2] pt-20 pb-16 sm:pb-20 relative overflow-hidden text-left font-sans mt-20 max-w-full" style={{ contain: "paint" }}>
       {/* Background Ambience Blobs */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#F8E5E1]/40 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-[#EDF3EE]/50 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-[#F8E5E1]/40 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-4 sm:left-10 w-64 sm:w-80 h-64 sm:h-80 bg-[#EDF3EE]/50 rounded-full blur-3xl pointer-events-none" />
 
       {/* Subtle Luxury Giant Background Brand Monogram */}
-      <div className="absolute inset-x-0 bottom-0 flex justify-center items-end pointer-events-none select-none overflow-hidden z-0 opacity-[0.14] sm:opacity-[0.18] translate-y-[6%]">
+      <div className="absolute inset-x-0 bottom-0 flex justify-center items-end pointer-events-none select-none overflow-hidden max-w-full z-0 opacity-[0.14] sm:opacity-[0.18] translate-y-[6%]">
         <span className="font-header text-[14vw] font-black tracking-[0.12em] uppercase text-[#B06B5B] leading-none whitespace-nowrap">
           COCOON
         </span>

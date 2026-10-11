@@ -208,7 +208,7 @@ export async function bookCourierPickup({ order, parcelDimensions = {}, pickupDa
       const orderPayload = {
         order_id: order.id,
         order_date: orderDateStr,
-        pickup_location: process.env.SHIPROCKET_PICKUP_LOCATION || "Mehak Agarwal",
+        pickup_location: (process.env.SHIPROCKET_PICKUP_LOCATION || "Mehak Agarwal").trim(),
         billing_customer_name: parsed.firstName || "Customer",
         billing_last_name: parsed.lastName || "Client",
         billing_address: safeAddress,

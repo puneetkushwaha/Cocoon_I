@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Luxurious Warm Linen Circular Badge -->
+  <circle cx="32" cy="32" r="30" fill="#FAF6F0" stroke="#EAE0D2" stroke-width="2"/>
+  
+  <!-- Outer Artisan Border Ring -->
+  <circle cx="32" cy="32" r="26" fill="none" stroke="#B06B5B" stroke-width="1.2" stroke-dasharray="3 2" opacity="0.6"/>
+
+  <!-- Atelier Monogram 'C' in French Warm Espresso -->
+  <text 
+    x="32" 
+    y="39" 
+    text-anchor="middle" 
+    font-family="Georgia, serif" 
+    font-size="28" 
+    font-weight="300" 
+    fill="#231F20"
+  >
+    C
+  </text>
+
+  <!-- Dainty Handcrafted Stitch Accent Dot in Terracotta -->
+  <circle cx="41" cy="23" r="2.2" fill="#B06B5B"/>
+</svg>

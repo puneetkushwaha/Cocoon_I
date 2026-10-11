@@ -19,13 +19,40 @@
   --color-brand-oatmeal: #EFE8DE;
 }
 
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  touch-action: pan-y;
+}
+
 body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
+  position: relative;
+  touch-action: pan-y;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  overflow-x: hidden;
   font-variant-numeric: lining-nums tabular-nums;
   font-feature-settings: "lnum" 1, "tnum" 1;
+}
+
+/* Allow horizontal swipe on designated horizontal carousels & chips */
+.overflow-x-auto,
+.overflow-x-scroll,
+[data-scroll-x] {
+  touch-action: pan-x pan-y !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure structural containers never exceed viewport bounds */
+main, section, header, footer, nav {
+  max-width: 100%;
 }
 
 *, *::before, *::after {
