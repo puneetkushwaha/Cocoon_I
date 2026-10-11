@@ -254,6 +254,7 @@ export const setStoredData = (key, data) => {
     else if (key === STORAGE_KEYS.HERO_CARDS) apiKey = "heroCards";
     else if (key === STORAGE_KEYS.TICKER) apiKey = "ticker";
     else if (key === STORAGE_KEYS.BESTSELLERS) apiKey = "bestsellers";
+    else if (key === STORAGE_KEYS.SETTINGS) apiKey = "settings";
 
     if (apiKey) {
       fetch("/api/store/data", {
@@ -296,6 +297,9 @@ export const STORE = {
           }
           if (Array.isArray(json.bestsellers) && json.bestsellers.length > 0) {
             localStorage.setItem(STORAGE_KEYS.BESTSELLERS, JSON.stringify(json.bestsellers));
+          }
+          if (json.settings && typeof json.settings === "object") {
+            localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(json.settings));
           }
           window.dispatchEvent(new Event("cocoon_store_update"));
         } else {
@@ -707,10 +711,12 @@ export const STORE = {
     return Array.from(emails);
   },
 
-  // Store Configuration & Settings (COD Toggle, etc.)
+  // Store Configuration & Settings (COD Toggle, Free Delivery on Online, etc.)
   getSettings: () => {
     return getStoredData(STORAGE_KEYS.SETTINGS, {
-      codEnabled: true, // Default to true per user request
+      codEnabled: true,
+      freeDeliveryOnOnline: true,
+      codDeliveryFee: 80
     });
   },
 
@@ -727,6 +733,20 @@ export const STORE = {
     const s = STORE.getSettings();
     const newState = explicitState !== undefined ? explicitState : !s.codEnabled;
     const updated = { ...s, codEnabled: newState };
+    STORE.setSettings(updated);
+    return newState;
+  },
+
+  isOnlineFreeDeliveryEnabled: () => {
+    const s = STORE.getSettings();
+    return s && typeof s.freeDeliveryOnOnline === "boolean" ? s.freeDeliveryOnOnline : true;
+  },
+
+  toggleOnlineFreeDelivery: (explicitState) => {
+    const s = STORE.getSettings();
+    const current = typeof s.freeDeliveryOnOnline === "boolean" ? s.freeDeliveryOnOnline : true;
+    const newState = explicitState !== undefined ? explicitState : !current;
+    const updated = { ...s, freeDeliveryOnOnline: newState };
     STORE.setSettings(updated);
     return newState;
   },

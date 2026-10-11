@@ -9,6 +9,12 @@ import {
   INITIAL_BESTSELLERS
 } from "@/data/store";
 
+const DEFAULT_SETTINGS = {
+  codEnabled: true,
+  freeDeliveryOnOnline: true,
+  codDeliveryFee: 80
+};
+
 // Global in-memory cache on the Node.js server to ensure instant sync
 let serverStoreCache = {
   products: null,
@@ -17,6 +23,7 @@ let serverStoreCache = {
   heroCards: null,
   ticker: null,
   bestsellers: null,
+  settings: null,
   lastUpdated: null
 };
 
@@ -52,6 +59,7 @@ export async function GET(request) {
           if (dbData.heroCards) serverStoreCache.heroCards = dbData.heroCards;
           if (dbData.ticker) serverStoreCache.ticker = dbData.ticker;
           if (dbData.bestsellers) serverStoreCache.bestsellers = dbData.bestsellers;
+          if (dbData.settings) serverStoreCache.settings = dbData.settings;
         }
       } catch (e) {
         // Supabase query fallback (e.g. if project is paused)
@@ -64,6 +72,7 @@ export async function GET(request) {
     const heroCards = serverStoreCache.heroCards || dbData?.heroCards || INITIAL_HERO_CARDS;
     const ticker = serverStoreCache.ticker || dbData?.ticker || INITIAL_TICKER;
     const bestsellers = serverStoreCache.bestsellers || dbData?.bestsellers || INITIAL_BESTSELLERS;
+    const settings = serverStoreCache.settings || dbData?.settings || DEFAULT_SETTINGS;
 
     if (type === "products") {
       return NextResponse.json({ success: true, products });
@@ -74,6 +83,9 @@ export async function GET(request) {
     if (type === "coupons") {
       return NextResponse.json({ success: true, coupons });
     }
+    if (type === "settings") {
+      return NextResponse.json({ success: true, settings });
+    }
 
     return NextResponse.json({
       success: true,
@@ -83,6 +95,7 @@ export async function GET(request) {
       heroCards,
       ticker,
       bestsellers,
+      settings,
       source: dbData ? "supabase" : (serverStoreCache.products ? "server_cache" : "initial_seed")
     });
   } catch (err) {
@@ -92,6 +105,7 @@ export async function GET(request) {
       products: PRODUCTS,
       categories: INITIAL_CATEGORIES,
       coupons: INITIAL_COUPONS,
+      settings: DEFAULT_SETTINGS,
       error: err.message
     });
   }
@@ -116,6 +130,7 @@ export async function POST(request) {
     if (key === "heroCards") serverStoreCache.heroCards = data;
     if (key === "ticker") serverStoreCache.ticker = data;
     if (key === "bestsellers") serverStoreCache.bestsellers = data;
+    if (key === "settings") serverStoreCache.settings = data;
     serverStoreCache.lastUpdated = new Date().toISOString();
 
     // 2. Persist to Supabase if available

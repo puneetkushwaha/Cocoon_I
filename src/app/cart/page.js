@@ -278,7 +278,31 @@ export default function CartPage() {
     return 0;
   }, [appliedCoupon, cart, subtotal]);
 
-  const shippingCost = (subtotal - couponDiscount) >= 999 || subtotal === 0 ? 0 : 80;
+  const [isOnlineFreeDelivery, setIsOnlineFreeDelivery] = useState(true);
+
+  useEffect(() => {
+    const syncSettings = () => {
+      try {
+        setIsOnlineFreeDelivery(STORE.isOnlineFreeDeliveryEnabled());
+      } catch (e) {}
+    };
+    syncSettings();
+    window.addEventListener("cocoon_store_update", syncSettings);
+    return () => window.removeEventListener("cocoon_store_update", syncSettings);
+  }, []);
+
+  const isOnlinePayment = paymentMethod === "upi" || paymentMethod === "online" || paymentMethod === "razorpay";
+
+  const shippingCost = useMemo(() => {
+    if (subtotal === 0) return 0;
+    // Online Payment gives 100% Free Shipping when enabled by admin
+    if (isOnlinePayment && isOnlineFreeDelivery) {
+      return 0;
+    }
+    // Standard COD / offline shipping rule (Free above Rs. 999, else Rs. 80)
+    return (subtotal - couponDiscount) >= 999 ? 0 : 80;
+  }, [subtotal, couponDiscount, isOnlinePayment, isOnlineFreeDelivery]);
+
   const grandTotal = Math.max(0, subtotal - couponDiscount + shippingCost);
 
   // Coupon Handlers
@@ -1235,9 +1259,19 @@ export default function CartPage() {
                   <div className="flex justify-between text-stone-600">
                     <span>Express Courier Transit:</span>
                     {shippingCost === 0 ? (
-                      <span className="text-emerald-700 font-bold">FREE (Above ₹999) ✓</span>
+                      <div className="flex items-center gap-1.5 text-emerald-700 font-bold">
+                        <span className="line-through text-stone-400 text-xs">₹80</span>
+                        <span>FREE {isOnlinePayment && isOnlineFreeDelivery ? "(Online Payment Benefit) ✓" : "✓"}</span>
+                      </div>
                     ) : (
-                      <span className="font-sans font-bold text-stone-900">₹{shippingCost}</span>
+                      <div className="text-right">
+                        <span className="font-sans font-bold text-stone-900">₹{shippingCost}</span>
+                        {isOnlineFreeDelivery && (
+                          <span className="block text-[10px] text-emerald-600 font-bold">
+                            (Select Online Payment to get ₹0 Free Delivery!)
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
 
@@ -1283,9 +1317,14 @@ export default function CartPage() {
                           {paymentMethod === "upi" && <div className="w-1.5 h-1.5 rounded-full bg-white"></div>}
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-[#2C2623] flex items-center gap-1.5">
+                          <p className="text-xs font-bold text-[#2C2623] flex items-center gap-1.5 flex-wrap">
                             <span>UPI & Card Payment</span>
                             <span className="text-[9px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded">Instant</span>
+                            {isOnlineFreeDelivery && (
+                              <span className="text-[9px] font-bold uppercase tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-xs">
+                                FREE Delivery (₹0)
+                              </span>
+                            )}
                           </p>
                           <p className="text-[10px] text-stone-500 font-serif">GPay • PhonePe • Paytm • Cards • NetBanking</p>
                         </div>

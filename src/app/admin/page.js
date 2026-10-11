@@ -82,8 +82,9 @@ export default function AdminPage() {
     isActive: true
   });
 
-  // COD setting state
+  // COD and Online Delivery Fee setting state
   const [isCodEnabled, setIsCodEnabled] = useState(true);
+  const [isOnlineFreeDelivery, setIsOnlineFreeDelivery] = useState(true);
   const [dbStatus, setDbStatus] = useState("checking");
 
   // Orders Verification Filter
@@ -193,6 +194,7 @@ export default function AdminPage() {
     setCoupons(STORE.getCoupons());
     setSubscribers(STORE.getSubscribers());
     setIsCodEnabled(STORE.isCodEnabled());
+    setIsOnlineFreeDelivery(STORE.isOnlineFreeDeliveryEnabled());
 
     // Sync live store data from backend API
     try {
@@ -210,6 +212,9 @@ export default function AdminPage() {
           if (serverData.heroCards) setHeroCards(serverData.heroCards);
           if (serverData.ticker) setTickerList(serverData.ticker);
           if (serverData.bestsellers) setBestsellers(serverData.bestsellers);
+          if (serverData.settings?.freeDeliveryOnOnline !== undefined) {
+            setIsOnlineFreeDelivery(Boolean(serverData.settings.freeDeliveryOnOnline));
+          }
         }
       }
     } catch (e) {
@@ -255,6 +260,16 @@ export default function AdminPage() {
       newState
         ? "Cash on Delivery (COD) turned ON. Buyers can now choose COD at checkout!"
         : "Cash on Delivery (COD) turned OFF. Store is now Prepaid Online Only."
+    );
+  };
+
+  const handleToggleOnlineFreeDelivery = () => {
+    const newState = STORE.toggleOnlineFreeDelivery();
+    setIsOnlineFreeDelivery(newState);
+    triggerToast(
+      newState
+        ? "✓ Free Delivery enabled for Online Payments! Buyers get Rs. 0 delivery fee when paying online."
+        : "Free Delivery on Online Payment turned OFF. Standard delivery fee restored."
     );
   };
 
@@ -939,8 +954,10 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {/* CASH ON DELIVERY (COD) MASTER CONTROL BANNER */}
-      <div className="bg-[#FAF5ED] border-b border-[#E8DFC9] px-6 py-3">
+      {/* CASH ON DELIVERY (COD) & ONLINE FREE DELIVERY MASTER CONTROL BANNER */}
+      <div className="bg-[#FAF5ED] border-b border-[#E8DFC9] px-6 py-3 space-y-2.5">
+        
+        {/* ROW 1: CASH ON DELIVERY CONTROL */}
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-3">
             <span className="font-bold text-[#2C2623] uppercase tracking-wider text-[11px] font-sans">
@@ -952,10 +969,10 @@ export default function AdminPage() {
                 : "bg-rose-100 text-rose-800 border border-rose-300"
             }`}>
               <span className={`w-2 h-2 rounded-full ${isCodEnabled ? "bg-emerald-500 animate-pulse" : "bg-rose-500"}`}></span>
-              <span>{isCodEnabled ? "COD (Cash on Delivery) is ON" : "COD is OFF (Direct UPI Only)"}</span>
+              <span>{isCodEnabled ? "COD (Cash on Delivery) is ON" : "COD is OFF (Prepaid Online Only)"}</span>
             </span>
             <span className="text-[11px] text-stone-500 hidden lg:inline">
-              {isCodEnabled ? "Buyers can choose Cash on Delivery or Direct UPI (8171902255@ibl) at checkout." : "Checkout strictly requires Direct UPI Payment (8171902255@ibl)."}
+              {isCodEnabled ? "Buyers can choose Cash on Delivery or Online Payment at checkout." : "Checkout strictly requires Online Payment."}
             </span>
           </div>
 
@@ -970,6 +987,40 @@ export default function AdminPage() {
             <span>{isCodEnabled ? "Turn COD OFF (Direct UPI Only)" : "Turn COD ON (Enable Cash on Delivery)"}</span>
           </button>
         </div>
+
+        {/* ROW 2: ONLINE PAYMENT FREE DELIVERY CONTROL */}
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs pt-2.5 border-t border-[#EAE0D2]">
+          <div className="flex items-center gap-3">
+            <span className="font-bold text-[#2C2623] uppercase tracking-wider text-[11px] font-sans">
+              Online Delivery Fee:
+            </span>
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+              isOnlineFreeDelivery 
+                ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                : "bg-amber-100 text-amber-800 border border-amber-300"
+            }`}>
+              <span className={`w-2 h-2 rounded-full ${isOnlineFreeDelivery ? "bg-emerald-500 animate-pulse" : "bg-amber-500"}`}></span>
+              <span>{isOnlineFreeDelivery ? "FREE Delivery on Online Payment (₹0 Fee)" : "Standard Delivery Fee (₹80 Charged)"}</span>
+            </span>
+            <span className="text-[11px] text-stone-500 hidden lg:inline">
+              {isOnlineFreeDelivery 
+                ? "Buyers paying online via UPI / Card get 100% Free Shipping."
+                : "Buyers paying online are charged delivery fee on orders under ₹999."}
+            </span>
+          </div>
+
+          <button
+            onClick={handleToggleOnlineFreeDelivery}
+            className={`px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-wider transition shadow-xs cursor-pointer flex items-center gap-2 self-start sm:self-auto ${
+              isOnlineFreeDelivery
+                ? "bg-amber-600 hover:bg-amber-700 text-white"
+                : "bg-emerald-600 hover:bg-emerald-700 text-white"
+            }`}
+          >
+            <span>{isOnlineFreeDelivery ? "Charge Delivery Fee on Online (₹80)" : "Make Online Delivery FREE (₹0 Fee)"}</span>
+          </button>
+        </div>
+
       </div>
 
       {/* 3. MAIN CONTENT CONTAINER */}
