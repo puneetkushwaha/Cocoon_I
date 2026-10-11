@@ -1,13 +1,22 @@
 import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { PRODUCTS } from "@/data/products";
-import { INITIAL_CATEGORIES, INITIAL_COUPONS } from "@/data/store";
+import {
+  INITIAL_CATEGORIES,
+  INITIAL_COUPONS,
+  INITIAL_HERO_CARDS,
+  INITIAL_TICKER,
+  INITIAL_BESTSELLERS
+} from "@/data/store";
 
 // Global in-memory cache on the Node.js server to ensure instant sync
 let serverStoreCache = {
   products: null,
   categories: null,
   coupons: null,
+  heroCards: null,
+  ticker: null,
+  bestsellers: null,
   lastUpdated: null
 };
 
@@ -18,12 +27,18 @@ export async function GET(request) {
 
     let dbData = null;
 
-    // 1. Try to read from Supabase if active
+    // 1. Try to read from Supabase if active (with strict timeout)
     if (isSupabaseConfigured()) {
       try {
-        const { data, error } = await supabase
+        const queryPromise = supabase
           .from("store_data")
           .select("*");
+
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Supabase query timeout")), 3000)
+        );
+
+        const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
 
         if (!error && Array.isArray(data) && data.length > 0) {
           dbData = {};
@@ -34,15 +49,21 @@ export async function GET(request) {
           if (dbData.products) serverStoreCache.products = dbData.products;
           if (dbData.categories) serverStoreCache.categories = dbData.categories;
           if (dbData.coupons) serverStoreCache.coupons = dbData.coupons;
+          if (dbData.heroCards) serverStoreCache.heroCards = dbData.heroCards;
+          if (dbData.ticker) serverStoreCache.ticker = dbData.ticker;
+          if (dbData.bestsellers) serverStoreCache.bestsellers = dbData.bestsellers;
         }
       } catch (e) {
-        // Supabase query fallback (e.g. if paused)
+        // Supabase query fallback (e.g. if project is paused)
       }
     }
 
     const products = serverStoreCache.products || dbData?.products || PRODUCTS;
     const categories = serverStoreCache.categories || dbData?.categories || INITIAL_CATEGORIES;
     const coupons = serverStoreCache.coupons || dbData?.coupons || INITIAL_COUPONS;
+    const heroCards = serverStoreCache.heroCards || dbData?.heroCards || INITIAL_HERO_CARDS;
+    const ticker = serverStoreCache.ticker || dbData?.ticker || INITIAL_TICKER;
+    const bestsellers = serverStoreCache.bestsellers || dbData?.bestsellers || INITIAL_BESTSELLERS;
 
     if (type === "products") {
       return NextResponse.json({ success: true, products });
@@ -59,6 +80,9 @@ export async function GET(request) {
       products,
       categories,
       coupons,
+      heroCards,
+      ticker,
+      bestsellers,
       source: dbData ? "supabase" : (serverStoreCache.products ? "server_cache" : "initial_seed")
     });
   } catch (err) {
@@ -89,6 +113,9 @@ export async function POST(request) {
     if (key === "products") serverStoreCache.products = data;
     if (key === "categories") serverStoreCache.categories = data;
     if (key === "coupons") serverStoreCache.coupons = data;
+    if (key === "heroCards") serverStoreCache.heroCards = data;
+    if (key === "ticker") serverStoreCache.ticker = data;
+    if (key === "bestsellers") serverStoreCache.bestsellers = data;
     serverStoreCache.lastUpdated = new Date().toISOString();
 
     // 2. Persist to Supabase if available

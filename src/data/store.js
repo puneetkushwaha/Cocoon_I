@@ -247,23 +247,19 @@ export const setStoredData = (key, data) => {
     }, 0);
 
     // Automatically sync to backend API & Database across devices
-    if (key === STORAGE_KEYS.PRODUCTS) {
+    let apiKey = null;
+    if (key === STORAGE_KEYS.PRODUCTS) apiKey = "products";
+    else if (key === STORAGE_KEYS.CATEGORIES) apiKey = "categories";
+    else if (key === STORAGE_KEYS.COUPONS) apiKey = "coupons";
+    else if (key === STORAGE_KEYS.HERO_CARDS) apiKey = "heroCards";
+    else if (key === STORAGE_KEYS.TICKER) apiKey = "ticker";
+    else if (key === STORAGE_KEYS.BESTSELLERS) apiKey = "bestsellers";
+
+    if (apiKey) {
       fetch("/api/store/data", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key: "products", data })
-      }).catch(() => {});
-    } else if (key === STORAGE_KEYS.CATEGORIES) {
-      fetch("/api/store/data", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key: "categories", data })
-      }).catch(() => {});
-    } else if (key === STORAGE_KEYS.COUPONS) {
-      fetch("/api/store/data", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key: "coupons", data })
+        body: JSON.stringify({ key: apiKey, data })
       }).catch(() => {});
     }
   } catch (e) {
@@ -280,16 +276,47 @@ export const STORE = {
       const res = await fetch("/api/store/data");
       const json = await res.json();
       if (json && json.success) {
-        if (Array.isArray(json.products) && json.products.length > 0) {
-          localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(json.products));
+        // Only overwrite local state IF the server returned real DB or server cache data!
+        // Never overwrite local changes with the static uncustomized initial seed!
+        if (json.source !== "initial_seed") {
+          if (Array.isArray(json.products) && json.products.length > 0) {
+            localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(json.products));
+          }
+          if (Array.isArray(json.categories) && json.categories.length > 0) {
+            localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(json.categories));
+          }
+          if (Array.isArray(json.coupons) && json.coupons.length > 0) {
+            localStorage.setItem(STORAGE_KEYS.COUPONS, JSON.stringify(json.coupons));
+          }
+          if (Array.isArray(json.heroCards) && json.heroCards.length > 0) {
+            localStorage.setItem(STORAGE_KEYS.HERO_CARDS, JSON.stringify(json.heroCards));
+          }
+          if (Array.isArray(json.ticker) && json.ticker.length > 0) {
+            localStorage.setItem(STORAGE_KEYS.TICKER, JSON.stringify(json.ticker));
+          }
+          if (Array.isArray(json.bestsellers) && json.bestsellers.length > 0) {
+            localStorage.setItem(STORAGE_KEYS.BESTSELLERS, JSON.stringify(json.bestsellers));
+          }
+          window.dispatchEvent(new Event("cocoon_store_update"));
+        } else {
+          // If server only has initial_seed, push any customized local data up to the server!
+          const currentProds = getStoredData(STORAGE_KEYS.PRODUCTS, null);
+          if (currentProds && Array.isArray(currentProds)) {
+            fetch("/api/store/data", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ key: "products", data: currentProds })
+            }).catch(() => {});
+          }
+          const currentCoupons = getStoredData(STORAGE_KEYS.COUPONS, null);
+          if (currentCoupons && Array.isArray(currentCoupons)) {
+            fetch("/api/store/data", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ key: "coupons", data: currentCoupons })
+            }).catch(() => {});
+          }
         }
-        if (Array.isArray(json.categories) && json.categories.length > 0) {
-          localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(json.categories));
-        }
-        if (Array.isArray(json.coupons) && json.coupons.length > 0) {
-          localStorage.setItem(STORAGE_KEYS.COUPONS, JSON.stringify(json.coupons));
-        }
-        window.dispatchEvent(new Event("cocoon_store_update"));
         return json;
       }
     } catch (e) {
@@ -299,15 +326,7 @@ export const STORE = {
   },
 
   getProducts: () => {
-    const stored = getStoredData(STORAGE_KEYS.PRODUCTS, PRODUCTS);
-    if (Array.isArray(stored) && stored.length < PRODUCTS.length) {
-      const storedIds = new Set(stored.map((p) => p.id));
-      const missing = PRODUCTS.filter((p) => !storedIds.has(p.id));
-      const merged = [...stored, ...missing];
-      setStoredData(STORAGE_KEYS.PRODUCTS, merged);
-      return merged;
-    }
-    return stored;
+    return getStoredData(STORAGE_KEYS.PRODUCTS, PRODUCTS);
   },
   setProducts: (data) => setStoredData(STORAGE_KEYS.PRODUCTS, data),
 

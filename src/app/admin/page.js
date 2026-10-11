@@ -84,6 +84,7 @@ export default function AdminPage() {
 
   // COD setting state
   const [isCodEnabled, setIsCodEnabled] = useState(true);
+  const [dbStatus, setDbStatus] = useState("checking");
 
   // Orders Verification Filter
   const [orderFilter, setOrderFilter] = useState("all"); // "all", "needs_verification", "verified", "upi", "cod"
@@ -197,11 +198,23 @@ export default function AdminPage() {
     try {
       const serverData = await STORE.fetchServerStoreData();
       if (serverData && serverData.success) {
-        if (serverData.products) setProducts(serverData.products);
-        if (serverData.categories) setCategories(serverData.categories);
-        if (serverData.coupons) setCoupons(serverData.coupons);
+        if (serverData.source === "supabase") {
+          setDbStatus("connected");
+        } else {
+          setDbStatus("local_only");
+        }
+        if (serverData.source !== "initial_seed") {
+          if (serverData.products) setProducts(serverData.products);
+          if (serverData.categories) setCategories(serverData.categories);
+          if (serverData.coupons) setCoupons(serverData.coupons);
+          if (serverData.heroCards) setHeroCards(serverData.heroCards);
+          if (serverData.ticker) setTickerList(serverData.ticker);
+          if (serverData.bestsellers) setBestsellers(serverData.bestsellers);
+        }
       }
-    } catch (e) {}
+    } catch (e) {
+      setDbStatus("local_only");
+    }
 
     // 2. Fetch live orders from Supabase across all devices
     try {
@@ -840,6 +853,24 @@ export default function AdminPage() {
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               <span>cocoon.by.mehak@gmail.com</span>
             </div>
+
+            {dbStatus === "connected" ? (
+              <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold" title="Supabase Database is active and syncing across devices">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>DB Live & Synced</span>
+              </div>
+            ) : (
+              <a
+                href="https://supabase.com/dashboard"
+                target="_blank"
+                rel="noreferrer"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold hover:bg-amber-500/30 transition cursor-pointer"
+                title="Supabase project is paused on free tier. Click to restore project on Supabase dashboard for multi-device sync."
+              >
+                <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+                <span>Cloud DB Paused (Unpause) ↗</span>
+              </a>
+            )}
             <button
               onClick={handleAdminLogout}
               className="px-3.5 py-1.5 rounded-full bg-rose-500/20 text-rose-300 hover:bg-rose-500 hover:text-white border border-rose-500/30 text-xs font-bold uppercase tracking-wider transition cursor-pointer"
