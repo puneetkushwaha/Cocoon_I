@@ -1379,7 +1379,8 @@ export default function Preset4() {
                       });
 
                       const orderData = await res.json();
-                      if (!orderData.success || !orderData.orderId) {
+                      const razorpayOrderId = orderData.orderId || orderData.id;
+                      if (!orderData.success || !razorpayOrderId) {
                         setIsProcessingPayment(false);
                         triggerToast(orderData.error || "Unable to initiate payment. Please try again.");
                         return;
@@ -1393,7 +1394,7 @@ export default function Preset4() {
                         name: "COCOON",
                         description: `Order of ${totalQty} Handcrafted Treasures`,
                         image: "https://www.gococoon.store/icon.svg",
-                        order_id: orderData.orderId,
+                        order_id: razorpayOrderId,
                         prefill: {
                           name: custData.name,
                           contact: custData.phone,

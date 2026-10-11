@@ -568,7 +568,8 @@ export default function CartPage() {
       });
 
       const orderData = await res.json();
-      if (!res.ok || !orderData.id) {
+      const razorpayOrderId = orderData.id || orderData.orderId;
+      if (!res.ok || !razorpayOrderId) {
         throw new Error(orderData.error || "Failed to initiate payment");
       }
 
@@ -580,7 +581,7 @@ export default function CartPage() {
         name: "COCOON Handcrafted Studio",
         description: `Order Payment for ${cart.length} item(s)`,
         image: "https://www.gococoon.store/logo.png",
-        order_id: orderData.id,
+        order_id: razorpayOrderId,
         prefill: {
           name: customerForm.name,
           email: customerForm.email || "",
