@@ -234,6 +234,18 @@ export default function AdminPage() {
     } catch (e) {
       console.warn("Live orders sync notice:", e);
     }
+
+    // 3. Fetch live customizations from Supabase across all devices
+    try {
+      const res = await fetch("/api/admin/customizations");
+      const data = await res.json();
+      if (data.success && Array.isArray(data.customizations)) {
+        setCustomizations(data.customizations);
+        STORE.setCustomizations(data.customizations);
+      }
+    } catch (e) {
+      console.warn("Live customizations sync notice:", e);
+    }
   };
 
   const handleToggleCod = () => {
@@ -537,11 +549,18 @@ export default function AdminPage() {
   };
 
   // CUSTOMIZATION ACTIONS
-  const updateCustomizationStatus = (id, newStatus) => {
+  const updateCustomizationStatus = async (id, newStatus) => {
     const updated = customizations.map((c) => (c.id === id ? { ...c, status: newStatus } : c));
     setCustomizations(updated);
     STORE.setCustomizations(updated);
     triggerToast(`Custom inquiry status updated to "${newStatus}"`);
+    try {
+      await fetch("/api/admin/customizations", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ inquiryId: id, updates: { status: newStatus } })
+      });
+    } catch (e) {}
   };
 
   // PRODUCT LAUNCH BROADCAST

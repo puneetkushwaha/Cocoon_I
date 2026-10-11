@@ -414,4 +414,61 @@ export async function updateOrderInSupabase(orderId, updates) {
   }
 }
 
+/**
+ * Fetch all custom inquiries from Supabase table 'customizations'
+ */
+export async function fetchCustomizationsFromSupabase() {
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const { data, error } = await supabase
+      .from("customizations")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.warn("Supabase fetch customizations notice:", error.message);
+      return [];
+    }
+
+    return (data || []).map((row) => ({
+      id: row.inquiry_id,
+      name: row.customer_name,
+      phone: row.customer_phone,
+      email: row.customer_email || "",
+      productName: row.product_name,
+      category: row.category,
+      colorway: row.colorway || "",
+      idea: row.idea || "",
+      neededBy: row.needed_by || "",
+      budget: row.budget || "",
+      socialLink: row.social_link || "",
+      mediaName: row.media_name || null,
+      mediaUrl: row.media_url || null,
+      status: row.status || "New",
+      date: row.created_at
+    }));
+  } catch (err) {
+    console.warn("Supabase fetch customizations error:", err);
+    return [];
+  }
+}
+
+/**
+ * Update customization inquiry in Supabase table 'customizations'
+ */
+export async function updateCustomizationInSupabase(inquiryId, updates) {
+  if (!isSupabaseConfigured() || !inquiryId) return false;
+  try {
+    const dbPayload = {};
+    if (updates.status !== undefined) dbPayload.status = updates.status;
+    const { error } = await supabase
+      .from("customizations")
+      .update(dbPayload)
+      .eq("inquiry_id", inquiryId);
+    return !error;
+  } catch (err) {
+    return false;
+  }
+}
+
 
