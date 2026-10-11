@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <!-- Soft Lavender Milk Background -->
+  <rect width="500" height="500" fill="#F8F4FA"/>
+
+  <!-- Subtle circular border -->
+  <circle cx="250" cy="250" r="236" fill="none" stroke="#2D2133" stroke-width="2" stroke-dasharray="5,5" opacity="0.2"/>
+
+  <!-- CUTE PUFFY CROCHET HEART & HOOK EMBLEM -->
+  <g transform="translate(0, -20)">
+    <!-- Big Puffy Pastel Lavender Yarn Ball -->
+    <circle cx="250" cy="210" r="85" fill="#E8D7F1" stroke="#2D2133" stroke-width="5"/>
+    
+    <!-- Puffy Wool Texture Lines -->
+    <path d="M 180,180 Q 250,150 320,180" fill="none" stroke="#2D2133" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M 170,215 Q 250,185 330,215" fill="none" stroke="#2D2133" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 180,250 Q 250,220 320,250" fill="none" stroke="#2D2133" stroke-width="4.5" stroke-linecap="round"/>
+
+    <!-- Puffy Pastel Pink Heart on Front -->
+    <path d="M 250,250 C 230,220 190,190 190,165 C 190,140 215,125 240,135 C 246,138 248,142 250,145 C 252,142 254,138 260,135 C 285,125 310,140 310,165 C 310,190 270,220 250,250 Z" 
+          fill="#F7CAD0" stroke="#2D2133" stroke-width="4.5" stroke-linejoin="round"/>
+
+    <!-- Y2K Style Sparkles (Twinkle Glints ✨) -->
+    <path d="M 150,130 Q 150,145 135,145 Q 150,145 150,160 Q 150,145 165,145 Q 150,145 150,130 Z" fill="#FFB703" stroke="#2D2133" stroke-width="2"/>
+    <path d="M 350,255 Q 350,268 338,268 Q 350,268 350,280 Q 350,268 362,268 Q 350,268 350,255 Z" fill="#9D4EDD" stroke="#2D2133" stroke-width="2"/>
+    <circle cx="340" cy="140" r="5" fill="#FFB703"/>
+    <circle cx="160" cy="270" r="4.5" fill="#9D4EDD"/>
+  </g>
+
+  <!-- Chunky Y2K Puffy Typography -->
+  <text x="250" y="385" text-anchor="middle" font-family="'Comfortaa', 'Fredoka One', 'Quicksand', sans-serif" font-size="50" font-weight="900" letter-spacing="0.22em" fill="#2D2133">
+    cocoon
+  </text>
+  <text x="250" y="418" text-anchor="middle" font-family="'Nunito', sans-serif" font-size="11" font-weight="800" letter-spacing="0.32em" fill="#9D4EDD">
+    KNITS &amp; CROCHET ✨
+  </text>
+</svg>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <!-- Pure Porcelain Linen Background -->
+  <rect width="500" height="500" fill="#FDFCFA"/>
+
+  <!-- Minimal Fine Border Frame -->
+  <circle cx="250" cy="250" r="236" fill="none" stroke="#1A1513" stroke-width="1.2" opacity="0.15"/>
+
+  <!-- THE INTERTWINED COCOON YARN KNOT EMBLEM -->
+  <g transform="translate(0, -20)">
+    <!-- Outer Interlocking Loops (Representing Two Infinite Yarn Stitches) -->
+    <path d="M 205,215 C 160,215 130,175 160,135 C 190,95 245,125 295,215 C 345,305 400,335 430,295 C 460,255 430,215 385,215" 
+          fill="none" stroke="#1A1513" stroke-width="6.5" stroke-linecap="round" opacity="0"/> <!-- guide hidden -->
+    
+    <!-- Left Loop -->
+    <ellipse cx="205" cy="210" rx="55" ry="68" fill="none" stroke="#1A1513" stroke-width="7" stroke-linecap="round" transform="rotate(-25 205 210)"/>
+    
+    <!-- Right Loop (Interlacing) -->
+    <ellipse cx="295" cy="210" rx="55" ry="68" fill="none" stroke="#1A1513" stroke-width="7" stroke-linecap="round" transform="rotate(25 295 210)"/>
+
+    <!-- Subtle Golden Thread Accent In Center Intersection -->
+    <path d="M 235,210 Q 250,195 265,210 Q 250,225 235,210 Z" fill="#C59B6D"/>
+
+    <!-- Small Single Needle Motif Accent -->
+    <line x1="210" y1="280" x2="290" y2="280" stroke="#C59B6D" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="210" cy="280" r="2.5" fill="#C59B6D"/>
+    <circle cx="290" cy="280" r="2.5" fill="#C59B6D"/>
+  </g>
+
+  <!-- High-End Luxury Typography (Celine / Loewe aesthetic) -->
+  <text x="250" y="375" text-anchor="middle" font-family="'Didot', 'Bodoni MT', 'Cinzel', 'Playfair Display', serif" font-size="54" font-weight="400" letter-spacing="0.38em" fill="#1A1513">
+    COCOON
+  </text>
+  
+  <text x="250" y="405" text-anchor="middle" font-family="'Montserrat', 'Helvetica', sans-serif" font-size="9" font-weight="700" letter-spacing="0.48em" fill="#1A1513" opacity="0.7">
+    STUDIO • MEHAK
+  </text>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <!-- Warm Sage & Linen Background -->
+  <rect width="500" height="500" fill="#F6F7F2"/>
+  
+  <!-- Subtle circular border -->
+  <circle cx="250" cy="250" r="236" fill="none" stroke="#2B3830" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.3"/>
+
+  <!-- BUTTERFLY & COCOON -->
+  <g transform="translate(0, -10)">
+    <!-- Butterfly Wings (Left Wing) -->
+    <path d="M 250,190 C 220,130 140,110 130,170 C 120,225 190,240 240,225" 
+          fill="#DFE8DE" stroke="#2B3830" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- Left Wing Stitch Pattern -->
+    <path d="M 170,165 Q 210,180 245,195" fill="none" stroke="#2B3830" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 155,195 Q 200,210 238,215" fill="none" stroke="#2B3830" stroke-width="2.5" stroke-linecap="round"/>
+    
+    <!-- Butterfly Wings (Right Wing) -->
+    <path d="M 250,190 C 280,130 360,110 370,170 C 380,225 310,240 260,225" 
+          fill="#DFE8DE" stroke="#2B3830" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- Right Wing Stitch Pattern -->
+    <path d="M 330,165 Q 290,180 255,195" fill="none" stroke="#2B3830" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 345,195 Q 300,210 262,215" fill="none" stroke="#2B3830" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Central Silk Cocoon Body -->
+    <ellipse cx="250" cy="210" rx="34" ry="58" fill="#F4EADB" stroke="#2B3830" stroke-width="4"/>
+    
+    <!-- Cocoon Diagonal Yarn Wraps -->
+    <path d="M 225,185 Q 250,175 275,192" fill="none" stroke="#688A72" stroke-width="3" stroke-linecap="round"/>
+    <path d="M 222,210 Q 250,198 278,218" fill="none" stroke="#2B3830" stroke-width="3" stroke-linecap="round"/>
+    <path d="M 226,235 Q 250,225 274,242" fill="none" stroke="#688A72" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- Butterfly Antennae (Curved into Crochet Hooks!) -->
+    <path d="M 246,155 Q 230,120 220,125 Q 215,135 228,138" fill="none" stroke="#2B3830" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 254,155 Q 270,120 280,125 Q 285,135 272,138" fill="none" stroke="#2B3830" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Subtle Botanical Branch Under Cocoon -->
+    <path d="M 180,285 Q 250,305 320,285" fill="none" stroke="#688A72" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="210" cy="293" r="3" fill="#688A72"/>
+    <circle cx="290" cy="293" r="3" fill="#688A72"/>
+  </g>
+
+  <!-- High-End Editorial Typography -->
+  <text x="250" y="380" text-anchor="middle" font-family="'Cormorant Garamond', 'Playfair Display', serif" font-size="44" font-weight="600" letter-spacing="0.32em" fill="#2B3830">
+    COCOON
+  </text>
+  <text x="250" y="410" text-anchor="middle" font-family="'Nunito Sans', sans-serif" font-size="9" font-weight="700" letter-spacing="0.4em" fill="#688A72">
+    BESPOKE CROCHET ATELIER
+  </text>
+</svg>

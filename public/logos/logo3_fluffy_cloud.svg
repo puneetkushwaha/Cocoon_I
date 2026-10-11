@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <!-- Pastel Cream Background -->
+  <rect width="500" height="500" fill="#FFFDF9"/>
+  
+  <!-- Subtle circular border -->
+  <circle cx="250" cy="250" r="236" fill="none" stroke="#3A2C27" stroke-width="2" stroke-dasharray="5,5" opacity="0.2"/>
+
+  <!-- CUTE FLUFFY CLOUD MASCOT -->
+  <g transform="translate(0, -10)">
+    <!-- Cloud Body (Pillowy bumps) -->
+    <path d="M 180,240 
+             C 140,240 130,190 170,175 
+             C 160,130 220,110 250,140 
+             C 280,110 340,130 330,175 
+             C 370,190 360,240 320,240 
+             Z" 
+          fill="#FFF" stroke="#3A2C27" stroke-width="4.5" stroke-linejoin="round"/>
+
+    <!-- Cute Smiling Face -->
+    <!-- Eyes (Happy Arcs) -->
+    <path d="M 215,185 Q 225,175 235,185" fill="none" stroke="#3A2C27" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M 265,185 Q 275,175 285,185" fill="none" stroke="#3A2C27" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- Cute Blushing Cheeks -->
+    <circle cx="205" cy="195" r="9" fill="#FFC1BD" opacity="0.8"/>
+    <circle cx="295" cy="195" r="9" fill="#FFC1BD" opacity="0.8"/>
+    <!-- Sweet Smile -->
+    <path d="M 242,198 Q 250,208 258,198" fill="none" stroke="#3A2C27" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- Tiny Knit Beanie on Cloud Head -->
+    <path d="M 225,125 Q 250,105 275,125 Q 250,118 225,125 Z" fill="#F4A261" stroke="#3A2C27" stroke-width="3.5"/>
+    <circle cx="250" cy="100" r="8" fill="#E76F51" stroke="#3A2C27" stroke-width="2.5"/>
+
+    <!-- Mini Yarn Balls Hanging Like Raindrops 🧶 -->
+    <g transform="translate(0, 10)">
+      <!-- Drop 1 -->
+      <path d="M 190,245 L 190,270" stroke="#3A2C27" stroke-width="2" stroke-dasharray="2,2"/>
+      <circle cx="190" cy="285" r="14" fill="#F4A261" stroke="#3A2C27" stroke-width="3"/>
+      <path d="M 183,280 Q 190,290 197,285" fill="none" stroke="#3A2C27" stroke-width="2"/>
+      
+      <!-- Drop 2 (Center Big) -->
+      <path d="M 250,245 L 250,285" stroke="#3A2C27" stroke-width="2" stroke-dasharray="2,2"/>
+      <circle cx="250" cy="305" r="18" fill="#E76F51" stroke="#3A2C27" stroke-width="3.5"/>
+      <path d="M 240,300 Q 250,312 260,302" fill="none" stroke="#3A2C27" stroke-width="2.5"/>
+
+      <!-- Drop 3 -->
+      <path d="M 310,245 L 310,270" stroke="#3A2C27" stroke-width="2" stroke-dasharray="2,2"/>
+      <circle cx="310" cy="285" r="14" fill="#2A9D8F" stroke="#3A2C27" stroke-width="3"/>
+      <path d="M 303,280 Q 310,290 317,285" fill="none" stroke="#3A2C27" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- Cute Bubble Typography -->
+  <text x="250" y="405" text-anchor="middle" font-family="'Comfortaa', 'Quicksand', sans-serif" font-size="44" font-weight="900" letter-spacing="0.22em" fill="#3A2C27">
+    cocoon
+  </text>
+  <text x="250" y="432" text-anchor="middle" font-family="'Nunito', sans-serif" font-size="10.5" font-weight="800" letter-spacing="0.3em" fill="#E76F51">
+    HANDMADE COZY STUFF ✨
+  </text>
+</svg>
