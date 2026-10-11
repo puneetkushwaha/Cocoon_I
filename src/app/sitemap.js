@@ -1,7 +1,7 @@
 import { PRODUCTS } from "@/data/products";
 
 export default function sitemap() {
-  const baseUrl = "https://gococoon.store";
+  const baseUrl = "https://www.gococoon.store";
 
   const staticPages = [
     {

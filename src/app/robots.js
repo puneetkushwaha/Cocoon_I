@@ -7,6 +7,6 @@ export default function robots() {
         disallow: ["/admin/", "/api/"],
       },
     ],
-    sitemap: "https://gococoon.store/sitemap.xml",
+    sitemap: "https://www.gococoon.store/sitemap.xml",
   };
 }

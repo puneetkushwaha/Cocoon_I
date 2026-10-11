@@ -22,12 +22,12 @@ export const metadata = {
     "bespoke crochet order",
     "crochet slow fashion",
   ],
-  authors: [{ name: "Mehak Agarwal", url: "https://gococoon.store" }],
+  authors: [{ name: "Mehak Agarwal", url: "https://www.gococoon.store" }],
   creator: "Mehak Agarwal",
   publisher: "COCOON",
-  metadataBase: new URL("https://gococoon.store"),
+  metadataBase: new URL("https://www.gococoon.store"),
   alternates: {
-    canonical: "https://gococoon.store",
+    canonical: "https://www.gococoon.store",
   },
   robots: {
     index: true,
@@ -54,7 +54,7 @@ export const metadata = {
   openGraph: {
     title: "COCOON | Handcrafted Crochet Boutique India",
     description: "Slow-crafted organic milk cotton crochet pieces made with care and patience.",
-    url: "https://gococoon.store",
+    url: "https://www.gococoon.store",
     siteName: "COCOON",
     images: [
       {
@@ -104,8 +104,8 @@ export default function RootLayout({ children }) {
               "@context": "https://schema.org",
               "@type": "OnlineStore",
               name: "COCOON",
-              url: "https://gococoon.store",
-              logo: "https://gococoon.store/icon.svg",
+              url: "https://www.gococoon.store",
+              logo: "https://www.gococoon.store/icon.svg",
               description: "Handcrafted Slow Crochet Essentials & Heirloom Boutique by Mehak Agarwal.",
               founder: {
                 "@type": "Person",
