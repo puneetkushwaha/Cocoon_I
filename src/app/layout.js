@@ -2,9 +2,44 @@ import { ReactLenis } from "lenis/react";
 import "./globals.css";
 
 export const metadata = {
-  title: "COCOON | Luxury Handcrafted Crochet Boutique",
-  description: "Discover slow-crafted organic milk cotton crochet essentials, handbags, apparel, and bespoke heirloom accessories handmade knot-by-knot.",
+  title: {
+    default: "COCOON | Handcrafted Crochet Boutique India",
+    template: "%s | COCOON",
+  },
+  description: "Discover slow-crafted organic milk cotton crochet essentials, handbags, hair accessories, waist belts, bandanas, and bespoke heirloom gifts handmade knot-by-knot in India by Mehak.",
+  keywords: [
+    "crochet",
+    "crochet bags India",
+    "handcrafted crochet boutique",
+    "COCOON crochet",
+    "gococoon",
+    "gococoon.store",
+    "organic milk cotton crochet",
+    "handmade gifts India",
+    "crochet bandanas",
+    "crochet hair ties",
+    "sunflower crochet backpack",
+    "bespoke crochet order",
+    "crochet slow fashion",
+  ],
+  authors: [{ name: "Mehak Agarwal", url: "https://gococoon.store" }],
+  creator: "Mehak Agarwal",
+  publisher: "COCOON",
   metadataBase: new URL("https://gococoon.store"),
+  alternates: {
+    canonical: "https://gococoon.store",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/icon.svg?v=3", type: "image/svg+xml" },
@@ -14,7 +49,7 @@ export const metadata = {
     apple: "/icon.svg?v=3",
   },
   openGraph: {
-    title: "COCOON | Luxury Handcrafted Crochet Boutique",
+    title: "COCOON | Handcrafted Crochet Boutique India",
     description: "Slow-crafted organic milk cotton crochet pieces made with care and patience.",
     url: "https://gococoon.store",
     siteName: "COCOON",
@@ -32,7 +67,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "COCOON | Handcrafted Crochet Boutique",
-    description: "100% Pure Organic Milk Cotton • Handmade with Care",
+    description: "100% Pure Organic Milk Cotton • Handmade with Care in India",
     images: ["/instagram-post.jpg"],
   },
 };
@@ -58,6 +93,30 @@ export default function RootLayout({ children }) {
         <link
           href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Nunito+Sans:wght@300;400;600;700;800&display=swap"
           rel="stylesheet"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "OnlineStore",
+              name: "COCOON",
+              url: "https://gococoon.store",
+              logo: "https://gococoon.store/icon.svg",
+              description: "Handcrafted Slow Crochet Essentials & Heirloom Boutique by Mehak Agarwal.",
+              founder: {
+                "@type": "Person",
+                name: "Mehak Agarwal",
+              },
+              contactPoint: {
+                "@type": "ContactPoint",
+                telephone: "+91-8171902255",
+                contactType: "Customer Service",
+                areaServed: "IN",
+                availableLanguage: ["English", "Hindi"],
+              },
+            }),
+          }}
         />
       </head>
       <body className="min-h-screen w-full max-w-full overflow-x-hidden overflow-x-clip flex flex-col bg-[#FAF6F0] text-[#221F1F] antialiased">
