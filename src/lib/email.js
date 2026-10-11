@@ -8,8 +8,8 @@ const getResendClient = () => {
   return new Resend(apiKey);
 };
 
-export const FROM_SENDER = process.env.RESEND_FROM_EMAIL || "COCOON <onboarding@dev2dev.online>";
-export const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "cocoon.crafts.official@gmail.com").trim().toLowerCase();
+export const FROM_SENDER = process.env.RESEND_FROM_EMAIL || "COCOON <orders@gococoon.store>";
+export const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "cocoon.by.mehak@gmail.com").trim().toLowerCase();
 
 /**
  * Standard Email Shell with COCOON Luxury Artisanal Branding
