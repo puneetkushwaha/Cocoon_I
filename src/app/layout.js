@@ -40,6 +40,9 @@ export const metadata = {
       "max-snippet": -1,
     },
   },
+  verification: {
+    google: "googleaa021cb5a04c5bfc",
+  },
   icons: {
     icon: [
       { url: "/icon.svg?v=3", type: "image/svg+xml" },
