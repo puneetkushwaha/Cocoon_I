@@ -53,11 +53,44 @@ export async function POST(request) {
       });
     }
 
-    // Otherwise, Normal Customer Sign-In is disabled
-    return NextResponse.json(
-      { success: false, error: "Only Admin portal login is permitted. Customers can shop directly as guests." },
-      { status: 403 }
+    // Otherwise, Normal Customer Sign-In
+    const isEmail = identifier.includes("@") || emailInput.includes("@");
+    const cleanEmail = emailInput || (isEmail ? identifier : "");
+    let cleanPhone = phoneInput || (!isEmail ? identifier : "");
+    if (cleanPhone.includes("@")) {
+      cleanPhone = "";
+    }
+
+    const customerUser = {
+      name: name || (cleanEmail ? cleanEmail.split("@")[0] : "Customer"),
+      email: cleanEmail,
+      phone: cleanPhone,
+      identifier: cleanEmail || cleanPhone || identifier,
+      role: "customer"
+    };
+
+    const sessionToken = createSessionToken(
+      { role: "customer", user: customerUser },
+      60 * 60 * 24 * 30
     );
+
+    cookieStore.set({
+      name: "cocoon_session",
+      value: sessionToken,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30 // 30 days
+    });
+
+    return NextResponse.json({
+      success: true,
+      role: "customer",
+      user: customerUser,
+      redirect: "/",
+      message: `Signed in successfully!`
+    });
   } catch (error) {
     console.error("Auth login error:", error);
     return NextResponse.json({ success: false, error: "Internal authentication error." }, { status: 500 });
