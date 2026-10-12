@@ -124,8 +124,8 @@ export default function Header({ onOpenCart, cartCountOverride }) {
           <div className="flex items-center justify-between h-20">
             
             {/* Brand Wordmark: Cocoon */}
-            <Link href="/" className="group flex items-center select-none py-1 text-left">
-              <span className="font-header text-3xl sm:text-4xl font-light tracking-[0.28em] uppercase text-[#231F20] group-hover:text-[#B06B5B] transition-colors duration-300 leading-none">
+            <Link href="/" className="group flex items-center select-none py-1 text-left shrink-0">
+              <span className="font-header text-2xl sm:text-4xl font-light tracking-[0.22em] sm:tracking-[0.28em] uppercase text-[#231F20] group-hover:text-[#B06B5B] transition-colors duration-300 leading-none">
                 COCOON
               </span>
             </Link>
@@ -146,8 +146,8 @@ export default function Header({ onOpenCart, cartCountOverride }) {
               </Link>
             </nav>
 
-            {/* Actions: Wishlist, Cart & Profile/Login (Desktop) + Minimal Menu (Mobile) */}
-            <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Actions: Wishlist, Cart, Profile/Login & Menu */}
+            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
               
               {/* Dedicated Full Wishlist Icon Button (Desktop Only) */}
               <Link
@@ -204,7 +204,7 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                 )}
               </Link>
 
-              {/* Customer Account / Login Link (Desktop & Mobile) */}
+              {/* Customer Account / Login Link (Desktop Only) */}
               {customerUser ? (
                 <Link
                   href="/profile"
@@ -215,8 +215,8 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                   <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#B06B5B] to-[#975647] text-white flex items-center justify-center font-header font-bold text-xs shadow-xs">
                     {(customerUser.name?.trim() || customerUser.email?.trim() || "C").charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#2C2623] group-hover:text-[#B06B5B] transition-colors max-w-[110px] truncate">
-                    {customerUser.name?.split(" ")[0] || "Account"}
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#2C2623] group-hover:text-[#B06B5B] transition-colors max-w-[100px] truncate">
+                    {customerUser.name?.split("@")[0]?.slice(0, 10) || "Account"}
                   </span>
                 </Link>
               ) : (
@@ -232,24 +232,35 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                 </Link>
               )}
 
-              {/* Mobile Standout Quick Login / Profile Pill */}
-              <Link
-                href={customerUser ? "/profile" : "/login"}
-                className="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#B06B5B] to-[#8C4537] text-white text-[11px] font-bold uppercase tracking-wider shadow-xs hover:scale-105 active:scale-95 transition border border-white/20"
-                title={customerUser ? "Account" : "Sign In"}
-                aria-label={customerUser ? "Account" : "Sign In"}
-              >
-                <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-                <span>{customerUser ? (customerUser.name?.split(" ")[0] || "Profile") : "Login"}</span>
-              </Link>
+              {/* Mobile Quick User Avatar / Login (Mobile Phone Only - Compact 32px, Never Overflows) */}
+              {customerUser ? (
+                <Link
+                  href="/profile"
+                  className="md:hidden w-8 h-8 rounded-full bg-gradient-to-tr from-[#B06B5B] to-[#8C4537] text-white flex items-center justify-center font-header font-bold text-xs shadow-xs border border-white/40 shrink-0"
+                  title={`Account: ${customerUser.name || "Customer"}`}
+                  aria-label="Account Profile"
+                >
+                  {(customerUser.name?.trim() || customerUser.email?.trim() || "C").charAt(0).toUpperCase()}
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className="md:hidden px-3 py-1.5 rounded-full bg-gradient-to-r from-[#B06B5B] to-[#8C4537] text-white text-[10px] font-bold uppercase tracking-wider shadow-xs shrink-0 flex items-center gap-1 border border-white/20"
+                  title="Sign In"
+                  aria-label="Sign In"
+                >
+                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                  <span>Login</span>
+                </Link>
+              )}
 
-              {/* Mobile Luxury Minimalist Menu Pill Button (Mobile Phone Only) */}
+              {/* Mobile Luxury Minimalist Menu Pill Button (Mobile Phone Only - ALWAYS VISIBLE) */}
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="md:hidden flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/85 backdrop-blur-md border border-[#EAE0D2] text-[#2C2623] hover:text-[#B06B5B] hover:border-[#B06B5B]/40 transition-all cursor-pointer active:scale-95 shadow-xs"
+                className="md:hidden flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-[#EAE0D2] text-[#2C2623] hover:text-[#B06B5B] hover:border-[#B06B5B]/40 transition-all cursor-pointer active:scale-95 shadow-xs shrink-0"
                 aria-label="Open boutique menu"
               >
                 <span className="text-[10px] font-sans font-bold tracking-[0.22em] uppercase">
