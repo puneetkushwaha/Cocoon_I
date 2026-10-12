@@ -204,33 +204,52 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                 )}
               </Link>
 
-              {/* Customer Account / Login Link (Desktop Only) */}
+              {/* Customer Account / Login Link (Desktop & Mobile) */}
               {customerUser ? (
                 <Link
                   href="/profile"
-                  className="hidden md:flex w-10 h-10 rounded-full bg-[#B06B5B]/90 backdrop-blur-md hover:bg-[#975647] text-white items-center justify-center font-bold text-sm shadow-xs transition-all hover:scale-105 cursor-pointer border border-white/30"
+                  className="hidden md:flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full bg-white/90 hover:bg-white text-[#2C2623] border border-[#B06B5B]/30 shadow-xs hover:shadow-md transition-all hover:scale-105 cursor-pointer group"
                   title={`My Account (${customerUser.name || "Customer"})`}
                   aria-label="My Account"
                 >
-                  <span className="leading-none font-header">
-                    {(customerUser.name?.trim() || customerUser.email?.trim() || "P").charAt(0).toUpperCase()}
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#B06B5B] to-[#975647] text-white flex items-center justify-center font-header font-bold text-xs shadow-xs">
+                    {(customerUser.name?.trim() || customerUser.email?.trim() || "C").charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#2C2623] group-hover:text-[#B06B5B] transition-colors max-w-[110px] truncate">
+                    {customerUser.name?.split(" ")[0] || "Account"}
                   </span>
                 </Link>
               ) : (
                 <Link
                   href="/login"
-                  className="hidden md:flex items-center px-4 py-2 rounded-full bg-white/50 backdrop-blur-md hover:bg-white/80 text-[#2C2623] hover:text-[#B06B5B] border border-white/70 text-xs font-bold uppercase tracking-wider transition-all shadow-xs"
-                  title="Sign In"
+                  className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#B06B5B] via-[#9F5647] to-[#8C4537] hover:from-[#9F5647] hover:to-[#7A3629] text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-[#B06B5B]/30 hover:shadow-lg hover:shadow-[#B06B5B]/40 hover:scale-105 active:scale-95 transition-all duration-200 border border-white/30"
+                  title="Sign In to Cocoon"
                 >
+                  <svg className="w-3.5 h-3.5 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
                   <span>Login</span>
                 </Link>
               )}
+
+              {/* Mobile Standout Quick Login / Profile Pill */}
+              <Link
+                href={customerUser ? "/profile" : "/login"}
+                className="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#B06B5B] to-[#8C4537] text-white text-[11px] font-bold uppercase tracking-wider shadow-xs hover:scale-105 active:scale-95 transition border border-white/20"
+                title={customerUser ? "Account" : "Sign In"}
+                aria-label={customerUser ? "Account" : "Sign In"}
+              >
+                <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                <span>{customerUser ? (customerUser.name?.split(" ")[0] || "Profile") : "Login"}</span>
+              </Link>
 
               {/* Mobile Luxury Minimalist Menu Pill Button (Mobile Phone Only) */}
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="md:hidden flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/75 backdrop-blur-md border border-[#EAE0D2] text-[#2C2623] hover:text-[#B06B5B] hover:border-[#B06B5B]/40 transition-all cursor-pointer active:scale-95 shadow-xs"
+                className="md:hidden flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/85 backdrop-blur-md border border-[#EAE0D2] text-[#2C2623] hover:text-[#B06B5B] hover:border-[#B06B5B]/40 transition-all cursor-pointer active:scale-95 shadow-xs"
                 aria-label="Open boutique menu"
               >
                 <span className="text-[10px] font-sans font-bold tracking-[0.22em] uppercase">
@@ -469,17 +488,24 @@ export default function Header({ onOpenCart, cartCountOverride }) {
               <Link
                 href={customerUser ? "/profile" : "/login"}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full p-3.5 rounded-2xl bg-[#231F20] hover:bg-[#B06B5B] text-white flex items-center justify-between transition-colors shadow-xs"
+                className="w-full p-4 rounded-2xl bg-gradient-to-r from-[#B06B5B] via-[#9F5647] to-[#8C4537] hover:from-[#9F5647] hover:to-[#7A3629] text-white flex items-center justify-between transition-all shadow-md shadow-[#B06B5B]/25 border border-white/20 active:scale-[0.99]"
               >
-                <div className="flex items-center gap-2.5">
-                  <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-xs font-bold border border-white/30">
                     {(customerUser?.name?.trim() || customerUser?.email?.trim() || "C").charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-xs font-sans font-bold uppercase tracking-wider">
-                    {customerUser ? `Account (${customerUser.name || "Customer"})` : "Sign In / Register"}
-                  </span>
+                  <div className="text-left">
+                    <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-rose-100 block">
+                      {customerUser ? "Signed In Customer" : "Studio Access"}
+                    </span>
+                    <span className="text-xs font-sans font-bold text-white leading-tight">
+                      {customerUser ? `My Account (${customerUser.name || "Customer"})` : "Login / Register"}
+                    </span>
+                  </div>
                 </div>
-                <span className="text-sm font-sans font-bold">&rarr;</span>
+                <span className="px-3 py-1 rounded-full bg-white text-[#B06B5B] text-xs font-black tracking-wider shadow-xs">
+                  {customerUser ? "View" : "Sign In"} &rarr;
+                </span>
               </Link>
             </div>
 

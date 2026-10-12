@@ -260,18 +260,50 @@ function LoginForm() {
                 <p className="text-xs font-serif text-stone-500 leading-relaxed font-light">
                   Please enter your credentials to open your atelier portal and view order dispatches.
                 </p>
+
+                {/* Mode Switcher Tabs (Sign In vs Create Account) */}
+                <div className="grid grid-cols-2 p-1 bg-[#FAF4ED] rounded-xl border border-[#EAE0D2] mt-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomerSignUp(false);
+                      setErrorMsg("");
+                      setSuccessMsg("");
+                    }}
+                    className={`py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                      !isCustomerSignUp
+                        ? "bg-white text-[#2C2623] shadow-xs"
+                        : "text-stone-500 hover:text-stone-800"
+                    }`}
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomerSignUp(true);
+                      setErrorMsg("");
+                      setSuccessMsg("");
+                    }}
+                    className={`py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                      isCustomerSignUp
+                        ? "bg-gradient-to-r from-[#B06B5B] to-[#975647] text-white shadow-xs"
+                        : "text-stone-500 hover:text-stone-800"
+                    }`}
+                  >
+                    Create Account
+                  </button>
+                </div>
               </div>
 
               {errorMsg && (
                 <div className="mb-4 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold animate-fadeIn flex items-center gap-2">
-                  
                   <span>{errorMsg}</span>
                 </div>
               )}
 
               {successMsg && (
                 <div className="mb-4 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold animate-fadeIn flex items-center gap-2">
-                  
                   <span>{successMsg}</span>
                 </div>
               )}
@@ -380,15 +412,18 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 rounded-xl bg-[#221F1F] hover:bg-[#B06B5B] text-white text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-60 cursor-pointer flex items-center justify-center gap-2 mt-2"
+                  className="w-full py-4 rounded-xl bg-gradient-to-r from-[#B06B5B] via-[#9F5647] to-[#8C4537] hover:from-[#9F5647] hover:to-[#7A3629] text-white text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-md shadow-[#B06B5B]/30 hover:shadow-xl hover:shadow-[#B06B5B]/40 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60 cursor-pointer flex items-center justify-center gap-2 mt-3 border border-white/20"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
                       <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
-                      <span>{isCustomerSignUp ? "Creating Account..." : "Verifying..."}</span>
+                      <span>{isCustomerSignUp ? "Creating Account..." : "Signing in..."}</span>
                     </span>
                   ) : (
-                    <span>{isCustomerSignUp ? "Create Account & Sign In →" : "Sign In →"}</span>
+                    <span className="flex items-center gap-1.5">
+                      <span>{isCustomerSignUp ? "Create Account & Sign In" : "Sign In to Cocoon"}</span>
+                      <span className="text-sm">→</span>
+                    </span>
                   )}
                 </button>
 
