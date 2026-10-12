@@ -152,7 +152,12 @@ export default function Footer() {
                 Join
               </button>
             </form>
-            <p className="text-[11px] text-[#2C2623]/55 italic font-serif">Gentle notes only, no spam ever.</p>
+            <p className="text-[11px] text-[#2C2623]/55 italic font-serif">
+              Gentle notes only, no spam ever. By subscribing you agree to our{" "}
+              <Link href="/privacy" className="underline hover:text-[#B06B5B]">
+                Privacy Policy
+              </Link>.
+            </p>
           </div>
 
         </div>

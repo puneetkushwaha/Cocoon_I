@@ -1213,6 +1213,13 @@ export default function Preset4() {
               <p className="text-[11px] text-center text-[#2C2623]/60 font-sans">
                 No advance fee required to inquire. Mehak reviews all references and responds on WhatsApp within 24 hours.
               </p>
+              <p className="text-[10px] text-center text-stone-400 font-sans">
+                By submitting this form, you consent to our{" "}
+                <a href="/privacy" target="_blank" className="underline hover:text-[#B06B5B]">
+                  Privacy Policy
+                </a>{" "}
+                under India&apos;s DPDP Act 2023.
+              </p>
 
             </div>
 
