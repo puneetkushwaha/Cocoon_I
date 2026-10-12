@@ -202,14 +202,21 @@ export default function StandaloneShopPage() {
 
     // 1. DIRECT UPI PAYMENT FLOW
     if (paymentMethod === "upi") {
+      const cleanUtr = utrNumber.trim().replace(/[^a-zA-Z0-9]/g, "");
+      if (!cleanUtr || cleanUtr.length < 6) {
+        setIsSubmitting(false);
+        triggerToast("Please enter a valid 12-digit UPI Reference / UTR Number to confirm payment");
+        return;
+      }
+
       try {
         const upiOrder = {
           ...baseOrderPayload,
           paymentMethod: "UPI",
-          utr: utrNumber.trim() || null,
-          paymentStatus: utrNumber.trim() ? `Paid via UPI (UTR: ${utrNumber.trim()})` : "UPI Payment Submitted (Awaiting Verification)",
+          utr: cleanUtr,
+          paymentStatus: `Paid via UPI (UTR: ${cleanUtr})`,
           status: "Processing",
-          notes: baseOrderPayload.notes + (utrNumber.trim() ? ` • UTR: ${utrNumber.trim()}` : "")
+          notes: baseOrderPayload.notes + ` • UTR: ${cleanUtr}`
         };
 
         const existing = STORE.getOrders();
@@ -554,7 +561,18 @@ export default function StandaloneShopPage() {
               {/* Direct UPI Payment Details (When Selected) */}
               {paymentMethod === "upi" && (
                 <div className="pt-3 border-t border-emerald-200/80 space-y-3 animate-fadeIn text-xs">
-                  {/* Dynamic QR Code & 1-Tap Mobile Button */}
+                  {/* Phone View: 1-Tap Mobile Button */}
+                  <div className="block md:hidden">
+                    <a
+                      href={`upi://pay?pa=8171902255@ibl&pn=COCOON%20STUDIO&am=${grandTotal}&cu=INR`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-700 to-teal-800 hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider transition shadow-xs"
+                    >
+                      <span>📲 Tap to Open UPI App & Pay ₹{grandTotal}</span>
+                    </a>
+                  </div>
+
+                  {/* Laptop / Desktop View: Dynamic QR Code & UPI Copy */}
                   <div className="bg-white p-3.5 rounded-xl border border-emerald-200 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
                     <div className="shrink-0 bg-white p-1 rounded-lg border border-stone-200 shadow-xs">
                       <img
@@ -583,25 +601,21 @@ export default function StandaloneShopPage() {
                           {copiedUpi ? "✓ Copied" : "Copy UPI"}
                         </button>
                       </div>
-
-                      {/* 1-Tap Mobile App Link */}
-                      <a
-                        href={`upi://pay?pa=8171902255@ibl&pn=COCOON%20STUDIO&am=${grandTotal}&cu=INR`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-xs"
-                      >
-                        <span>📲 Tap to Pay ₹{grandTotal} in UPI App</span>
-                      </a>
+                      <p className="text-[11px] text-stone-600 font-serif leading-relaxed">
+                        Scan from laptop or click open UPI app on phone. After payment, enter your 12-digit UTR below.
+                      </p>
                     </div>
                   </div>
 
-                  {/* 12-Digit UTR Input */}
+                  {/* 12-Digit UTR Input (Mandatory) */}
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-stone-800 block">
-                      UPI Ref / UTR / Transaction ID (Optional or enter after payment):
+                    <label className="text-[11px] font-bold text-stone-800 flex items-center justify-between">
+                      <span>UPI Ref / UTR / Transaction ID (Mandatory) *</span>
+                      <span className="text-[10px] text-[#B06B5B] font-mono">12 Digits</span>
                     </label>
                     <input
                       type="text"
+                      required
                       maxLength={22}
                       value={utrNumber}
                       onChange={(e) => setUtrNumber(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
@@ -609,7 +623,7 @@ export default function StandaloneShopPage() {
                       className="w-full bg-white border border-emerald-300 rounded-xl px-3.5 py-2 text-xs font-mono text-stone-900 focus:outline-none focus:border-emerald-600"
                     />
                     <p className="text-[10px] text-stone-500">
-                      Can also share screenshot/UTR directly on WhatsApp after placing order.
+                      Find this 12-digit reference number in your UPI app receipt after making the payment.
                     </p>
                   </div>
                 </div>

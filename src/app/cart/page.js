@@ -478,7 +478,8 @@ export default function CartPage() {
       } catch (e) {}
 
       const orderId = generateOrderId();
-      const isOnline = chosenMethod.includes("Razorpay") || chosenMethod.includes("Online") || chosenMethod === "UPI";
+      const isUpiOrder = chosenMethod === "UPI" || chosenMethod.includes("UPI");
+      const isCodOrder = chosenMethod === "COD";
       const newOrder = {
         id: orderId,
         date: new Date().toISOString(),
@@ -495,17 +496,16 @@ export default function CartPage() {
           imgUrl: i.imgUrl
         })),
         totalAmount: grandTotal,
-        paymentMethod: chosenMethod,
-        utr: paymentId || (isOnline ? "Razorpay-Verified" : null),
-        paymentStatus: isOnline
-          ? `Paid via Online Payment (Payment ID: ${paymentId || "Verified"})`
+        paymentMethod: isUpiOrder ? "UPI" : "COD",
+        utr: isUpiOrder ? (paymentId || utrNumber.trim() || null) : null,
+        paymentStatus: isUpiOrder
+          ? `Paid via UPI (UTR: ${paymentId || utrNumber.trim()})`
           : "Pending (Pay on Delivery - Email Verified)",
         status: "Processing",
         notes: (customerForm.notes ? customerForm.notes.trim() + " • " : "") +
           (appliedCoupon ? `Coupon: ${appliedCoupon.code} (-₹${couponDiscount}) • ` : "") +
-          (paymentId ? `Razorpay ID: ${paymentId} • ` : "") +
-          (isOnline
-            ? `Paid via Razorpay Secured Gateway (Verified)`
+          (isUpiOrder
+            ? `Direct UPI to 8171902255@ibl [UTR: ${paymentId || utrNumber.trim()}]`
             : `Cash on Delivery (Email OTP Verified)`),
         timestamp: Date.now()
       };
@@ -568,115 +568,17 @@ export default function CartPage() {
       return;
     }
 
-    // ONLINE RAZORPAY PAYMENT FLOW (UPI, Cards, NetBanking, Wallets)
-    setIsSubmittingOrder(true);
-    triggerToast("Opening secure payment gateway...");
-
-    // Dynamically load Razorpay SDK
-    const isLoaded = await new Promise((resolve) => {
-      if (typeof window === "undefined") return resolve(false);
-      if (window.Razorpay) return resolve(true);
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-
-    if (!isLoaded) {
-      triggerToast("Failed to load payment gateway. Please check your internet connection.");
-      setIsSubmittingOrder(false);
-      return;
-    }
-
-    try {
-      // 1. Create Order on Razorpay Server
-      const res = await fetch("/api/payment/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: grandTotal,
-          currency: "INR",
-          receipt: `rcpt_${Date.now()}`,
-          notes: {
-            customerName: customerForm.name,
-            customerPhone: customerForm.phone,
-            customerEmail: customerForm.email,
-            itemCount: cart.length
-          }
-        })
-      });
-
-      const orderData = await res.json();
-      const razorpayOrderId = orderData.id || orderData.orderId;
-      if (!res.ok || !razorpayOrderId) {
-        throw new Error(orderData.error || "Failed to initiate payment");
+    // DIRECT UPI PAYMENT FLOW (Mobile Deep-Link & Desktop QR with Mandatory UTR)
+    if (paymentMethod === "upi") {
+      const cleanUtr = utrNumber.trim().replace(/[^a-zA-Z0-9]/g, "");
+      if (!cleanUtr || cleanUtr.length < 6) {
+        triggerToast("Please enter a valid 12-digit UPI Reference / UTR Number to confirm payment");
+        return;
       }
 
-      // 2. Open Razorpay Checkout Modal
-      const options = {
-        key: orderData.keyId,
-        amount: orderData.amount,
-        currency: orderData.currency,
-        name: "COCOON Handcrafted Studio",
-        description: `Order Payment for ${cart.length} item(s)`,
-        image: "https://www.gococoon.store/logo.png",
-        order_id: razorpayOrderId,
-        prefill: {
-          name: customerForm.name,
-          email: customerForm.email || "",
-          contact: customerForm.phone
-        },
-        theme: {
-          color: "#B06B5B"
-        },
-        handler: async function (response) {
-          // 3. Verify Payment Signature on Server
-          try {
-            triggerToast("Verifying payment...");
-            const verifyRes = await fetch("/api/payment/verify", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature
-              })
-            });
-
-            const verifyData = await verifyRes.json();
-            if (!verifyRes.ok || !verifyData.verified) {
-              triggerToast("Payment verification failed. Please contact support.");
-              setIsSubmittingOrder(false);
-              return;
-            }
-
-            // 4. Payment Verified! Finalize and record order
-            await executeOrderFinalization("Online Payment (Razorpay)", response.razorpay_payment_id);
-          } catch (err) {
-            console.error("Verification error:", err);
-            triggerToast("Payment verification failed. Please contact support.");
-            setIsSubmittingOrder(false);
-          }
-        },
-        modal: {
-          ondismiss: function () {
-            setIsSubmittingOrder(false);
-            triggerToast("Payment cancelled. Your order was not placed.");
-          }
-        }
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.on("payment.failed", function (resp) {
-        setIsSubmittingOrder(false);
-        triggerToast(resp.error?.description || "Payment failed. Please try again.");
-      });
-      rzp.open();
-    } catch (err) {
-      console.error("Payment initiation error:", err);
-      triggerToast(err.message || "Failed to start payment. Please try again.");
-      setIsSubmittingOrder(false);
+      setIsSubmittingOrder(true);
+      await executeOrderFinalization("UPI", cleanUtr);
+      return;
     }
   };
 
@@ -1301,7 +1203,7 @@ export default function CartPage() {
                   </div>
 
                   <div className="grid grid-cols-1 gap-2.5">
-                    {/* Option 1: Instant Online Payment (Razorpay UPI, Cards, NetBanking) */}
+                    {/* Option 1: Direct UPI Payment (Mobile 1-Tap App & Laptop QR Code) */}
                     <div
                       onClick={() => setPaymentMethod("upi")}
                       className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
@@ -1318,37 +1220,89 @@ export default function CartPage() {
                         </div>
                         <div>
                           <p className="text-xs font-bold text-[#2C2623] flex items-center gap-1.5 flex-wrap">
-                            <span>UPI & Card Payment</span>
-                            <span className="text-[9px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded">Instant</span>
+                            <span>Direct UPI Payment</span>
+                            <span className="text-[9px] font-bold uppercase tracking-wider bg-purple-100 text-purple-900 px-1.5 py-0.2 rounded">Zero Gateway Fee</span>
                             {isOnlineFreeDelivery && (
                               <span className="text-[9px] font-bold uppercase tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-xs">
                                 FREE Delivery (₹0)
                               </span>
                             )}
                           </p>
-                          <p className="text-[10px] text-stone-500 font-serif">GPay • PhonePe • Paytm • Cards • NetBanking</p>
+                          <p className="text-[10px] text-stone-500 font-serif">GPay • PhonePe • Paytm • BHIM • Cred UPI</p>
                         </div>
                       </div>
                       <span className="text-[10px] font-bold text-[#B06B5B] font-mono">₹{grandTotal}</span>
                     </div>
 
-                    {/* Online Gateway Info Banner (Shown when UPI/Online is selected) */}
+                    {/* Direct UPI Box: 1-Tap Button for Phone + QR Code for Laptop + Mandatory UTR */}
                     {paymentMethod === "upi" && (
-                      <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E8DFC9] space-y-2 animate-fadeIn text-left">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs">🔒</span>
-                          <span className="text-xs font-bold text-stone-800 font-serif">100% Secured by Razorpay</span>
-                          <span className="text-[9px] font-semibold bg-[#EFE8DD] text-stone-600 px-1.5 py-0.5 rounded ml-auto">Encrypted 256-Bit</span>
+                      <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#E8DFC9] space-y-3.5 animate-fadeIn text-left">
+                        {/* 1. Mobile Phone View: 1-Tap UPI Open Button */}
+                        <div className="block md:hidden space-y-2">
+                          <a
+                            href={`upi://pay?pa=8171902255@ibl&pn=COCOON%20STUDIO&am=${grandTotal}&cu=INR&tn=Cocoon%20Order`}
+                            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#2C2623] to-[#1A1715] hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
+                          >
+                            <span>📱 Tap to Open UPI App & Pay ₹{grandTotal}</span>
+                          </a>
+                          <p className="text-[10px] text-stone-500 text-center font-serif">
+                            Opens Google Pay, PhonePe, Paytm, BHIM, or any installed UPI app automatically.
+                          </p>
                         </div>
-                        <p className="text-[11px] text-stone-600 font-serif leading-relaxed">
-                          Pay directly with any UPI App (Google Pay, PhonePe, Paytm, BHIM) or Credit/Debit Card. Your order will be confirmed immediately once payment succeeds.
-                        </p>
-                        <div className="flex items-center gap-2 pt-1 flex-wrap">
-                          <span className="text-[10px] bg-white border border-stone-200 px-2 py-0.5 rounded font-mono font-bold text-stone-700">UPI</span>
-                          <span className="text-[10px] bg-white border border-stone-200 px-2 py-0.5 rounded font-mono font-bold text-stone-700">GPay</span>
-                          <span className="text-[10px] bg-white border border-stone-200 px-2 py-0.5 rounded font-mono font-bold text-stone-700">PhonePe</span>
-                          <span className="text-[10px] bg-white border border-stone-200 px-2 py-0.5 rounded font-mono font-bold text-stone-700">Paytm</span>
-                          <span className="text-[10px] bg-white border border-stone-200 px-2 py-0.5 rounded font-mono font-bold text-stone-700">Cards</span>
+
+                        {/* 2. Laptop / Desktop View (and fallback for phone): Dynamic QR Code + UPI ID Copy */}
+                        <div className="bg-white p-3.5 rounded-2xl border border-stone-200 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                          <div className="shrink-0 bg-white p-1.5 rounded-xl border border-stone-200 shadow-2xs">
+                            <img
+                              src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(
+                                `upi://pay?pa=8171902255@ibl&pn=COCOON%20STUDIO&am=${grandTotal}&cu=INR&tn=Cocoon%20Order`
+                              )}`}
+                              alt="COCOON Studio UPI QR Code"
+                              className="w-32 h-32 mx-auto rounded-lg"
+                            />
+                            <span className="text-[9px] text-stone-500 font-mono block mt-1">Scan via any UPI App</span>
+                          </div>
+
+                          <div className="flex-1 space-y-2.5 w-full">
+                            <div>
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">Cocoon Official UPI ID:</span>
+                              <div className="flex items-center justify-center sm:justify-start gap-2 mt-0.5">
+                                <span className="font-mono text-xs font-bold text-stone-900 bg-stone-100 px-2.5 py-1 rounded-lg border border-stone-300">
+                                  8171902255@ibl
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={handleCopyUpi}
+                                  className="px-2.5 py-1 rounded-lg bg-stone-800 hover:bg-black text-white text-[11px] font-semibold transition cursor-pointer"
+                                >
+                                  {copiedUpi ? "✓ Copied" : "Copy"}
+                                </button>
+                              </div>
+                            </div>
+                            <p className="text-[11px] text-stone-600 font-serif leading-relaxed">
+                              Scan QR code from phone screen or click open UPI app. After payment, enter your 12-digit UTR reference number below.
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* 3. Mandatory UTR Number Input (Phone and Laptop Dono me) */}
+                        <div className="space-y-1.5 pt-1 border-t border-[#EAE1D3]">
+                          <label className="text-xs font-bold text-stone-800 flex items-center justify-between">
+                            <span>UPI Ref / UTR / Transaction ID (Mandatory) *</span>
+                            <span className="text-[10px] text-[#B06B5B] font-mono font-normal">12 Digits</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            maxLength={22}
+                            value={utrNumber}
+                            onChange={(e) => setUtrNumber(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
+                            placeholder="Enter 12-digit UTR No. (e.g. 429381749281)"
+                            className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] focus:ring-1 focus:ring-[#B06B5B]/30 rounded-xl px-3.5 py-2.5 text-xs font-mono text-stone-900 focus:outline-none"
+                          />
+                          <p className="text-[10px] text-stone-500 font-serif">
+                            You get this 12-digit UTR / Reference ID in GPay/PhonePe/Paytm after payment is completed.
+                          </p>
                         </div>
                       </div>
                     )}
@@ -1416,16 +1370,16 @@ export default function CartPage() {
                     </svg>
                     <span>
                       {isSubmittingOrder
-                        ? "Opening Payment Window..."
+                        ? "Placing Order..."
                         : (paymentMethod === "upi"
-                            ? `🔒 Pay ₹${grandTotal} via UPI / Card & Confirm Order →`
+                            ? `Confirm UPI Order (₹${grandTotal}) →`
                             : `Confirm COD Order (₹${grandTotal}) →`)}
                     </span>
                   </button>
 
                   <p className="text-[11px] text-center text-stone-500 font-serif leading-tight">
                     {paymentMethod === "upi"
-                      ? `Secure Razorpay payment gateway • Order confirms immediately after payment.`
+                      ? `Direct UPI transfer to 8171902255@ibl • Enter UTR number above to confirm.`
                       : `Cash payable upon delivery: ₹${grandTotal}. Order confirmation sent to WhatsApp & Email.`}
                   </p>
                 </div>

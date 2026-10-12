@@ -443,6 +443,14 @@ export default function ProductDetailPage({ params }) {
     const totalAmount = product.price * quantity;
     const isUpi = paymentMethod === "upi";
 
+    if (isUpi) {
+      const cleanUtr = utrNumber.trim().replace(/[^a-zA-Z0-9]/g, "");
+      if (!cleanUtr || cleanUtr.length < 6) {
+        triggerToast("Please enter a valid 12-digit UPI Reference / UTR Number to confirm payment");
+        return;
+      }
+    }
+
     try {
       const newOrder = {
         id: generateOrderId(),
@@ -1399,19 +1407,25 @@ export default function ProductDetailPage({ params }) {
               {/* Direct UPI Box */}
               {paymentMethod === "upi" && (
                 <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#E8DFC9] space-y-2 text-left animate-fadeIn">
-                  <a
-                    href={`upi://pay?pa=8171902255@ibl&pn=COCOON%20Studio&am=${product.price * quantity}&cu=INR&tn=Order%20Payment`}
-                    className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-[#2C2623] hover:bg-[#1A1715] text-white text-[11px] font-bold tracking-wide uppercase transition active:scale-[0.98]"
-                  >
-                    <span>📱 Open UPI App to Pay ₹{product.price * quantity}</span>
-                  </a>
+                  {/* Phone View: 1-Tap UPI Open Button */}
+                  <div className="block md:hidden">
+                    <a
+                      href={`upi://pay?pa=8171902255@ibl&pn=COCOON%20Studio&am=${product.price * quantity}&cu=INR&tn=Order%20Payment`}
+                      className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-[#2C2623] hover:bg-[#1A1715] text-white text-[11px] font-bold tracking-wide uppercase transition active:scale-[0.98]"
+                    >
+                      <span>📱 Open UPI App to Pay ₹{product.price * quantity}</span>
+                    </a>
+                  </div>
 
                   <div className="flex items-center gap-2 pt-1">
-                    <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(`upi://pay?pa=8171902255@ibl&pn=COCOON Studio&am=${product.price * quantity}&cu=INR&tn=Order Payment`)}`}
-                      alt="UPI QR"
-                      className="w-20 h-20 rounded-lg border border-stone-200 p-1 bg-white shrink-0"
-                    />
+                    <div className="shrink-0 bg-white p-1 rounded-lg border border-stone-200">
+                      <img
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(`upi://pay?pa=8171902255@ibl&pn=COCOON Studio&am=${product.price * quantity}&cu=INR&tn=Order Payment`)}`}
+                        alt="UPI QR"
+                        className="w-20 h-20 rounded-lg"
+                      />
+                      <span className="text-[8px] text-stone-500 font-mono block text-center mt-0.5">Scan via UPI App</span>
+                    </div>
                     <div className="flex-1 space-y-1.5 text-xs">
                       <div className="flex items-center justify-between bg-white px-2 py-1 rounded-lg border border-stone-200">
                         <span className="font-mono text-[11px] font-bold text-stone-800">8171902255@ibl</span>
@@ -1423,14 +1437,18 @@ export default function ProductDetailPage({ params }) {
                           {copiedUpi ? "Copied!" : "Copy"}
                         </button>
                       </div>
-                      <input
-                        type="text"
-                        maxLength={16}
-                        value={utrNumber}
-                        onChange={(e) => setUtrNumber(e.target.value.trim())}
-                        placeholder="12-digit UTR No. (Optional)"
-                        className="w-full bg-white border border-stone-200 rounded-lg px-2.5 py-1 text-xs font-mono"
-                      />
+                      <div>
+                        <input
+                          type="text"
+                          required
+                          maxLength={22}
+                          value={utrNumber}
+                          onChange={(e) => setUtrNumber(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
+                          placeholder="12-digit UTR / Ref No. *"
+                          className="w-full bg-white border border-stone-200 focus:border-[#B06B5B] rounded-lg px-2.5 py-1 text-xs font-mono"
+                        />
+                        <span className="text-[9px] text-stone-500 block mt-0.5">Mandatory for UPI payment verification</span>
+                      </div>
                     </div>
                   </div>
                 </div>
