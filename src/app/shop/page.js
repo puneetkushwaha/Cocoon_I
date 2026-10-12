@@ -306,13 +306,13 @@ export default function StandaloneShopPage() {
           <div className="max-w-2xl mx-auto px-4 pt-4">
             <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#F7EBE8] via-[#FAF3ED] to-[#F1E9DF] border border-[#E8D4CC] shadow-xs text-center space-y-1.5">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#B06B5B] text-white text-[10px] font-bold uppercase tracking-wider shadow-2xs">
-                Limited Time Offer
+                Handcrafted Crochet Vault
               </div>
-              <h2 className="text-base sm:text-lg font-header font-bold text-[#2C2623]">
-                Instant 10% OFF on Online Payments
-              </h2>
+              <h1 className="text-xl sm:text-2xl font-header font-bold text-[#2C2623]">
+                Handcrafted Slow Crochet Essentials & Drops
+              </h1>
               <p className="text-xs text-stone-600 font-serif leading-relaxed">
-                Pay online via UPI, Cards, or NetBanking to claim <strong>flat 10% off</strong> on your order. Cash on Delivery (COD) is also available across India!
+                Explore slow-knitted made-to-order treasures. Pay online via UPI or Cards to get Free Delivery across India!
               </p>
             </div>
           </div>

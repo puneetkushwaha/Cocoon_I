@@ -46,6 +46,12 @@ export default function sitemap() {
       changeFrequency: "monthly",
       priority: 0.3,
     },
+    {
+      url: `${baseUrl}/cookies`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.3,
+    },
   ];
 
   const productPages = PRODUCTS.map((product) => ({

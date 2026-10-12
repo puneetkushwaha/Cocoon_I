@@ -4,7 +4,7 @@ export default function robots() {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/"],
+        disallow: ["/admin/", "/api/", "/cart", "/profile"],
       },
     ],
     sitemap: "https://www.gococoon.store/sitemap.xml",

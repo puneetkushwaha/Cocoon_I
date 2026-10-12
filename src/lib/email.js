@@ -361,7 +361,7 @@ export async function sendOrderStatusEmail(order, newStatus) {
       <p style="font-size: 13px; color: #5C524B; line-height: 1.5; margin: 0 0 16px 0;">
         We hope you adore your handcrafted heirloom. Share your feedback with a quick photo or video review, and receive an instant <strong>flat 15% OFF discount voucher</strong> on your next purchase!
       </p>
-      <a href="https://cocoon-psi.vercel.app/review?orderId=${encodeURIComponent(order.id)}&productId=${encodeURIComponent(order.items?.[0]?.id || '')}&productName=${encodeURIComponent(order.items?.[0]?.name || '')}&name=${encodeURIComponent(order.customerName || '')}&phone=${encodeURIComponent(order.customerPhone || '')}" 
+      <a href="https://www.gococoon.store/review?orderId=${encodeURIComponent(order.id)}&productId=${encodeURIComponent(order.items?.[0]?.id || '')}&productName=${encodeURIComponent(order.items?.[0]?.name || '')}&name=${encodeURIComponent(order.customerName || '')}&phone=${encodeURIComponent(order.customerPhone || '')}" 
          style="display: inline-block; background-color: #B06B5B; color: #FFFFFF; padding: 13px 26px; border-radius: 50px; font-size: 13px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; box-shadow: 0 4px 12px rgba(176,107,91,0.25);">
         ★ Rate & Claim 15% OFF Voucher
       </a>
@@ -541,7 +541,7 @@ export async function sendCustomInquiryEmails(inquiry) {
 /**
  * 4. NEW PRODUCT LAUNCH BROADCAST EMAIL
  */
-export async function sendProductLaunchBroadcast({ product, recipients, siteUrl = "https://cocoon-psi.vercel.app" }) {
+export async function sendProductLaunchBroadcast({ product, recipients, siteUrl = "https://www.gococoon.store" }) {
   const productUrl = `${siteUrl}/product/${product.id}`;
   const imgUrl = product.imgUrl && product.imgUrl.startsWith("http")
     ? product.imgUrl
@@ -628,7 +628,7 @@ export async function sendProductLaunchBroadcast({ product, recipients, siteUrl 
 /**
  * 5. NEW OFFER & PROMO BROADCAST EMAIL
  */
-export async function sendOfferBroadcast({ offer, recipients, siteUrl = "https://cocoon-psi.vercel.app" }) {
+export async function sendOfferBroadcast({ offer, recipients, siteUrl = "https://www.gococoon.store" }) {
   const content = `
     <div style="text-align: center; margin-bottom: 24px;">
       
@@ -723,7 +723,7 @@ export async function sendNewsletterWelcome(email) {
     </div>
 
     <div style="text-align: center;">
-      <a href="https://cocoon-psi.vercel.app" 
+      <a href="https://www.gococoon.store" 
          style="display: inline-block; background-color: #B06B5B; color: #FFFFFF; padding: 13px 28px; border-radius: 50px; font-size: 12px; font-weight: bold; text-transform: uppercase;">
         Explore Current Drops &rarr;
       </a>
