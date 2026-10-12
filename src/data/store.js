@@ -212,9 +212,16 @@ export const getStoredData = (key, fallback) => {
     if (!item) return fallback;
     const parsed = JSON.parse(item);
 
-    // Auto-purge any legacy demo/mock data
+    // Auto-purge any legacy demo/mock data or deleted items
     if (key === STORAGE_KEYS.ORDERS && Array.isArray(parsed)) {
-      const cleanOrders = parsed.filter((o) => !o.id?.startsWith("ORD-94"));
+      const cleanOrders = parsed.filter(
+        (o) =>
+          !o.id?.startsWith("ORD-94") &&
+          o.status !== "Deleted" &&
+          o.id !== "ORD-9787" &&
+          o.id !== "ORD-1612" &&
+          o.id !== "ORD-5214"
+      );
       if (cleanOrders.length !== parsed.length) {
         localStorage.setItem(key, JSON.stringify(cleanOrders));
         return cleanOrders;
@@ -223,12 +230,25 @@ export const getStoredData = (key, fallback) => {
     }
 
     if (key === STORAGE_KEYS.CUSTOMIZATIONS && Array.isArray(parsed)) {
-      const cleanCust = parsed.filter((c) => c.id !== "CUST-101");
+      const cleanCust = parsed.filter(
+        (c) => c.id !== "CUST-101" && c.status !== "Deleted" && c.id !== "INQ-TEST"
+      );
       if (cleanCust.length !== parsed.length) {
         localStorage.setItem(key, JSON.stringify(cleanCust));
         return cleanCust;
       }
       return cleanCust;
+    }
+
+    if (key === STORAGE_KEYS.REVIEWS && Array.isArray(parsed)) {
+      const cleanReviews = parsed.filter(
+        (r) => r.status !== "Deleted" && r.id !== "REV-TEST"
+      );
+      if (cleanReviews.length !== parsed.length) {
+        localStorage.setItem(key, JSON.stringify(cleanReviews));
+        return cleanReviews;
+      }
+      return cleanReviews;
     }
 
     return parsed;
@@ -353,6 +373,30 @@ export const STORE = {
     const updated = all.map((o) => (o.id === orderId ? { ...o, ...updates } : o));
     STORE.setOrders(updated);
     return updated;
+  },
+  deleteOrder: (orderId) => {
+    const all = STORE.getOrders();
+    const updated = all.filter((o) => o.id !== orderId);
+    STORE.setOrders(updated);
+    if (typeof window !== "undefined") {
+      fetch("/api/admin/orders", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId })
+      }).catch(() => {});
+    }
+    return updated;
+  },
+  clearOrders: () => {
+    STORE.setOrders([]);
+    if (typeof window !== "undefined") {
+      fetch("/api/admin/orders", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clearAll: true })
+      }).catch(() => {});
+    }
+    return [];
   },
 
   getCustomizations: () => getStoredData(STORAGE_KEYS.CUSTOMIZATIONS, INITIAL_CUSTOMIZATIONS),

@@ -226,15 +226,11 @@ export default function AdminPage() {
       const res = await fetch("/api/admin/orders");
       const data = await res.json();
       if (data.success && Array.isArray(data.orders)) {
-        const local = STORE.getOrders();
-        const map = new Map();
-        local.forEach((o) => map.set(o.id, o));
-        data.orders.forEach((o) => map.set(o.id, { ...map.get(o.id), ...o }));
-        const merged = Array.from(map.values()).sort(
+        const sorted = data.orders.sort(
           (a, b) => new Date(b.date || b.timestamp || 0) - new Date(a.date || a.timestamp || 0)
         );
-        setOrders(merged);
-        STORE.setOrders(merged);
+        setOrders(sorted);
+        STORE.setOrders(sorted);
       }
     } catch (e) {
       console.warn("Live orders sync notice:", e);
@@ -328,6 +324,66 @@ export default function AdminPage() {
       } catch (e) {
         console.error("Status update email error:", e);
       }
+    }
+  };
+
+  // DELETE AN INDIVIDUAL ORDER
+  const handleDeleteOrder = async (orderId) => {
+    if (!confirm(`Are you sure you want to delete order #${orderId}? This cannot be undone.`)) {
+      return;
+    }
+    const updated = orders.filter((o) => o.id !== orderId);
+    setOrders(updated);
+    STORE.deleteOrder(orderId);
+    triggerToast(`Order #${orderId} deleted successfully.`);
+
+    try {
+      await fetch("/api/admin/orders", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId })
+      });
+    } catch (e) {
+      console.warn("Delete order error:", e);
+    }
+  };
+
+  // CLEAR ALL TEST ORDERS (RESET TO 0)
+  const handleClearAllOrders = async () => {
+    if (!confirm("Are you sure you want to clear ALL test orders from the database? The orders count will be reset to 0.")) {
+      return;
+    }
+    setOrders([]);
+    STORE.clearOrders();
+    triggerToast("All test orders cleared from database! Order count is now 0.");
+
+    try {
+      await fetch("/api/admin/orders", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clearAll: true })
+      });
+    } catch (e) {
+      console.warn("Clear orders error:", e);
+    }
+  };
+
+  // DELETE A CUSTOMIZATION INQUIRY
+  const handleDeleteCustomization = async (inquiryId) => {
+    if (!confirm(`Are you sure you want to delete custom slip #${inquiryId}?`)) return;
+    const updated = customizations.filter((c) => c.id !== inquiryId);
+    setCustomizations(updated);
+    STORE.setCustomizations(updated);
+    triggerToast(`Custom inquiry #${inquiryId} deleted.`);
+
+    try {
+      await fetch("/api/admin/customizations", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ inquiryId })
+      });
+    } catch (e) {
+      console.warn("Delete customization error:", e);
     }
   };
 
@@ -1105,17 +1161,26 @@ export default function AdminPage() {
 
                         <div className="text-right flex sm:flex-col items-center sm:items-end justify-between gap-1">
                           <span className="font-bold text-sm text-[#2C2623]">Rs. {order.totalAmount}</span>
-                          <select
-                            value={order.status}
-                            onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                            className="text-[11px] bg-stone-50 border border-stone-200 rounded-lg px-2 py-1 focus:outline-none"
-                          >
-                            <option value="Pending">Pending</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Shipped">Shipped</option>
-                            <option value="Delivered">Delivered</option>
-                            <option value="Cancelled">Cancelled</option>
-                          </select>
+                          <div className="flex items-center gap-2">
+                            <select
+                              value={order.status}
+                              onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                              className="text-[11px] bg-stone-50 border border-stone-200 rounded-lg px-2 py-1 focus:outline-none"
+                            >
+                              <option value="Pending">Pending</option>
+                              <option value="Processing">Processing</option>
+                              <option value="Shipped">Shipped</option>
+                              <option value="Delivered">Delivered</option>
+                              <option value="Cancelled">Cancelled</option>
+                            </select>
+                            <button
+                              onClick={() => handleDeleteOrder(order.id)}
+                              className="text-[10px] text-rose-500 hover:text-rose-700 hover:underline cursor-pointer px-1 py-0.5 rounded"
+                              title="Delete this order"
+                            >
+                              🗑️
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1156,6 +1221,17 @@ export default function AdminPage() {
               <div>
                 <h2 className="text-2xl font-header font-bold text-[#2C2623]">Orders Fulfillment Center</h2>
                 <p className="text-xs text-[#2C2623]/60">Manage order statuses: Pending &rarr; Processing &rarr; Shipped &rarr; Delivered</p>
+              </div>
+              <div className="flex items-center gap-2">
+                {orders.length > 0 && (
+                  <button
+                    onClick={handleClearAllOrders}
+                    className="px-3.5 py-1.5 rounded-xl border border-rose-300 text-rose-600 hover:bg-rose-50 text-xs font-bold transition cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                    title="Clear all test orders and reset count to 0"
+                  >
+                    <span>🗑️ Clear All Test Orders</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -1477,6 +1553,13 @@ export default function AdminPage() {
                           >
                             Send Alert to 8171902255
                           </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteOrder(order.id)}
+                            className="text-[10px] text-rose-600 hover:text-rose-800 hover:underline cursor-pointer block text-right w-full pt-1"
+                          >
+                            🗑️ Delete Order
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -1582,12 +1665,21 @@ export default function AdminPage() {
                       <span>Reply on WhatsApp</span>
                     </a>
 
-                    <button
-                      onClick={() => STORE.sendWhatsAppNotification("customization", c)}
-                      className="text-xs text-stone-500 hover:text-stone-800 underline"
-                    >
-                      Send Alert to 8171902255
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => STORE.sendWhatsAppNotification("customization", c)}
+                        className="text-xs text-stone-500 hover:text-stone-800 underline cursor-pointer"
+                      >
+                        Alert
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCustomization(c.id)}
+                        className="text-xs text-rose-600 hover:text-rose-800 underline cursor-pointer"
+                        title="Delete custom slip"
+                      >
+                        🗑️ Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

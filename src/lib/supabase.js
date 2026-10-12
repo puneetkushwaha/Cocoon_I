@@ -347,6 +347,7 @@ export async function fetchOrdersFromSupabase() {
     const { data, error } = await supabase
       .from("orders")
       .select("*")
+      .neq("status", "Deleted")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -415,6 +416,50 @@ export async function updateOrderInSupabase(orderId, updates) {
 }
 
 /**
+ * Delete an order from Supabase (soft-delete via status = 'Deleted')
+ */
+export async function deleteOrderInSupabase(orderId) {
+  if (!isSupabaseConfigured() || !orderId) return false;
+  try {
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: "Deleted" })
+      .eq("order_id", orderId);
+
+    if (error) {
+      console.warn("Supabase delete order notice:", error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.warn("Supabase delete order error:", err);
+    return false;
+  }
+}
+
+/**
+ * Clear all orders from Supabase (marks all as 'Deleted')
+ */
+export async function clearAllOrdersInSupabase() {
+  if (!isSupabaseConfigured()) return false;
+  try {
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: "Deleted" })
+      .neq("status", "Deleted");
+
+    if (error) {
+      console.warn("Supabase clear all orders notice:", error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.warn("Supabase clear all orders error:", err);
+    return false;
+  }
+}
+
+/**
  * Fetch all custom inquiries from Supabase table 'customizations'
  */
 export async function fetchCustomizationsFromSupabase() {
@@ -423,6 +468,7 @@ export async function fetchCustomizationsFromSupabase() {
     const { data, error } = await supabase
       .from("customizations")
       .select("*")
+      .neq("status", "Deleted")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -470,5 +516,22 @@ export async function updateCustomizationInSupabase(inquiryId, updates) {
     return false;
   }
 }
+
+/**
+ * Delete a customization inquiry in Supabase
+ */
+export async function deleteCustomizationInSupabase(inquiryId) {
+  if (!isSupabaseConfigured() || !inquiryId) return false;
+  try {
+    const { error } = await supabase
+      .from("customizations")
+      .update({ status: "Deleted" })
+      .eq("inquiry_id", inquiryId);
+    return !error;
+  } catch (err) {
+    return false;
+  }
+}
+
 
 

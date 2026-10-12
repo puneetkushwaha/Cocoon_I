@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { verifySessionToken } from "@/lib/auth";
-import { fetchCustomizationsFromSupabase, updateCustomizationInSupabase } from "@/lib/supabase";
+import { fetchCustomizationsFromSupabase, updateCustomizationInSupabase, deleteCustomizationInSupabase } from "@/lib/supabase";
 
 async function checkAdminAuth() {
   const cookieStore = await cookies();
@@ -46,3 +46,25 @@ export async function PATCH(request) {
     return NextResponse.json({ success: false, error: "Error updating customization" }, { status: 500 });
   }
 }
+
+export async function DELETE(request) {
+  const isAdmin = await checkAdminAuth();
+  if (!isAdmin) {
+    return NextResponse.json({ success: false, error: "Unauthorized access" }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json().catch(() => ({}));
+    const { inquiryId } = body;
+    if (!inquiryId) {
+      return NextResponse.json({ success: false, error: "inquiryId is required" }, { status: 400 });
+    }
+
+    const success = await deleteCustomizationInSupabase(inquiryId);
+    return NextResponse.json({ success, message: `Inquiry ${inquiryId} deleted` });
+  } catch (err) {
+    console.error("Admin customization delete error:", err);
+    return NextResponse.json({ success: false, error: "Error deleting customization" }, { status: 500 });
+  }
+}
+
