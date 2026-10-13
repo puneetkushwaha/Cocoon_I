@@ -1527,7 +1527,7 @@ export default function CartPage() {
                 {/* Email Address */}
                 <div>
                   <label className="text-xs font-bold text-stone-700 block mb-1">
-                    Email Address (For invoice & delivery receipt)
+                    Email Address (For order confirmation & tracking updates)
                   </label>
                   <input
                     type="email"
@@ -2021,13 +2021,6 @@ export default function CartPage() {
             </div>
 
             <div className="flex flex-col gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="w-full py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>🖨️ Print / Save Tax Invoice</span>
-              </button>
               <Link
                 href="/profile"
                 className="w-full py-3 rounded-xl bg-[#526B57] hover:bg-[#405444] text-white text-xs font-bold uppercase tracking-wider block text-center transition"
