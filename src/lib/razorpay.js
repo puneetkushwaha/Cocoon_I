@@ -63,8 +63,8 @@ export const initiateRazorpayPayment = async ({
       key: orderData.keyId,
       amount: orderData.amount,
       currency: orderData.currency || "INR",
-      name: "COCOON",
-      description: "Handcrafted Crochet Order",
+      name: "COCOON 🧶",
+      description: "Stitched with love, packed with care 🌸✨",
       image: "https://www.gococoon.store/icon.svg",
       order_id: orderData.orderId,
       prefill: {

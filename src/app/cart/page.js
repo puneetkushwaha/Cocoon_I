@@ -171,6 +171,147 @@ export default function CartPage() {
     } catch (e) {}
   };
 
+  // Reconcile pending mobile UPI payments (Google Pay, PhonePe, Paytm app switches)
+  useEffect(() => {
+    const reconcilePayments = async () => {
+      // 1. Check local pending payment token
+      try {
+        const rawPending = localStorage.getItem("cocoon_pending_payment");
+        if (rawPending) {
+          const pending = JSON.parse(rawPending);
+          if (pending && pending.razorpayOrderId) {
+            // Only check if created in the last 45 minutes
+            if (Date.now() - (pending.createdAt || 0) < 45 * 60 * 1000) {
+              const res = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(pending.razorpayOrderId)}`);
+              const checkData = await res.json();
+              if (checkData && checkData.paid) {
+                localStorage.removeItem("cocoon_pending_payment");
+                sessionStorage.removeItem("cocoon_temp_cart");
+                localStorage.removeItem("cocoon_temp_cart");
+                setCart([]);
+
+                const orderId = generateOrderId();
+                const newOrder = {
+                  id: orderId,
+                  date: new Date().toISOString(),
+                  customerName: pending.customerForm?.name || "Valued Customer",
+                  customerPhone: pending.customerForm?.phone || "",
+                  customerEmail: pending.customerForm?.email || "",
+                  address: `${pending.customerForm?.address || ""}, ${pending.customerForm?.city || ""} - ${pending.customerForm?.pincode || ""}`.replace(/^,\s*|-\s*$/g, "").trim(),
+                  items: (pending.cart || []).map((i) => ({
+                    id: i.id,
+                    name: i.name,
+                    price: i.price,
+                    quantity: i.quantity,
+                    color: i.color || "Standard",
+                    imgUrl: i.imgUrl
+                  })),
+                  totalAmount: pending.grandTotal || 0,
+                  paymentMethod: "Online Payment (Razorpay)",
+                  utr: checkData.paymentId,
+                  paymentStatus: `Paid via Razorpay (ID: ${checkData.paymentId})`,
+                  status: "Processing",
+                  notes: (pending.customerForm?.notes ? pending.customerForm.notes.trim() + " • " : "") +
+                    `Paid Online via Razorpay [Payment ID: ${checkData.paymentId}, Order: ${pending.razorpayOrderId}]`,
+                  timestamp: Date.now()
+                };
+
+                const existingOrders = STORE.getOrders();
+                STORE.setOrders([newOrder, ...existingOrders]);
+                setIsSubmittingOrder(false);
+                setPlacedOrderSummary(newOrder);
+                triggerToast(`Order confirmed for ${newOrder.customerName}! 🎉`);
+
+                saveOrderToSupabase(newOrder).catch((e) => console.warn("Supabase order sync warning:", e));
+                try {
+                  STORE.dispatchEmailNotification("order_placed", { order: newOrder });
+                  STORE.sendWhatsAppNotification("order", newOrder);
+                } catch (e) {}
+                return;
+              }
+            } else {
+              localStorage.removeItem("cocoon_pending_payment");
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Reconcile pending payment error:", err);
+      }
+
+      // 2. Fallback check: If customer user has a captured order in the last 2 hours in Supabase but local cart is still full
+      try {
+        const savedUserRaw = localStorage.getItem("cocoon_customer_user");
+        if (savedUserRaw) {
+          const user = JSON.parse(savedUserRaw);
+          const email = user?.email?.trim().toLowerCase();
+          const phone = user?.phone?.replace(/\D/g, "");
+
+          if (email || phone) {
+            const res = await fetch("/api/admin/orders");
+            if (res.ok) {
+              const data = await res.json();
+              const orders = data.orders || [];
+              const recentPaid = orders.find((o) => {
+                const isEmail = email && o.customer_email?.trim().toLowerCase() === email;
+                const isPhone = phone && o.customer_phone?.replace(/\D/g, "").endsWith(phone.slice(-10));
+                const isRecent = Date.now() - new Date(o.created_at).getTime() < 2 * 60 * 60 * 1000;
+                const isPaid = (o.status === "Processing" || o.status === "Delivered") && o.utr;
+                return (isEmail || isPhone) && isRecent && isPaid;
+              });
+
+              if (recentPaid) {
+                const sessionKey = `cocoon_shown_${recentPaid.order_id || recentPaid.id}`;
+                if (!sessionStorage.getItem(sessionKey)) {
+                  sessionStorage.setItem(sessionKey, "true");
+                  sessionStorage.removeItem("cocoon_temp_cart");
+                  localStorage.removeItem("cocoon_temp_cart");
+                  setCart([]);
+
+                  const recoveredOrder = {
+                    id: recentPaid.order_id || `ORD-${recentPaid.id}`,
+                    date: recentPaid.created_at,
+                    customerName: recentPaid.customer_name,
+                    customerPhone: recentPaid.customer_phone,
+                    customerEmail: recentPaid.customer_email || "",
+                    address: recentPaid.address,
+                    items: recentPaid.items || [],
+                    totalAmount: recentPaid.total_amount,
+                    paymentMethod: recentPaid.payment_method || "Online Payment (Razorpay)",
+                    utr: recentPaid.utr,
+                    paymentStatus: `Paid via Razorpay (ID: ${recentPaid.utr})`,
+                    status: recentPaid.status || "Processing",
+                    notes: recentPaid.notes || ""
+                  };
+
+                  setPlacedOrderSummary(recoveredOrder);
+                  triggerToast(`Order confirmed for ${recentPaid.customer_name}! 🎉`);
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Reconcile recent paid orders error:", err);
+      }
+    };
+
+    reconcilePayments();
+
+    const handleResume = () => {
+      if (document.visibilityState === "visible") {
+        reconcilePayments();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleResume);
+    window.addEventListener("focus", handleResume);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleResume);
+      window.removeEventListener("focus", handleResume);
+    };
+  }, []);
+
   // Update Item Quantity
   const handleUpdateQty = (id, color, delta) => {
     const updated = cart
@@ -657,6 +798,20 @@ export default function CartPage() {
           throw new Error(orderData.error || "Failed to initiate payment");
         }
 
+        // Persist pending order to localStorage to survive mobile UPI app switches / page reloads
+        try {
+          const pendingOrderData = {
+            razorpayOrderId,
+            customerForm: { ...customerForm },
+            cart: [...cart],
+            grandTotal,
+            appliedCoupon,
+            couponDiscount,
+            createdAt: Date.now()
+          };
+          localStorage.setItem("cocoon_pending_payment", JSON.stringify(pendingOrderData));
+        } catch (e) {}
+
         let isOrderFinalized = false;
         let pollInterval = null;
 
@@ -664,6 +819,9 @@ export default function CartPage() {
           if (isOrderFinalized) return;
           isOrderFinalized = true;
           if (pollInterval) clearInterval(pollInterval);
+          try {
+            localStorage.removeItem("cocoon_pending_payment");
+          } catch (e) {}
           try {
             if (rzp) rzp.close();
           } catch (e) {}
@@ -675,8 +833,8 @@ export default function CartPage() {
           key: orderData.keyId,
           amount: orderData.amount,
           currency: orderData.currency || "INR",
-          name: "COCOON Handcrafted Studio",
-          description: `Order Payment for ${cart.length} item(s)`,
+          name: "COCOON 🧶",
+          description: "Stitched with love, packed with care 🌸✨",
           image: "https://www.gococoon.store/icon.svg",
           order_id: razorpayOrderId,
           prefill: {

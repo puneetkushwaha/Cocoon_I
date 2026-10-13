@@ -1518,8 +1518,8 @@ export default function Preset4() {
                         key: orderData.keyId,
                         amount: orderData.amount,
                         currency: orderData.currency || "INR",
-                        name: "COCOON",
-                        description: `Order of ${totalQty} Handcrafted Treasures`,
+                        name: "COCOON 🧶",
+                        description: "Stitched with love, packed with care 🌸✨",
                         image: "https://www.gococoon.store/icon.svg",
                         order_id: razorpayOrderId,
                         prefill: {

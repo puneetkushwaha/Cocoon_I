@@ -111,6 +111,34 @@ export default function CustomerProfilePage() {
       setStoreProducts(STORE.getProducts());
       setSavedAddresses(STORE.getAddresses());
 
+      // Merge verified live orders from server/database
+      fetch("/api/admin/orders")
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data && data.orders) {
+            const serverOrders = data.orders.map((o) => ({
+              id: o.order_id || `ORD-${o.id}`,
+              date: o.created_at,
+              customerName: o.customer_name,
+              customerPhone: o.customer_phone,
+              customerEmail: o.customer_email || "",
+              address: o.address,
+              items: o.items || [],
+              totalAmount: o.total_amount,
+              paymentMethod: o.payment_method,
+              utr: o.utr,
+              paymentStatus: o.utr ? `Paid via Razorpay (ID: ${o.utr})` : "Pending",
+              status: o.status || "Processing",
+              notes: o.notes || ""
+            }));
+            const local = STORE.getOrders();
+            const mergedMap = new Map();
+            [...local, ...serverOrders].forEach((item) => mergedMap.set(item.id, item));
+            setAllOrders(Array.from(mergedMap.values()));
+          }
+        })
+        .catch(() => {});
+
       try {
         const savedWish = localStorage.getItem("cocoon_wishlist");
         if (savedWish) setWishlist(JSON.parse(savedWish));
