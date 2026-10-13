@@ -247,20 +247,19 @@ export default function CartPage() {
           const phone = user?.phone?.replace(/\D/g, "");
 
           if (email || phone) {
-            const res = await fetch("/api/admin/orders");
+            const res = await fetch(`/api/orders/my-orders?email=${encodeURIComponent(email || "")}&phone=${encodeURIComponent(phone || "")}`);
             if (res.ok) {
               const data = await res.json();
               const orders = data.orders || [];
               const recentPaid = orders.find((o) => {
-                const isEmail = email && o.customer_email?.trim().toLowerCase() === email;
-                const isPhone = phone && o.customer_phone?.replace(/\D/g, "").endsWith(phone.slice(-10));
-                const isRecent = Date.now() - new Date(o.created_at).getTime() < 2 * 60 * 60 * 1000;
+                const orderTime = o.timestamp || new Date(o.date).getTime();
+                const isRecent = Date.now() - orderTime < 3 * 60 * 60 * 1000;
                 const isPaid = (o.status === "Processing" || o.status === "Delivered") && o.utr;
-                return (isEmail || isPhone) && isRecent && isPaid;
+                return isRecent && isPaid;
               });
 
               if (recentPaid) {
-                const sessionKey = `cocoon_shown_${recentPaid.order_id || recentPaid.id}`;
+                const sessionKey = `cocoon_shown_${recentPaid.id}`;
                 if (!sessionStorage.getItem(sessionKey)) {
                   sessionStorage.setItem(sessionKey, "true");
                   sessionStorage.removeItem("cocoon_temp_cart");
@@ -268,15 +267,15 @@ export default function CartPage() {
                   setCart([]);
 
                   const recoveredOrder = {
-                    id: recentPaid.order_id || `ORD-${recentPaid.id}`,
-                    date: recentPaid.created_at,
-                    customerName: recentPaid.customer_name,
-                    customerPhone: recentPaid.customer_phone,
-                    customerEmail: recentPaid.customer_email || "",
+                    id: recentPaid.id,
+                    date: recentPaid.date,
+                    customerName: recentPaid.customerName,
+                    customerPhone: recentPaid.customerPhone,
+                    customerEmail: recentPaid.customerEmail || "",
                     address: recentPaid.address,
                     items: recentPaid.items || [],
-                    totalAmount: recentPaid.total_amount,
-                    paymentMethod: recentPaid.payment_method || "Online Payment (Razorpay)",
+                    totalAmount: recentPaid.totalAmount,
+                    paymentMethod: recentPaid.paymentMethod || "Online Payment (Razorpay)",
                     utr: recentPaid.utr,
                     paymentStatus: `Paid via Razorpay (ID: ${recentPaid.utr})`,
                     status: recentPaid.status || "Processing",
@@ -284,7 +283,7 @@ export default function CartPage() {
                   };
 
                   setPlacedOrderSummary(recoveredOrder);
-                  triggerToast(`Order confirmed for ${recentPaid.customer_name}! 🎉`);
+                  triggerToast(`Order confirmed for ${recentPaid.customerName}! 🎉`);
                 }
               }
             }

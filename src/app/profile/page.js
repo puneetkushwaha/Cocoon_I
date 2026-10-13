@@ -112,32 +112,30 @@ export default function CustomerProfilePage() {
       setSavedAddresses(STORE.getAddresses());
 
       // Merge verified live orders from server/database
-      fetch("/api/admin/orders")
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (data && data.orders) {
-            const serverOrders = data.orders.map((o) => ({
-              id: o.order_id || `ORD-${o.id}`,
-              date: o.created_at,
-              customerName: o.customer_name,
-              customerPhone: o.customer_phone,
-              customerEmail: o.customer_email || "",
-              address: o.address,
-              items: o.items || [],
-              totalAmount: o.total_amount,
-              paymentMethod: o.payment_method,
-              utr: o.utr,
-              paymentStatus: o.utr ? `Paid via Razorpay (ID: ${o.utr})` : "Pending",
-              status: o.status || "Processing",
-              notes: o.notes || ""
-            }));
-            const local = STORE.getOrders();
-            const mergedMap = new Map();
-            [...local, ...serverOrders].forEach((item) => mergedMap.set(item.id, item));
-            setAllOrders(Array.from(mergedMap.values()));
-          }
-        })
-        .catch(() => {});
+      const userRaw = localStorage.getItem("cocoon_customer_user");
+      let uEmail = "";
+      let uPhone = "";
+      try {
+        if (userRaw) {
+          const u = JSON.parse(userRaw);
+          uEmail = u.email || "";
+          uPhone = u.phone || "";
+        }
+      } catch (e) {}
+
+      if (uEmail || uPhone) {
+        fetch(`/api/orders/my-orders?email=${encodeURIComponent(uEmail)}&phone=${encodeURIComponent(uPhone)}`)
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data) => {
+            if (data && data.orders) {
+              const local = STORE.getOrders();
+              const mergedMap = new Map();
+              [...local, ...data.orders].forEach((item) => mergedMap.set(item.id, item));
+              setAllOrders(Array.from(mergedMap.values()));
+            }
+          })
+          .catch(() => {});
+      }
 
       try {
         const savedWish = localStorage.getItem("cocoon_wishlist");
