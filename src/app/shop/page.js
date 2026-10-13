@@ -141,6 +141,45 @@ export default function StandaloneShopPage() {
   const shipping = 60; // Flat ₹60 Courier Delivery
   const grandTotal = Math.max(0, subtotal - upiDiscount + shipping);
 
+  const [isUtrSubmitting, setIsUtrSubmitting] = useState(false);
+
+  const handleUpdateUtr = async (orderId, newUtr) => {
+    const clean = (newUtr || "").trim().replace(/[^a-zA-Z0-9]/g, "");
+    if (!clean || clean.length < 6) {
+      triggerToast("Please enter a valid 12-digit UTR Number");
+      return;
+    }
+
+    setIsUtrSubmitting(true);
+    try {
+      const allOrders = STORE.getOrders();
+      const updatedList = allOrders.map((o) => {
+        if (o.id === orderId) {
+          return {
+            ...o,
+            utr: clean,
+            paymentStatus: `Paid via UPI (UTR: ${clean})`,
+            notes: (o.notes ? o.notes.replace(/\[UTR:.*?\]/g, "").trim() + " • " : "") + `[UTR: ${clean}]`
+          };
+        }
+        return o;
+      });
+
+      STORE.setOrders(updatedList);
+      const updatedOrder = updatedList.find((o) => o.id === orderId);
+      if (updatedOrder) {
+        await saveOrderToSupabase(updatedOrder);
+        setPlacedOrder(updatedOrder);
+      }
+      triggerToast("✓ UTR Number saved & submitted for verification!");
+    } catch (err) {
+      console.error("UTR update error:", err);
+      triggerToast("Could not update UTR. You can also send it via WhatsApp.");
+    } finally {
+      setIsUtrSubmitting(false);
+    }
+  };
+
   // Handle Order Submit (Direct UPI vs COD)
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
@@ -202,21 +241,21 @@ export default function StandaloneShopPage() {
 
     // 1. DIRECT UPI PAYMENT FLOW
     if (paymentMethod === "upi") {
-      const cleanUtr = utrNumber.trim().replace(/[^a-zA-Z0-9]/g, "");
-      if (!cleanUtr || cleanUtr.length < 6) {
-        setIsSubmitting(false);
-        triggerToast("Please enter a valid 12-digit UPI Reference / UTR Number to confirm payment");
-        return;
+      if (typeof window !== "undefined") {
+        const isMobileDevice = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+        if (isMobileDevice) {
+          window.location.href = `upi://pay?pa=8171902255@ibl&pn=Mehak%20Agarwal&mc=5691&tr=${Date.now()}&am=${grandTotal}&cu=INR&tn=Cocoon%20Order`;
+        }
       }
 
       try {
         const upiOrder = {
           ...baseOrderPayload,
           paymentMethod: "UPI",
-          utr: cleanUtr,
-          paymentStatus: `Paid via UPI (UTR: ${cleanUtr})`,
+          utr: utrNumber.trim() || null,
+          paymentStatus: utrNumber.trim() ? `Paid via UPI (UTR: ${utrNumber.trim()})` : "UPI Payment Submitted (Awaiting Verification)",
           status: "Processing",
-          notes: baseOrderPayload.notes + ` • UTR: ${cleanUtr}`
+          notes: baseOrderPayload.notes + (utrNumber.trim() ? ` • UTR: ${utrNumber.trim()}` : "")
         };
 
         const existing = STORE.getOrders();
@@ -561,32 +600,22 @@ export default function StandaloneShopPage() {
               {/* Direct UPI Payment Details (When Selected) */}
               {paymentMethod === "upi" && (
                 <div className="pt-3 border-t border-emerald-200/80 space-y-3 animate-fadeIn text-xs">
-                  {/* Phone View: 1-Tap Mobile Button */}
-                  <div className="block md:hidden">
-                    <a
-                      href={`upi://pay?pa=8171902255@ibl&pn=COCOON%20STUDIO&am=${grandTotal}&cu=INR`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-700 to-teal-800 hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider transition shadow-xs"
-                    >
-                      <span>📲 Tap to Open UPI App & Pay ₹{grandTotal}</span>
-                    </a>
-                  </div>
-
-                  {/* Laptop / Desktop View: Dynamic QR Code & UPI Copy */}
-                  <div className="bg-white p-3.5 rounded-xl border border-emerald-200 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                  {/* Laptop / Desktop View ONLY: Dynamic QR Code & UPI Copy (Hidden on mobile) */}
+                  <div className="hidden md:flex bg-white p-3.5 rounded-xl border border-emerald-200 flex-row items-center gap-4 text-left">
                     <div className="shrink-0 bg-white p-1 rounded-lg border border-stone-200 shadow-xs">
                       <img
                         src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(
-                          `upi://pay?pa=8171902255@ibl&pn=COCOON%20STUDIO&am=${grandTotal}&cu=INR`
+                          `upi://pay?pa=8171902255@ibl&pn=Mehak%20Agarwal&mc=5691&tr=${Date.now()}&am=${grandTotal}&cu=INR&tn=Cocoon%20Order`
                         )}`}
                         alt="COCOON Studio UPI QR Code"
-                        className="w-28 h-28 mx-auto"
+                        className="w-24 h-24 mx-auto rounded-lg"
                       />
-                      <span className="text-[9px] text-stone-500 font-mono block mt-1">Scan via any UPI App</span>
+                      <span className="text-[8px] text-stone-500 font-mono block text-center mt-1">Scan via UPI App</span>
                     </div>
 
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-center justify-center sm:justify-start gap-2">
+                    <div className="flex-1 space-y-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">Cocoon Studio UPI ID:</span>
+                      <div className="flex items-center gap-2">
                         <span className="font-mono text-xs font-bold text-stone-900 bg-stone-100 px-2.5 py-1 rounded-md border border-stone-300">
                           8171902255@ibl
                         </span>
@@ -602,29 +631,24 @@ export default function StandaloneShopPage() {
                         </button>
                       </div>
                       <p className="text-[11px] text-stone-600 font-serif leading-relaxed">
-                        Scan from laptop or click open UPI app on phone. After payment, enter your 12-digit UTR below.
+                        Scan from phone screen or copy UPI ID. Click below to place order and enter UTR.
                       </p>
                     </div>
                   </div>
 
-                  {/* 12-Digit UTR Input (Mandatory) */}
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-stone-800 flex items-center justify-between">
-                      <span>UPI Ref / UTR / Transaction ID (Mandatory) *</span>
-                      <span className="text-[10px] text-[#B06B5B] font-mono">12 Digits</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      maxLength={22}
-                      value={utrNumber}
-                      onChange={(e) => setUtrNumber(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
-                      placeholder="e.g. 429381749281 (12 digits)"
-                      className="w-full bg-white border border-emerald-300 rounded-xl px-3.5 py-2 text-xs font-mono text-stone-900 focus:outline-none focus:border-emerald-600"
-                    />
-                    <p className="text-[10px] text-stone-500">
-                      Find this 12-digit reference number in your UPI app receipt after making the payment.
-                    </p>
+                  {/* Phone View: Clean Notice */}
+                  <div className="md:hidden flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-emerald-200 text-xs">
+                    <span className="text-stone-700 font-serif">Pay: <strong className="font-mono text-stone-900">8171902255@ibl</strong></span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCopyUpi();
+                      }}
+                      className="text-[11px] font-bold text-[#B06B5B] hover:underline"
+                    >
+                      {copiedUpi ? "✓ Copied" : "Copy UPI"}
+                    </button>
                   </div>
                 </div>
               )}
@@ -822,11 +846,11 @@ export default function StandaloneShopPage() {
               className="w-full py-4 rounded-2xl bg-[#B06B5B] hover:bg-[#975647] text-white font-bold text-xs uppercase tracking-wider transition shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer text-center"
             >
               {isSubmitting ? (
-                "Processing Your Order..."
+                "Opening UPI & Placing Order..."
               ) : paymentMethod === "upi" ? (
-                `Confirm UPI Order (₹${grandTotal})`
+                `Pay ₹${grandTotal} via UPI & Place Order →`
               ) : (
-                `Confirm Cash on Delivery Order (₹${grandTotal})`
+                `Confirm Cash on Delivery Order (₹${grandTotal}) →`
               )}
             </button>
           </form>
@@ -875,11 +899,42 @@ export default function StandaloneShopPage() {
               </span>
               <span className="text-stone-900 font-bold text-base">₹{placedOrder.totalAmount}</span>
             </div>
-            {placedOrder.utr && (
-              <div className="text-[11px] text-emerald-800 bg-emerald-50 px-2 py-1 rounded font-mono border border-emerald-200">
-                <strong>UPI UTR / Ref:</strong> {placedOrder.utr}
+            {placedOrder.utr ? (
+              <div className="text-[11px] text-emerald-800 bg-emerald-50 px-3 py-2 rounded-xl font-mono border border-emerald-200 flex justify-between items-center">
+                <strong>UPI UTR / Ref:</strong>
+                <span className="font-bold select-all text-stone-900">{placedOrder.utr}</span>
               </div>
-            )}
+            ) : placedOrder.paymentMethod === "UPI" ? (
+              <div className="p-3 bg-white rounded-2xl border border-emerald-300 space-y-2 text-left">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-stone-800">
+                    ⚡ Enter UPI UTR / Ref No.
+                  </span>
+                  <span className="text-[9px] text-[#B06B5B] font-mono font-bold">12 Digits</span>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    maxLength={22}
+                    value={utrNumber}
+                    onChange={(e) => setUtrNumber(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
+                    placeholder="e.g. 429381749281"
+                    className="flex-1 bg-stone-50 border border-stone-200 focus:border-[#B06B5B] focus:bg-white rounded-lg px-2.5 py-1.5 text-xs font-mono text-stone-900 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    disabled={isUtrSubmitting}
+                    onClick={() => handleUpdateUtr(placedOrder.id, utrNumber)}
+                    className="px-3 py-1.5 bg-[#B06B5B] hover:bg-[#964B44] text-white text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer shrink-0"
+                  >
+                    {isUtrSubmitting ? "Saving..." : "Submit UTR"}
+                  </button>
+                </div>
+                <p className="text-[10px] text-stone-500 font-serif leading-tight">
+                  Check your UPI app (GPay/PhonePe/Paytm) payment details for the 12-digit UPI Ref/UTR No.
+                </p>
+              </div>
+            ) : null}
             <div className="text-[11px] text-stone-600">
               <strong>Item:</strong> {placedOrder.items?.map((i) => `${i.name} (x${i.quantity})`).join(", ")}
             </div>

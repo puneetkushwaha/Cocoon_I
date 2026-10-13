@@ -61,6 +61,7 @@ export default function CartPage() {
   const [paymentMethod, setPaymentMethod] = useState("upi"); // "upi" or "cod"
   const [utrNumber, setUtrNumber] = useState("");
   const [copiedUpi, setCopiedUpi] = useState(false);
+  const [isUtrSubmitting, setIsUtrSubmitting] = useState(false);
 
   const triggerToast = (msg) => {
     setToastMessage(msg);
@@ -540,6 +541,44 @@ export default function CartPage() {
     }
   };
 
+  // Update UTR from the Order Done Success Popup
+  const handleUpdateUtr = async (orderId, newUtr) => {
+    const clean = (newUtr || "").trim().replace(/[^a-zA-Z0-9]/g, "");
+    if (!clean || clean.length < 6) {
+      triggerToast("Please enter a valid 12-digit UTR Number");
+      return;
+    }
+
+    setIsUtrSubmitting(true);
+    try {
+      const allOrders = STORE.getOrders();
+      const updatedList = allOrders.map((o) => {
+        if (o.id === orderId) {
+          return {
+            ...o,
+            utr: clean,
+            paymentStatus: `Paid via UPI (UTR: ${clean})`,
+            notes: (o.notes ? o.notes.replace(/\[UTR:.*?\]/g, "").trim() + " • " : "") + `[UTR: ${clean}]`
+          };
+        }
+        return o;
+      });
+
+      STORE.setOrders(updatedList);
+      const updatedOrder = updatedList.find((o) => o.id === orderId);
+      if (updatedOrder) {
+        await saveOrderToSupabase(updatedOrder);
+        setPlacedOrderSummary(updatedOrder);
+      }
+      triggerToast("✓ UTR Number saved & submitted for verification!");
+    } catch (err) {
+      console.error("UTR update error:", err);
+      triggerToast("Could not update UTR. You can also send it via WhatsApp.");
+    } finally {
+      setIsUtrSubmitting(false);
+    }
+  };
+
   // Place Order Submit Handler
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
@@ -568,16 +607,22 @@ export default function CartPage() {
       return;
     }
 
-    // DIRECT UPI PAYMENT FLOW (Mobile Deep-Link & Desktop QR with Mandatory UTR)
+    // DIRECT UPI PAYMENT FLOW: 1-Click Pay & Order Placement
     if (paymentMethod === "upi") {
-      const cleanUtr = utrNumber.trim().replace(/[^a-zA-Z0-9]/g, "");
-      if (!cleanUtr || cleanUtr.length < 6) {
-        triggerToast("Please enter a valid 12-digit UPI Reference / UTR Number to confirm payment");
-        return;
+      setIsSubmittingOrder(true);
+
+      // On mobile devices, trigger direct UPI intent immediately
+      if (typeof window !== "undefined") {
+        const isMobileDevice = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+        if (isMobileDevice) {
+          const upiUrl = `upi://pay?pa=8171902255@ibl&pn=Mehak%20Agarwal&mc=5691&tr=${Date.now()}&am=${grandTotal}&cu=INR&tn=Cocoon%20Order`;
+          // Attempt to open native UPI app
+          window.location.href = upiUrl;
+        }
       }
 
-      setIsSubmittingOrder(true);
-      await executeOrderFinalization("UPI", cleanUtr);
+      // Finalize order immediately and present the minimal UTR submission popup
+      await executeOrderFinalization("UPI", utrNumber.trim() || null);
       return;
     }
   };
@@ -1234,39 +1279,26 @@ export default function CartPage() {
                       <span className="text-[10px] font-bold text-[#B06B5B] font-mono">₹{grandTotal}</span>
                     </div>
 
-                    {/* Direct UPI Box: 1-Tap Button for Phone + QR Code for Laptop + Mandatory UTR */}
+                    {/* Direct UPI Box: Shown only when UPI is selected. Laptop shows QR code; mobile gets seamless 1-click experience */}
                     {paymentMethod === "upi" && (
-                      <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#E8DFC9] space-y-3.5 animate-fadeIn text-left">
-                        {/* 1. Mobile Phone View: 1-Tap UPI Open Button */}
-                        <div className="block md:hidden space-y-2">
-                          <a
-                            href={`upi://pay?pa=8171902255@ibl&pn=COCOON%20STUDIO&am=${grandTotal}&cu=INR&tn=Cocoon%20Order`}
-                            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#2C2623] to-[#1A1715] hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98]"
-                          >
-                            <span>📱 Tap to Open UPI App & Pay ₹{grandTotal}</span>
-                          </a>
-                          <p className="text-[10px] text-stone-500 text-center font-serif">
-                            Opens Google Pay, PhonePe, Paytm, BHIM, or any installed UPI app automatically.
-                          </p>
-                        </div>
-
-                        {/* 2. Laptop / Desktop View (and fallback for phone): Dynamic QR Code + UPI ID Copy */}
-                        <div className="bg-white p-3.5 rounded-2xl border border-stone-200 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                      <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#E8DFC9] space-y-3 animate-fadeIn text-left">
+                        {/* 1. Laptop / Desktop ONLY: Dynamic QR Code + UPI Copy (Hidden on mobile) */}
+                        <div className="hidden md:flex bg-white p-3.5 rounded-2xl border border-stone-200 flex-row items-center gap-4 text-left">
                           <div className="shrink-0 bg-white p-1.5 rounded-xl border border-stone-200 shadow-2xs">
                             <img
                               src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(
-                                `upi://pay?pa=8171902255@ibl&pn=COCOON%20STUDIO&am=${grandTotal}&cu=INR&tn=Cocoon%20Order`
+                                `upi://pay?pa=8171902255@ibl&pn=Mehak%20Agarwal&mc=5691&tr=${Date.now()}&am=${grandTotal}&cu=INR&tn=Cocoon%20Order`
                               )}`}
                               alt="COCOON Studio UPI QR Code"
-                              className="w-32 h-32 mx-auto rounded-lg"
+                              className="w-28 h-28 mx-auto rounded-lg"
                             />
-                            <span className="text-[9px] text-stone-500 font-mono block mt-1">Scan via any UPI App</span>
+                            <span className="text-[9px] text-stone-500 font-mono block text-center mt-1">Scan via any UPI App</span>
                           </div>
 
-                          <div className="flex-1 space-y-2.5 w-full">
+                          <div className="flex-1 space-y-2">
                             <div>
                               <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">Cocoon Official UPI ID:</span>
-                              <div className="flex items-center justify-center sm:justify-start gap-2 mt-0.5">
+                              <div className="flex items-center gap-2 mt-0.5">
                                 <span className="font-mono text-xs font-bold text-stone-900 bg-stone-100 px-2.5 py-1 rounded-lg border border-stone-300">
                                   8171902255@ibl
                                 </span>
@@ -1280,28 +1312,25 @@ export default function CartPage() {
                               </div>
                             </div>
                             <p className="text-[11px] text-stone-600 font-serif leading-relaxed">
-                              Scan QR code from phone screen or click open UPI app. After payment, enter your 12-digit UTR reference number below.
+                              Scan QR code from your phone or copy UPI ID. Click the button below to confirm your order and enter UTR.
                             </p>
                           </div>
                         </div>
 
-                        {/* 3. Mandatory UTR Number Input (Phone and Laptop Dono me) */}
-                        <div className="space-y-1.5 pt-1 border-t border-[#EAE1D3]">
-                          <label className="text-xs font-bold text-stone-800 flex items-center justify-between">
-                            <span>UPI Ref / UTR / Transaction ID (Mandatory) *</span>
-                            <span className="text-[10px] text-[#B06B5B] font-mono font-normal">12 Digits</span>
-                          </label>
-                          <input
-                            type="text"
-                            required
-                            maxLength={22}
-                            value={utrNumber}
-                            onChange={(e) => setUtrNumber(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
-                            placeholder="Enter 12-digit UTR No. (e.g. 429381749281)"
-                            className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] focus:ring-1 focus:ring-[#B06B5B]/30 rounded-xl px-3.5 py-2.5 text-xs font-mono text-stone-900 focus:outline-none"
-                          />
-                          <p className="text-[10px] text-stone-500 font-serif">
-                            You get this 12-digit UTR / Reference ID in GPay/PhonePe/Paytm after payment is completed.
+                        {/* 2. Mobile View Brief Notice: Clean & minimal */}
+                        <div className="md:hidden space-y-1">
+                          <div className="flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-stone-200 text-xs">
+                            <span className="text-stone-600 font-serif">Pay to: <strong className="font-mono text-stone-900">8171902255@ibl</strong></span>
+                            <button
+                              type="button"
+                              onClick={handleCopyUpi}
+                              className="text-[11px] font-bold text-[#B06B5B] hover:underline"
+                            >
+                              {copiedUpi ? "✓ Copied" : "Copy UPI"}
+                            </button>
+                          </div>
+                          <p className="text-[10px] text-stone-500 font-serif text-center pt-0.5">
+                            Clicking button below will open your UPI app (GPay/PhonePe/Paytm) directly.
                           </p>
                         </div>
                       </div>
@@ -1370,16 +1399,16 @@ export default function CartPage() {
                     </svg>
                     <span>
                       {isSubmittingOrder
-                        ? "Placing Order..."
+                        ? "Opening UPI & Placing Order..."
                         : (paymentMethod === "upi"
-                            ? `Confirm UPI Order (₹${grandTotal}) →`
+                            ? `Pay ₹${grandTotal} via UPI & Place Order →`
                             : `Confirm COD Order (₹${grandTotal}) →`)}
                     </span>
                   </button>
 
                   <p className="text-[11px] text-center text-stone-500 font-serif leading-tight">
                     {paymentMethod === "upi"
-                      ? `Direct UPI transfer to 8171902255@ibl • Enter UTR number above to confirm.`
+                      ? `Secure direct payment • Opens your UPI app on mobile or scan QR on laptop.`
                       : `Cash payable upon delivery: ₹${grandTotal}. Order confirmation sent to WhatsApp & Email.`}
                   </p>
                 </div>
@@ -1451,10 +1480,40 @@ export default function CartPage() {
                       Direct UPI (8171902255@ibl)
                     </span>
                   </div>
-                  {placedOrderSummary.utr && (
-                    <div className="flex justify-between items-center text-[11px] text-stone-600 bg-stone-50 p-1.5 rounded border border-stone-200">
+                  {placedOrderSummary.utr ? (
+                    <div className="flex justify-between items-center text-[11px] text-stone-600 bg-stone-50 p-2 rounded-xl border border-stone-200">
                       <strong>UPI UTR No:</strong>
-                      <span className="font-mono font-bold text-stone-900">{placedOrderSummary.utr}</span>
+                      <span className="font-mono font-bold text-stone-900 select-all">{placedOrderSummary.utr}</span>
+                    </div>
+                  ) : (
+                    <div className="p-3 bg-white rounded-xl border border-emerald-300 space-y-2 text-left">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold text-stone-800">
+                          ⚡ Enter UPI UTR / Ref No.
+                        </span>
+                        <span className="text-[9px] text-[#B06B5B] font-mono font-bold">12 Digits</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          maxLength={22}
+                          value={utrNumber}
+                          onChange={(e) => setUtrNumber(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
+                          placeholder="e.g. 429381749281"
+                          className="flex-1 bg-stone-50 border border-stone-200 focus:border-[#B06B5B] focus:bg-white rounded-lg px-2.5 py-1.5 text-xs font-mono text-stone-900 focus:outline-none"
+                        />
+                        <button
+                          type="button"
+                          disabled={isUtrSubmitting}
+                          onClick={() => handleUpdateUtr(placedOrderSummary.id, utrNumber)}
+                          className="px-3 py-1.5 bg-[#B06B5B] hover:bg-[#964B44] text-white text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer shrink-0"
+                        >
+                          {isUtrSubmitting ? "Saving..." : "Submit UTR"}
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-stone-500 font-serif leading-tight">
+                        Check your UPI app (GPay/PhonePe/Paytm) payment details for the 12-digit UPI Ref/UTR No.
+                      </p>
                     </div>
                   )}
                   <div className="flex justify-between items-center text-stone-700 pt-1 border-t border-stone-200/60">
