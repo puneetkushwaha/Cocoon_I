@@ -485,7 +485,7 @@ export default function ProductDetailPage({ params }) {
     if (isUpi && typeof window !== "undefined") {
       const isMobileDevice = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
       if (isMobileDevice) {
-        window.location.href = `upi://pay?pa=8171902255@ibl&pn=Mehak%20Agarwal&mc=5691&tr=${Date.now()}&am=${totalAmount}&cu=INR&tn=Cocoon%20Order`;
+        window.location.href = `upi://pay?pa=8171902255@ibl&pn=Miss%20Mehak%20Agarwal&am=${totalAmount}&cu=INR&tn=Order`;
       }
     }
 
@@ -1449,7 +1449,7 @@ export default function ProductDetailPage({ params }) {
                   <div className="hidden md:flex items-center gap-3 bg-white p-2.5 rounded-lg border border-stone-200">
                     <div className="shrink-0 bg-white p-1 rounded-md border border-stone-200">
                       <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(`upi://pay?pa=8171902255@ibl&pn=Mehak%20Agarwal&mc=5691&tr=${Date.now()}&am=${product.price * quantity}&cu=INR&tn=Cocoon%20Order`)}`}
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(`upi://pay?pa=8171902255@ibl&pn=Miss%20Mehak%20Agarwal&am=${product.price * quantity}&cu=INR&tn=Order`)}`}
                         alt="UPI QR"
                         className="w-20 h-20 rounded-md"
                       />

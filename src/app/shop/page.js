@@ -244,7 +244,7 @@ export default function StandaloneShopPage() {
       if (typeof window !== "undefined") {
         const isMobileDevice = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
         if (isMobileDevice) {
-          window.location.href = `upi://pay?pa=8171902255@ibl&pn=Mehak%20Agarwal&mc=5691&tr=${Date.now()}&am=${grandTotal}&cu=INR&tn=Cocoon%20Order`;
+          window.location.href = `upi://pay?pa=8171902255@ibl&pn=Miss%20Mehak%20Agarwal&am=${grandTotal}&cu=INR&tn=Order`;
         }
       }
 
@@ -605,7 +605,7 @@ export default function StandaloneShopPage() {
                     <div className="shrink-0 bg-white p-1 rounded-lg border border-stone-200 shadow-xs">
                       <img
                         src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(
-                          `upi://pay?pa=8171902255@ibl&pn=Mehak%20Agarwal&mc=5691&tr=${Date.now()}&am=${grandTotal}&cu=INR&tn=Cocoon%20Order`
+                          `upi://pay?pa=8171902255@ibl&pn=Miss%20Mehak%20Agarwal&am=${grandTotal}&cu=INR&tn=Order`
                         )}`}
                         alt="COCOON Studio UPI QR Code"
                         className="w-24 h-24 mx-auto rounded-lg"

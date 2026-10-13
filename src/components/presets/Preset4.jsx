@@ -1396,7 +1396,7 @@ export default function Preset4() {
                     if (typeof window !== "undefined") {
                       const isMobileDevice = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
                       if (isMobileDevice) {
-                        window.location.href = `upi://pay?pa=8171902255@ibl&pn=Mehak%20Agarwal&mc=5691&tr=${Date.now()}&am=${subtotal}&cu=INR&tn=Cocoon%20Order`;
+                        window.location.href = `upi://pay?pa=8171902255@ibl&pn=Miss%20Mehak%20Agarwal&am=${subtotal}&cu=INR&tn=Order`;
                       }
                     }
 
@@ -1546,7 +1546,7 @@ export default function Preset4() {
                       <div className="shrink-0 bg-white p-1 rounded-lg border border-stone-200">
                         <img
                           src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(
-                            `upi://pay?pa=8171902255@ibl&pn=Mehak%20Agarwal&mc=5691&tr=${Date.now()}&am=${subtotal}&cu=INR&tn=Cocoon%20Order`
+                            `upi://pay?pa=8171902255@ibl&pn=Miss%20Mehak%20Agarwal&am=${subtotal}&cu=INR&tn=Order`
                           )}`}
                           alt="UPI QR Code"
                           className="w-20 h-20 mx-auto rounded-md"
