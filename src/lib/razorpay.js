@@ -67,6 +67,8 @@ export const initiateRazorpayPayment = async ({
       description: "Stitched with love, packed with care 🌸✨",
       image: "https://www.gococoon.store/icon.svg",
       order_id: orderData.orderId,
+      callback_url: `${typeof window !== "undefined" ? window.location.origin : "https://www.gococoon.store"}/api/payment/callback`,
+      redirect: true,
       prefill: {
         name: customer?.name || "",
         email: customer?.email || "",

@@ -1522,10 +1522,18 @@ export default function Preset4() {
                         description: "Stitched with love, packed with care 🌸✨",
                         image: "https://www.gococoon.store/icon.svg",
                         order_id: razorpayOrderId,
+                        callback_url: `${typeof window !== "undefined" ? window.location.origin : "https://www.gococoon.store"}/api/payment/callback`,
+                        redirect: true,
                         prefill: {
                           name: custData.name,
                           contact: custData.phone,
                           email: custData.email || ""
+                        },
+                        notes: {
+                          customerName: custData.name,
+                          customerPhone: custData.phone,
+                          customerEmail: custData.email || "",
+                          address: `${custData.address || ""}${custData.city ? `, ${custData.city}` : ""}${custData.pincode ? ` - ${custData.pincode}` : ""}`.trim()
                         },
                         theme: {
                           color: "#B06B5B"

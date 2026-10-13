@@ -173,6 +173,75 @@ export default function CartPage() {
 
   // Reconcile pending mobile UPI payments (Google Pay, PhonePe, Paytm app switches)
   useEffect(() => {
+    // 0. Handle direct server redirect callback (?paymentStatus=success or failed)
+    if (typeof window !== "undefined") {
+      try {
+        const searchParams = new URLSearchParams(window.location.search);
+        const pStatus = searchParams.get("paymentStatus");
+        if (pStatus === "success") {
+          const pId = searchParams.get("paymentId") || "";
+          const oId = searchParams.get("orderId") || "";
+
+          // Clear cart and pending tokens immediately
+          sessionStorage.removeItem("cocoon_temp_cart");
+          localStorage.removeItem("cocoon_temp_cart");
+          localStorage.removeItem("cocoon_pending_payment");
+          setCart([]);
+
+          let cName = customerForm?.name || "Valued Customer";
+          let cPhone = customerForm?.phone || "";
+          let cEmail = customerForm?.email || "";
+          let cAddr = customerForm?.address || "Studio Courier Delivery";
+          let grandT = grandTotal || 1;
+
+          try {
+            const raw = localStorage.getItem("cocoon_pending_payment") || localStorage.getItem("cocoon_customer_user");
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              cName = parsed.customerForm?.name || parsed.name || cName;
+              cPhone = parsed.customerForm?.phone || parsed.phone || cPhone;
+              cEmail = parsed.customerForm?.email || parsed.email || cEmail;
+              cAddr = parsed.customerForm?.address || parsed.address || cAddr;
+              grandT = parsed.grandTotal || grandT;
+            }
+          } catch (e) {}
+
+          const confirmedOrder = {
+            id: oId || generateOrderId(),
+            date: new Date().toISOString(),
+            customerName: cName,
+            customerPhone: cPhone,
+            customerEmail: cEmail,
+            address: cAddr,
+            items: cart.length > 0 ? cart : [{ id: "crochet-item", name: "Handcrafted Crochet Item", price: grandT, quantity: 1, color: "Artisanal" }],
+            totalAmount: grandT,
+            paymentMethod: "Online Payment (Razorpay)",
+            utr: pId,
+            paymentStatus: `Paid via Razorpay (ID: ${pId})`,
+            status: "Processing",
+            notes: `Paid Online via Razorpay [Payment ID: ${pId}, Order ID: ${oId}]`
+          };
+
+          const existingOrders = STORE.getOrders();
+          STORE.setOrders([confirmedOrder, ...existingOrders]);
+          setIsSubmittingOrder(false);
+          setPlacedOrderSummary(confirmedOrder);
+          triggerToast(`Order confirmed for ${cName}! 🎉`);
+
+          // Clean URL without refresh
+          window.history.replaceState({}, document.title, window.location.pathname);
+          return;
+        } else if (pStatus === "failed") {
+          const reason = searchParams.get("reason") || "Payment was declined or cancelled by bank.";
+          setIsSubmittingOrder(false);
+          triggerToast(`Payment Failed: ${reason}`);
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      } catch (e) {
+        console.warn("URL paymentStatus parse notice:", e);
+      }
+    }
+
     const reconcilePayments = async () => {
       // 1. Check local pending payment token
       try {
@@ -836,10 +905,18 @@ export default function CartPage() {
           description: "Stitched with love, packed with care 🌸✨",
           image: "https://www.gococoon.store/icon.svg",
           order_id: razorpayOrderId,
+          callback_url: `${typeof window !== "undefined" ? window.location.origin : "https://www.gococoon.store"}/api/payment/callback`,
+          redirect: true,
           prefill: {
             name: customerForm.name,
             email: customerForm.email || "",
             contact: customerForm.phone
+          },
+          notes: {
+            customerName: customerForm.name,
+            customerPhone: customerForm.phone,
+            customerEmail: customerForm.email || "",
+            address: `${customerForm.address || ""}${customerForm.city ? `, ${customerForm.city}` : ""}${customerForm.pincode ? ` - ${customerForm.pincode}` : ""}`.trim()
           },
           theme: {
             color: "#B06B5B"
