@@ -271,8 +271,8 @@ export default function StandaloneShopPage() {
               customerName: form.name,
               customerPhone: form.phone,
               customerEmail: form.email,
-              productId: product.id,
-              productName: product.name
+              productId: selectedProduct?.id || "",
+              productName: selectedProduct?.name || ""
             }
           })
         });
@@ -283,78 +283,155 @@ export default function StandaloneShopPage() {
           throw new Error(orderData.error || "Failed to initiate payment");
         }
 
+        let isOrderFinalized = false;
+        let pollTimer = null;
+
+        const finalizeShopOrder = (paymentId) => {
+          if (isOrderFinalized) return;
+          isOrderFinalized = true;
+          if (pollTimer) clearInterval(pollTimer);
+
+          const onlineOrder = {
+            ...baseOrderPayload,
+            paymentMethod: "Online Payment (Razorpay)",
+            utr: paymentId,
+            paymentStatus: `Paid via Razorpay (ID: ${paymentId})`,
+            status: "Processing",
+            notes: baseOrderPayload.notes + ` • Paid via Razorpay [ID: ${paymentId}]`
+          };
+
+          // Instant UI update
+          const existing = STORE.getOrders();
+          STORE.setOrders([onlineOrder, ...existing]);
+          setIsSubmitting(false);
+          setPlacedOrder(onlineOrder);
+          setActiveView("success");
+          triggerToast("Order placed & verified via Razorpay! 🎉");
+
+          // Non-blocking background syncs
+          saveOrderToSupabase(onlineOrder).catch(console.warn);
+          try {
+            STORE.dispatchEmailNotification("order_placed", { order: onlineOrder });
+            STORE.sendWhatsAppNotification("order", onlineOrder);
+          } catch (_) {}
+        };
+
+        // Background polling for Google Pay / UPI intent app-switch
+        pollTimer = setInterval(async () => {
+          if (isOrderFinalized) {
+            clearInterval(pollTimer);
+            return;
+          }
+          try {
+            const checkRes = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(razorpayOrderId)}`);
+            const checkData = await checkRes.json();
+            if (checkData && checkData.paid) {
+              finalizeShopOrder(checkData.paymentId);
+            }
+          } catch (_) {}
+        }, 3000);
+
+        setTimeout(() => {
+          if (pollTimer) clearInterval(pollTimer);
+        }, 180000);
+
         const options = {
           key: orderData.keyId,
           amount: orderData.amount,
           currency: orderData.currency || "INR",
-          name: "COCOON Handcrafted Studio",
-          description: `Order for ${product.name}`,
+          name: "COCOON 🧶",
+          description: "Stitched with love, packed with care 🌸✨",
           image: "https://www.gococoon.store/icon.svg",
           order_id: razorpayOrderId,
+          callback_url: `${typeof window !== "undefined" ? window.location.origin : "https://www.gococoon.store"}/api/payment/callback`,
+          redirect: true,
           prefill: {
             name: form.name,
             email: form.email || "",
             contact: form.phone
+          },
+          notes: {
+            customerName: form.name,
+            customerPhone: form.phone,
+            customerEmail: form.email || "",
+            address: fullDeliveryAddress
           },
           theme: {
             color: "#B06B5B"
           },
           handler: async function (response) {
             try {
-              triggerToast("Verifying payment...");
+              triggerToast("Verifying payment with bank... ⏳");
               const verifyRes = await fetch("/api/payment/verify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_order_id: response.razorpay_order_id || razorpayOrderId,
                   razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature
+                  razorpay_signature: response.razorpay_signature || ""
                 })
               });
 
               const verifyData = await verifyRes.json();
-              if (!verifyRes.ok || (!verifyData.success && !verifyData.verified)) {
-                triggerToast("Payment verification failed. Please contact support.");
-                setIsSubmitting(false);
+              if (verifyRes.ok && (verifyData.success || verifyData.verified)) {
+                finalizeShopOrder(response.razorpay_payment_id || verifyData.paymentId);
                 return;
               }
 
-              const onlineOrder = {
-                ...baseOrderPayload,
-                paymentMethod: "Online Payment (Razorpay)",
-                utr: response.razorpay_payment_id,
-                paymentStatus: `Paid via Razorpay (ID: ${response.razorpay_payment_id})`,
-                status: "Processing",
-                notes: baseOrderPayload.notes + ` • Paid via Razorpay [ID: ${response.razorpay_payment_id}]`
-              };
-
-              const existing = STORE.getOrders();
-              STORE.setOrders([onlineOrder, ...existing]);
-              await saveOrderToSupabase(onlineOrder);
-
-              STORE.dispatchEmailNotification("order_placed", { order: onlineOrder });
-              STORE.sendWhatsAppNotification("order", onlineOrder);
+              // Fallback verification check directly from Razorpay
+              const checkRes = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(razorpayOrderId)}`);
+              const checkData = await checkRes.json();
+              if (checkData && checkData.paid) {
+                finalizeShopOrder(checkData.paymentId || response.razorpay_payment_id);
+                return;
+              }
 
               setIsSubmitting(false);
-              setPlacedOrder(onlineOrder);
-              setActiveView("success");
-              triggerToast("Order placed & verified via Razorpay!");
+              triggerToast("Payment verification failed. Please contact studio.");
             } catch (err) {
               console.error("Verification error:", err);
-              triggerToast("Payment verification error. Please contact studio.");
+              try {
+                const checkRes = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(razorpayOrderId)}`);
+                const checkData = await checkRes.json();
+                if (checkData && checkData.paid) {
+                  finalizeShopOrder(checkData.paymentId || response?.razorpay_payment_id);
+                  return;
+                }
+              } catch (_) {}
               setIsSubmitting(false);
+              triggerToast("Payment verification error. Please contact studio.");
             }
           },
           modal: {
-            ondismiss: function () {
-              setIsSubmitting(false);
-              triggerToast("Payment cancelled. Order was not placed.");
+            ondismiss: async function () {
+              // Active burst polling for Google Pay / UPI intent app-switch
+              try {
+                triggerToast("Verifying payment with UPI/Bank... ⏳");
+                setIsSubmitting(true);
+                for (let attempt = 1; attempt <= 8; attempt++) {
+                  if (isOrderFinalized) return;
+                  const checkRes = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(razorpayOrderId)}`);
+                  const checkData = await checkRes.json();
+                  if (checkData && checkData.paid) {
+                    finalizeShopOrder(checkData.paymentId);
+                    return;
+                  }
+                  await new Promise((r) => setTimeout(r, 2500));
+                }
+              } catch (e) {}
+
+              if (!isOrderFinalized) {
+                if (pollTimer) clearInterval(pollTimer);
+                setIsSubmitting(false);
+                triggerToast("Payment cancelled. Order was not placed.");
+              }
             }
           }
         };
 
         const rzp = new window.Razorpay(options);
         rzp.on("payment.failed", function (resp) {
+          if (pollTimer) clearInterval(pollTimer);
           setIsSubmitting(false);
           triggerToast(resp.error?.description || "Payment failed. Please try again.");
         });
