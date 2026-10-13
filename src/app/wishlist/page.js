@@ -88,6 +88,16 @@ export default function WishlistPage() {
       sessionStorage.setItem("cocoon_temp_cart", JSON.stringify(currentCart));
       localStorage.setItem("cocoon_temp_cart", JSON.stringify(currentCart));
       window.dispatchEvent(new Event("cocoon_store_update"));
+      window.dispatchEvent(
+        new CustomEvent("cocoon_item_added_to_cart", {
+          detail: {
+            name: product.name,
+            price: product.price,
+            image: product.image || product.images?.[0] || product.imgUrl || "",
+            quantity: 1
+          }
+        })
+      );
       triggerToast(`Added "${product.name}" to your basket!`);
     } catch (e) {}
   };

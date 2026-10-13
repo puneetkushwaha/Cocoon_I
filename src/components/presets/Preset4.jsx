@@ -237,6 +237,18 @@ export default function Preset4() {
     persistCart(updated);
     triggerToast(`Added to your basket: ${product.name}`);
     if (quickViewProduct) setQuickViewProduct(null);
+    try {
+      window.dispatchEvent(
+        new CustomEvent("cocoon_item_added_to_cart", {
+          detail: {
+            name: product.name,
+            price: product.price,
+            image: product.images?.[0] || product.image || product.imgUrl || "",
+            quantity: 1
+          }
+        })
+      );
+    } catch (e) {}
   };
 
   const removeFromCart = (id, color) => {

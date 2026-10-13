@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { STORE } from "@/data/store";
 
 export default function Header({ onOpenCart, cartCountOverride }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const [tickerList, setTickerList] = useState([
     "100% Handcrafted with Organic Milk Cotton",
@@ -21,6 +22,8 @@ export default function Header({ onOpenCart, cartCountOverride }) {
   const [wishlistCount, setWishlistCount] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [floatingCartToast, setFloatingCartToast] = useState(null);
+  const prevCountRef = useRef(null);
 
   // Sync Header Data across all pages
   useEffect(() => {
@@ -78,17 +81,39 @@ export default function Header({ onOpenCart, cartCountOverride }) {
 
     syncHeader();
 
+    const handleItemAdded = (e) => {
+      const detail = e?.detail || {};
+      setFloatingCartToast({
+        name: detail.name || "Handcrafted Piece",
+        price: detail.price ? `₹${detail.price}` : "",
+        image: detail.image || null,
+        quantity: detail.quantity || 1,
+        timestamp: Date.now()
+      });
+    };
+
     const asyncSync = () => {
       setTimeout(syncHeader, 0);
     };
 
+    window.addEventListener("cocoon_item_added_to_cart", handleItemAdded);
     window.addEventListener("cocoon_store_update", asyncSync);
     window.addEventListener("storage", asyncSync);
     return () => {
+      window.removeEventListener("cocoon_item_added_to_cart", handleItemAdded);
       window.removeEventListener("cocoon_store_update", asyncSync);
       window.removeEventListener("storage", asyncSync);
     };
   }, []);
+
+  // Auto-dismiss floating toast after 5.5s
+  useEffect(() => {
+    if (!floatingCartToast) return;
+    const timer = setTimeout(() => {
+      setFloatingCartToast(null);
+    }, 5500);
+    return () => clearTimeout(timer);
+  }, [floatingCartToast]);
 
   // Body scroll lock when mobile menu is open
   useEffect(() => {
@@ -232,29 +257,32 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                 </Link>
               )}
 
-              {/* Mobile Quick User Avatar / Login (Mobile Phone Only - Compact 32px, Never Overflows) */}
-              {customerUser ? (
-                <Link
-                  href="/profile"
-                  className="md:hidden w-8 h-8 rounded-full bg-gradient-to-tr from-[#B06B5B] to-[#8C4537] text-white flex items-center justify-center font-header font-bold text-xs shadow-xs border border-white/40 shrink-0"
-                  title={`Account: ${customerUser.name || "Customer"}`}
-                  aria-label="Account Profile"
+              {/* Mobile Dedicated Cart Button (Mobile Header - Outside Menu, Next to Menu Pill) */}
+              <Link
+                href="/cart"
+                className="md:hidden relative w-9 h-9 rounded-full bg-[#231F20]/90 backdrop-blur-md hover:bg-[#B06B5B] text-white shadow-xs flex items-center justify-center cursor-pointer border border-white/20 active:scale-95 shrink-0 transition-all"
+                title="Shopping Basket"
+                aria-label="Shopping Basket"
+              >
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.8"
+                  stroke="currentColor"
                 >
-                  {(customerUser.name?.trim() || customerUser.email?.trim() || "C").charAt(0).toUpperCase()}
-                </Link>
-              ) : (
-                <Link
-                  href="/login"
-                  className="md:hidden px-3 py-1.5 rounded-full bg-gradient-to-r from-[#B06B5B] to-[#8C4537] text-white text-[10px] font-bold uppercase tracking-wider shadow-xs shrink-0 flex items-center gap-1 border border-white/20"
-                  title="Sign In"
-                  aria-label="Sign In"
-                >
-                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                  </svg>
-                  <span>Login</span>
-                </Link>
-              )}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"
+                  />
+                </svg>
+                {effectiveCartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#B06B5B] text-white text-[9px] font-black min-w-4 h-4 px-1 rounded-full flex items-center justify-center shadow-xs border border-white">
+                    {effectiveCartCount}
+                  </span>
+                )}
+              </Link>
 
               {/* Mobile Luxury Minimalist Menu Pill Button (Mobile Phone Only - ALWAYS VISIBLE) */}
               <button
@@ -548,6 +576,67 @@ export default function Header({ onOpenCart, cartCountOverride }) {
             </p>
           </div>
 
+        </div>
+      )}
+
+      {/* Floating "Proceed to Cart" Pill Toast (Appears across site upon adding any item to cart) */}
+      {floatingCartToast && pathname !== "/cart" && (
+        <div className="fixed bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-[9999] w-[94%] max-w-md pointer-events-auto transition-all duration-300 animate-[bounce_0.6s_ease-out_1]">
+          <div className="bg-[#231F20]/95 backdrop-blur-xl text-white p-3 sm:p-3.5 rounded-2xl shadow-2xl border border-white/20 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              {floatingCartToast.image ? (
+                <div className="w-11 h-11 rounded-xl overflow-hidden bg-stone-800 border border-white/20 shrink-0">
+                  <img
+                    src={floatingCartToast.image}
+                    alt={floatingCartToast.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                </div>
+              )}
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-emerald-300">
+                    Added to basket
+                  </span>
+                  {floatingCartToast.price && (
+                    <span className="text-[10px] text-stone-400">
+                      • {floatingCartToast.price}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs font-serif font-medium text-white truncate max-w-[130px] sm:max-w-[180px]">
+                  {floatingCartToast.name}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Link
+                href="/cart"
+                onClick={() => setFloatingCartToast(null)}
+                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#B06B5B] to-[#975647] hover:from-[#975647] hover:to-[#804235] text-white text-[11px] font-bold tracking-wider uppercase shadow-md active:scale-95 transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer border border-white/20"
+              >
+                <span>Proceed to Cart</span>
+                <span className="text-xs">&rarr;</span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => setFloatingCartToast(null)}
+                className="w-7 h-7 rounded-lg text-white/50 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors text-xs cursor-pointer"
+                title="Dismiss"
+                aria-label="Dismiss toast"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>

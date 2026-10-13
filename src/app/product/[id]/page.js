@@ -360,6 +360,18 @@ export default function ProductDetailPage({ params }) {
     }
     persistCart(updated);
     triggerToast(`Added ${qty}x ${prod.name} to your basket!`);
+    try {
+      window.dispatchEvent(
+        new CustomEvent("cocoon_item_added_to_cart", {
+          detail: {
+            name: prod.name,
+            price: prod.price,
+            image: prod.images?.[0] || prod.image || "",
+            quantity: qty
+          }
+        })
+      );
+    } catch (e) {}
   };
 
   const persistCart = (updatedCart) => {
