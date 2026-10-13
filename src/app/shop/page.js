@@ -239,41 +239,130 @@ export default function StandaloneShopPage() {
       }));
     } catch (e) {}
 
-    // 1. DIRECT UPI PAYMENT FLOW
-    if (paymentMethod === "upi") {
-      if (typeof window !== "undefined") {
-        const isMobileDevice = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-        if (isMobileDevice) {
-          window.location.href = `upi://pay?pa=8171902255@ibl&pn=Miss%20Mehak%20Agarwal&am=${grandTotal}&cu=INR&tn=Order`;
-        }
+    // 1. ONLINE RAZORPAY PAYMENT FLOW
+    if (paymentMethod === "upi" || paymentMethod === "online") {
+      setIsSubmitting(true);
+      triggerToast("Opening secure Razorpay payment gateway...");
+
+      const isLoaded = await new Promise((resolve) => {
+        if (typeof window !== "undefined" && window.Razorpay) return resolve(true);
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+      });
+
+      if (!isLoaded) {
+        triggerToast("Failed to load payment gateway. Please check your internet connection.");
+        setIsSubmitting(false);
+        return;
       }
 
       try {
-        const upiOrder = {
-          ...baseOrderPayload,
-          paymentMethod: "UPI",
-          utr: utrNumber.trim() || null,
-          paymentStatus: utrNumber.trim() ? `Paid via UPI (UTR: ${utrNumber.trim()})` : "UPI Payment Submitted (Awaiting Verification)",
-          status: "Processing",
-          notes: baseOrderPayload.notes + (utrNumber.trim() ? ` • UTR: ${utrNumber.trim()}` : "")
+        const res = await fetch("/api/payment/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: grandTotal,
+            currency: "INR",
+            receipt: `rcpt_${Date.now()}`,
+            notes: {
+              customerName: form.name,
+              customerPhone: form.phone,
+              customerEmail: form.email,
+              productId: product.id,
+              productName: product.name
+            }
+          })
+        });
+
+        const orderData = await res.json();
+        const razorpayOrderId = orderData.id || orderData.orderId;
+        if (!res.ok || !razorpayOrderId) {
+          throw new Error(orderData.error || "Failed to initiate payment");
+        }
+
+        const options = {
+          key: orderData.keyId,
+          amount: orderData.amount,
+          currency: orderData.currency || "INR",
+          name: "COCOON Handcrafted Studio",
+          description: `Order for ${product.name}`,
+          image: "https://www.gococoon.store/icon.svg",
+          order_id: razorpayOrderId,
+          prefill: {
+            name: form.name,
+            email: form.email || "",
+            contact: form.phone
+          },
+          theme: {
+            color: "#B06B5B"
+          },
+          handler: async function (response) {
+            try {
+              triggerToast("Verifying payment...");
+              const verifyRes = await fetch("/api/payment/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature
+                })
+              });
+
+              const verifyData = await verifyRes.json();
+              if (!verifyRes.ok || (!verifyData.success && !verifyData.verified)) {
+                triggerToast("Payment verification failed. Please contact support.");
+                setIsSubmitting(false);
+                return;
+              }
+
+              const onlineOrder = {
+                ...baseOrderPayload,
+                paymentMethod: "Online Payment (Razorpay)",
+                utr: response.razorpay_payment_id,
+                paymentStatus: `Paid via Razorpay (ID: ${response.razorpay_payment_id})`,
+                status: "Processing",
+                notes: baseOrderPayload.notes + ` • Paid via Razorpay [ID: ${response.razorpay_payment_id}]`
+              };
+
+              const existing = STORE.getOrders();
+              STORE.setOrders([onlineOrder, ...existing]);
+              await saveOrderToSupabase(onlineOrder);
+
+              STORE.dispatchEmailNotification("order_placed", { order: onlineOrder });
+              STORE.sendWhatsAppNotification("order", onlineOrder);
+
+              setIsSubmitting(false);
+              setPlacedOrder(onlineOrder);
+              setActiveView("success");
+              triggerToast("Order placed & verified via Razorpay!");
+            } catch (err) {
+              console.error("Verification error:", err);
+              triggerToast("Payment verification error. Please contact studio.");
+              setIsSubmitting(false);
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              setIsSubmitting(false);
+              triggerToast("Payment cancelled. Order was not placed.");
+            }
+          }
         };
 
-        const existing = STORE.getOrders();
-        STORE.setOrders([upiOrder, ...existing]);
-        await saveOrderToSupabase(upiOrder);
-
-        // Dispatch Email & WhatsApp Notification
-        STORE.dispatchEmailNotification("order_placed", { order: upiOrder });
-        STORE.sendWhatsAppNotification("order", upiOrder);
-
-        setIsSubmitting(false);
-        setPlacedOrder(upiOrder);
-        setActiveView("success");
-        triggerToast("Order placed successfully via Direct UPI!");
+        const rzp = new window.Razorpay(options);
+        rzp.on("payment.failed", function (resp) {
+          setIsSubmitting(false);
+          triggerToast(resp.error?.description || "Payment failed. Please try again.");
+        });
+        rzp.open();
       } catch (err) {
-        console.error("UPI order error:", err);
+        console.error("Razorpay initiation error:", err);
         setIsSubmitting(false);
-        triggerToast("Error placing order. Please try again.");
+        triggerToast(err.message || "Failed to start payment.");
       }
       return;
     }
@@ -565,7 +654,7 @@ export default function StandaloneShopPage() {
               Select Payment Method
             </h3>
 
-            {/* Direct UPI Option (8171902255@ibl with 5% Instant OFF) */}
+            {/* Online Payment Option (Razorpay Instant) */}
             <div
               onClick={() => setPaymentMethod("upi")}
               className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col gap-3 ${
@@ -585,71 +674,24 @@ export default function StandaloneShopPage() {
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-xs sm:text-sm text-[#2C2623] flex items-center gap-1.5">
-                      <span>⚡ Direct UPI (GPay / PhonePe / Paytm)</span>
+                      <span>🔒 Online Payment (UPI, Cards & NetBanking)</span>
                     </span>
                     <span className="text-[10px] font-black uppercase text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
                       5% Instant Off
                     </span>
                   </div>
                   <p className="text-xs text-stone-600 font-serif">
-                    Pay directly to studio UPI ID: <strong className="text-emerald-900 font-mono">8171902255@ibl</strong>
+                    100% Secured by Razorpay • GPay, PhonePe, Paytm, Cards & NetBanking
                   </p>
                 </div>
               </div>
 
-              {/* Direct UPI Payment Details (When Selected) */}
+              {/* Online Payment Details (When Selected) */}
               {paymentMethod === "upi" && (
-                <div className="pt-3 border-t border-emerald-200/80 space-y-3 animate-fadeIn text-xs">
-                  {/* Laptop / Desktop View ONLY: Dynamic QR Code & UPI Copy (Hidden on mobile) */}
-                  <div className="hidden md:flex bg-white p-3.5 rounded-xl border border-emerald-200 flex-row items-center gap-4 text-left">
-                    <div className="shrink-0 bg-white p-1 rounded-lg border border-stone-200 shadow-xs">
-                      <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(
-                          `upi://pay?pa=8171902255@ibl&pn=Miss%20Mehak%20Agarwal&am=${grandTotal}&cu=INR&tn=Order`
-                        )}`}
-                        alt="COCOON Studio UPI QR Code"
-                        className="w-24 h-24 mx-auto rounded-lg"
-                      />
-                      <span className="text-[8px] text-stone-500 font-mono block text-center mt-1">Scan via UPI App</span>
-                    </div>
-
-                    <div className="flex-1 space-y-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">Cocoon Studio UPI ID:</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-stone-900 bg-stone-100 px-2.5 py-1 rounded-md border border-stone-300">
-                          8171902255@ibl
-                        </span>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCopyUpi();
-                          }}
-                          className="px-2.5 py-1 rounded-md bg-stone-800 hover:bg-black text-white text-[11px] font-semibold transition"
-                        >
-                          {copiedUpi ? "✓ Copied" : "Copy UPI"}
-                        </button>
-                      </div>
-                      <p className="text-[11px] text-stone-600 font-serif leading-relaxed">
-                        Scan from phone screen or copy UPI ID. Click below to place order and enter UTR.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Phone View: Clean Notice */}
-                  <div className="md:hidden flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-emerald-200 text-xs">
-                    <span className="text-stone-700 font-serif">Pay: <strong className="font-mono text-stone-900">8171902255@ibl</strong></span>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCopyUpi();
-                      }}
-                      className="text-[11px] font-bold text-[#B06B5B] hover:underline"
-                    >
-                      {copiedUpi ? "✓ Copied" : "Copy UPI"}
-                    </button>
-                  </div>
+                <div className="pt-2 border-t border-emerald-200/80 space-y-1 animate-fadeIn text-xs">
+                  <p className="text-[11px] text-stone-600 font-serif leading-relaxed">
+                    Pay securely via Razorpay checkout. Order is confirmed automatically once payment succeeds.
+                  </p>
                 </div>
               )}
             </div>
@@ -846,9 +888,9 @@ export default function StandaloneShopPage() {
               className="w-full py-4 rounded-2xl bg-[#B06B5B] hover:bg-[#975647] text-white font-bold text-xs uppercase tracking-wider transition shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer text-center"
             >
               {isSubmitting ? (
-                "Opening UPI & Placing Order..."
+                "Opening Payment Window..."
               ) : paymentMethod === "upi" ? (
-                `Pay ₹${grandTotal} via UPI & Place Order →`
+                `🔒 Pay ₹${grandTotal} via UPI / Card & Confirm Order →`
               ) : (
                 `Confirm Cash on Delivery Order (₹${grandTotal}) →`
               )}
@@ -899,42 +941,18 @@ export default function StandaloneShopPage() {
               </span>
               <span className="text-stone-900 font-bold text-base">₹{placedOrder.totalAmount}</span>
             </div>
-            {placedOrder.utr ? (
+            {placedOrder.utr && (
               <div className="text-[11px] text-emerald-800 bg-emerald-50 px-3 py-2 rounded-xl font-mono border border-emerald-200 flex justify-between items-center">
-                <strong>UPI UTR / Ref:</strong>
+                <strong>Payment Ref ID:</strong>
                 <span className="font-bold select-all text-stone-900">{placedOrder.utr}</span>
               </div>
-            ) : placedOrder.paymentMethod === "UPI" ? (
-              <div className="p-3 bg-white rounded-2xl border border-emerald-300 space-y-2 text-left">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-stone-800">
-                    ⚡ Enter UPI UTR / Ref No.
-                  </span>
-                  <span className="text-[9px] text-[#B06B5B] font-mono font-bold">12 Digits</span>
-                </div>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    maxLength={22}
-                    value={utrNumber}
-                    onChange={(e) => setUtrNumber(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
-                    placeholder="e.g. 429381749281"
-                    className="flex-1 bg-stone-50 border border-stone-200 focus:border-[#B06B5B] focus:bg-white rounded-lg px-2.5 py-1.5 text-xs font-mono text-stone-900 focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    disabled={isUtrSubmitting}
-                    onClick={() => handleUpdateUtr(placedOrder.id, utrNumber)}
-                    className="px-3 py-1.5 bg-[#B06B5B] hover:bg-[#964B44] text-white text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer shrink-0"
-                  >
-                    {isUtrSubmitting ? "Saving..." : "Submit UTR"}
-                  </button>
-                </div>
-                <p className="text-[10px] text-stone-500 font-serif leading-tight">
-                  Check your UPI app (GPay/PhonePe/Paytm) payment details for the 12-digit UPI Ref/UTR No.
-                </p>
+            )}
+            {placedOrder.paymentMethod !== "COD" && (
+              <div className="flex justify-between items-center text-[11px] text-stone-700 pt-1 border-t border-stone-200/60">
+                <span className="font-semibold">Payment Status:</span>
+                <span className="text-emerald-700 font-bold">Paid Online ✓</span>
               </div>
-            ) : null}
+            )}
             <div className="text-[11px] text-stone-600">
               <strong>Item:</strong> {placedOrder.items?.map((i) => `${i.name} (x${i.quantity})`).join(", ")}
             </div>
