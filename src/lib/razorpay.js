@@ -79,41 +79,130 @@ export const initiateRazorpayPayment = async ({
         color: "#B06B5B", // Artisanal Terracotta
       },
       modal: {
-        ondismiss: () => {
+        ondismiss: async () => {
+          if (hasCompleted) return;
+          clearInterval(pollTimer);
+          try {
+            // Check if payment was actually successful before dismissing
+            const checkRes = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(orderData.orderId)}`);
+            const checkData = await checkRes.json();
+            if (checkData.success && checkData.paid) {
+              hasCompleted = true;
+              if (onSuccess) {
+                onSuccess({
+                  paymentId: checkData.paymentId,
+                  orderId: orderData.orderId,
+                  signature: "verified_via_server",
+                });
+              }
+              return;
+            }
+          } catch (e) {
+            console.warn("Order check on dismiss failed:", e);
+          }
           if (onDismiss) onDismiss();
         },
       },
       handler: async function (response) {
+        if (hasCompleted) return;
+        clearInterval(pollTimer);
         try {
           // 3. Verify payment signature on backend
           const verifyRes = await fetch("/api/payment/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
+              razorpay_order_id: response.razorpay_order_id || orderData.orderId,
               razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
+              razorpay_signature: response.razorpay_signature || "",
             }),
           });
 
           const verifyData = await verifyRes.json();
           if (verifyData.success) {
+            hasCompleted = true;
             if (onSuccess) {
               onSuccess({
                 paymentId: response.razorpay_payment_id,
-                orderId: response.razorpay_order_id,
+                orderId: response.razorpay_order_id || orderData.orderId,
                 signature: response.razorpay_signature,
               });
             }
-          } else {
-            if (onFailure) onFailure(verifyData.error || "Payment signature verification failed.");
+            return;
           }
+
+          // Fallback check
+          const fallbackRes = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(orderData.orderId)}`);
+          const fallbackData = await fallbackRes.json();
+          if (fallbackData.success && fallbackData.paid) {
+            hasCompleted = true;
+            if (onSuccess) {
+              onSuccess({
+                paymentId: fallbackData.paymentId || response.razorpay_payment_id,
+                orderId: orderData.orderId,
+                signature: "fallback_verified",
+              });
+            }
+            return;
+          }
+
+          if (onFailure) onFailure(verifyData.error || "Payment signature verification failed.");
         } catch (verifyErr) {
           console.error("Payment verification network error:", verifyErr);
+          // Check server status as last resort
+          try {
+            const lastCheck = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(orderData.orderId)}`);
+            const lastData = await lastCheck.json();
+            if (lastData.success && lastData.paid) {
+              hasCompleted = true;
+              if (onSuccess) {
+                onSuccess({
+                  paymentId: lastData.paymentId || response?.razorpay_payment_id,
+                  orderId: orderData.orderId,
+                  signature: "fallback_verified",
+                });
+              }
+              return;
+            }
+          } catch (_) {}
+
           if (onFailure) onFailure("Payment verification failed. Please contact studio WhatsApp.");
         }
       },
     };
+
+    let hasCompleted = false;
+    let pollTimer = null;
+
+    // Background polling for mobile app switches (Google Pay, PhonePe, Paytm)
+    pollTimer = setInterval(async () => {
+      if (hasCompleted) {
+        clearInterval(pollTimer);
+        return;
+      }
+      try {
+        const pollRes = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(orderData.orderId)}`);
+        const pollData = await pollRes.json();
+        if (pollData.success && pollData.paid) {
+          hasCompleted = true;
+          clearInterval(pollTimer);
+          if (onSuccess) {
+            onSuccess({
+              paymentId: pollData.paymentId,
+              orderId: orderData.orderId,
+              signature: "polled_success",
+            });
+          }
+        }
+      } catch (pollErr) {
+        // silent fail on poll
+      }
+    }, 3500);
+
+    // Stop polling after 4 minutes
+    setTimeout(() => {
+      if (pollTimer) clearInterval(pollTimer);
+    }, 240000);
 
     const rzpInstance = new window.Razorpay(options);
     rzpInstance.on("payment.failed", function (response) {

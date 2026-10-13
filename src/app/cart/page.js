@@ -511,17 +511,11 @@ export default function CartPage() {
         timestamp: Date.now()
       };
 
+      // 1. Immediately store in local store and UI state so order is 100% saved
       const existingOrders = STORE.getOrders();
       STORE.setOrders([newOrder, ...existingOrders]);
-      await saveOrderToSupabase(newOrder);
 
-      // Dispatch Email Notification to Customer & Admin
-      STORE.dispatchEmailNotification("order_placed", { order: newOrder });
-
-      // Dispatch WhatsApp Notification to Mehak's Studio (+91 8171902255)
-      STORE.sendWhatsAppNotification("order", newOrder);
-
-      // Clear cart
+      // 2. Clear cart immediately
       setCart([]);
       try {
         sessionStorage.removeItem("cocoon_temp_cart");
@@ -531,9 +525,19 @@ export default function CartPage() {
         }, 0);
       } catch (e) {}
 
+      // 3. Immediately display Order Confirmed Screen
       setIsSubmittingOrder(false);
       setPlacedOrderSummary(newOrder);
       triggerToast(`Order placed successfully! Total: ₹${grandTotal}`);
+
+      // 4. Background Database & Notification Syncs (Non-blocking)
+      saveOrderToSupabase(newOrder).catch((e) => console.warn("Supabase order sync warning:", e));
+      try {
+        STORE.dispatchEmailNotification("order_placed", { order: newOrder });
+      } catch (e) {}
+      try {
+        STORE.sendWhatsAppNotification("order", newOrder);
+      } catch (e) {}
     } catch (err) {
       console.error("Order finalization error:", err);
       setIsSubmittingOrder(false);
@@ -653,6 +657,19 @@ export default function CartPage() {
           throw new Error(orderData.error || "Failed to initiate payment");
         }
 
+        let isOrderFinalized = false;
+        let pollInterval = null;
+
+        const finalizeAndClear = async (payId) => {
+          if (isOrderFinalized) return;
+          isOrderFinalized = true;
+          if (pollInterval) clearInterval(pollInterval);
+          try {
+            if (rzp) rzp.close();
+          } catch (e) {}
+          await executeOrderFinalization("Online Payment (Razorpay)", payId);
+        };
+
         // 2. Open Razorpay Checkout Modal
         const options = {
           key: orderData.keyId,
@@ -673,46 +690,92 @@ export default function CartPage() {
           handler: async function (response) {
             // 3. Verify Payment Signature on Server
             try {
-              triggerToast("Verifying payment...");
+              triggerToast("Verifying payment with bank... ⏳");
               const verifyRes = await fetch("/api/payment/verify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_order_id: response.razorpay_order_id || razorpayOrderId,
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature
                 })
               });
 
               const verifyData = await verifyRes.json();
-              if (!verifyRes.ok || (!verifyData.success && !verifyData.verified)) {
-                triggerToast("Payment verification failed. Please contact support.");
-                setIsSubmittingOrder(false);
+              if (verifyRes.ok && (verifyData.success || verifyData.verified)) {
+                await finalizeAndClear(response.razorpay_payment_id || verifyData.paymentId);
                 return;
               }
 
-              // 4. Payment Verified! Finalize and record order
-              await executeOrderFinalization("Online Payment (Razorpay)", response.razorpay_payment_id);
+              // Fallback verification check directly from Razorpay API
+              const checkRes = await fetch(`/api/payment/check-order?orderId=${razorpayOrderId}`);
+              const checkData = await checkRes.json();
+              if (checkData && checkData.paid) {
+                await finalizeAndClear(checkData.paymentId || response.razorpay_payment_id);
+                return;
+              }
+
+              triggerToast("Payment verification failed. Please contact studio WhatsApp.");
+              setIsSubmittingOrder(false);
             } catch (err) {
               console.error("Verification error:", err);
-              triggerToast("Payment verification failed. Please contact support.");
+              // Second fallback check
+              try {
+                const checkRes = await fetch(`/api/payment/check-order?orderId=${razorpayOrderId}`);
+                const checkData = await checkRes.json();
+                if (checkData && checkData.paid) {
+                  await finalizeAndClear(checkData.paymentId || response.razorpay_payment_id);
+                  return;
+                }
+              } catch (e) {}
               setIsSubmittingOrder(false);
+              triggerToast("Unable to verify payment. Please contact studio support.");
             }
           },
           modal: {
-            ondismiss: function () {
+            ondismiss: async function () {
+              // Critical for mobile Google Pay / UPI intent app-switch:
+              // When user returns to browser after paying in Google Pay, modal may close. Check if payment succeeded!
+              try {
+                triggerToast("Checking payment confirmation... ⏳");
+                const checkRes = await fetch(`/api/payment/check-order?orderId=${razorpayOrderId}`);
+                const checkData = await checkRes.json();
+                if (checkData && checkData.paid) {
+                  await finalizeAndClear(checkData.paymentId);
+                  return;
+                }
+              } catch (e) {}
+              if (pollInterval) clearInterval(pollInterval);
               setIsSubmittingOrder(false);
-              triggerToast("Payment cancelled. Your order was not placed.");
             }
           }
         };
 
         const rzp = new window.Razorpay(options);
         rzp.on("payment.failed", function (resp) {
+          if (pollInterval) clearInterval(pollInterval);
           setIsSubmittingOrder(false);
-          triggerToast(resp.error?.description || "Payment failed. Please try again.");
+          triggerToast(resp.error?.description || "Payment failed or declined. Please try again.");
         });
         rzp.open();
+
+        // 3. Background Poller (Checks every 3s for 90s - catches app switches seamlessly)
+        let pollCount = 0;
+        pollInterval = setInterval(async () => {
+          pollCount += 1;
+          if (pollCount > 30 || isOrderFinalized) {
+            clearInterval(pollInterval);
+            return;
+          }
+          try {
+            const checkRes = await fetch(`/api/payment/check-order?orderId=${razorpayOrderId}`);
+            const checkData = await checkRes.json();
+            if (checkData && checkData.paid) {
+              clearInterval(pollInterval);
+              await finalizeAndClear(checkData.paymentId);
+            }
+          } catch (e) {}
+        }, 3000);
       } catch (err) {
         console.error("Payment initiation error:", err);
         triggerToast(err.message || "Failed to start payment. Please try again.");

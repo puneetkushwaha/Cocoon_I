@@ -1445,6 +1445,75 @@ export default function Preset4() {
                         return;
                       }
 
+                      let orderFinalized = false;
+                      let pollTimer = null;
+
+                      const finalizePresetOrder = (paymentId) => {
+                        if (orderFinalized) return;
+                        orderFinalized = true;
+                        if (pollTimer) clearInterval(pollTimer);
+
+                        const newOrder = {
+                          id: generateOrderId(),
+                          date: new Date().toISOString(),
+                          customerName: custData.name,
+                          customerPhone: custData.phone,
+                          customerEmail: custData.email || "",
+                          address: `${custData.address}, ${custData.city} - ${custData.pincode}`,
+                          items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, color: i.color })),
+                          totalAmount: subtotal,
+                          status: "Processing",
+                          paymentMethod: "Online Payment (Razorpay)",
+                          utr: paymentId,
+                          paymentStatus: `Paid via Razorpay (ID: ${paymentId})`,
+                          notes: (custData.notes ? custData.notes + " • " : "") + `Paid Online via Razorpay [Payment ID: ${paymentId}]`
+                        };
+
+                        // 1. Immediately update UI & Cart so customer sees instant confirmation
+                        const existingOrders = STORE.getOrders();
+                        STORE.setOrders([newOrder, ...existingOrders]);
+                        setIsProcessingPayment(false);
+                        setPlacedOrderSummary(newOrder);
+                        setCart([]);
+                        persistCart([]);
+                        setIsAuthModalOpen(false);
+                        triggerToast(`Order confirmed for ${custData.name}! 🎉`);
+
+                        // 2. Background non-blocking persistence and notifications
+                        (async () => {
+                          try {
+                            await saveOrderToSupabase(newOrder);
+                          } catch (e) {
+                            console.warn("Background order sync warning:", e);
+                          }
+                          try {
+                            STORE.dispatchEmailNotification("order_placed", { order: newOrder });
+                            STORE.sendWhatsAppNotification("order", newOrder);
+                          } catch (e) {
+                            console.warn("Background notification warning:", e);
+                          }
+                        })();
+                      };
+
+                      // Background polling for Google Pay / UPI intent app-switch
+                      pollTimer = setInterval(async () => {
+                        if (orderFinalized) {
+                          clearInterval(pollTimer);
+                          return;
+                        }
+                        try {
+                          const pollRes = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(razorpayOrderId)}`);
+                          const pollData = await pollRes.json();
+                          if (pollData.success && pollData.paid) {
+                            finalizePresetOrder(pollData.paymentId);
+                          }
+                        } catch (_) {}
+                      }, 3500);
+
+                      setTimeout(() => {
+                        if (pollTimer) clearInterval(pollTimer);
+                      }, 240000);
+
                       const options = {
                         key: orderData.keyId,
                         amount: orderData.amount,
@@ -1468,56 +1537,60 @@ export default function Preset4() {
                               method: "POST",
                               headers: { "Content-Type": "application/json" },
                               body: JSON.stringify({
-                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_order_id: response.razorpay_order_id || razorpayOrderId,
                                 razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_signature: response.razorpay_signature
+                                razorpay_signature: response.razorpay_signature || ""
                               })
                             });
 
                             const verifyData = await verifyRes.json();
-                            if (!verifyData.success) {
-                              setIsProcessingPayment(false);
-                              triggerToast("Payment verification failed. Please contact studio.");
+                            if (verifyData.success) {
+                              finalizePresetOrder(response.razorpay_payment_id);
                               return;
                             }
 
-                            const newOrder = {
-                              id: generateOrderId(),
-                              date: new Date().toISOString(),
-                              customerName: custData.name,
-                              customerPhone: custData.phone,
-                              customerEmail: custData.email || "",
-                              address: `${custData.address}, ${custData.city} - ${custData.pincode}`,
-                              items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, color: i.color })),
-                              totalAmount: subtotal,
-                              status: "Processing",
-                              paymentMethod: "Online Payment (Razorpay)",
-                              utr: response.razorpay_payment_id,
-                              paymentStatus: `Paid via Razorpay (ID: ${response.razorpay_payment_id})`,
-                              notes: (custData.notes ? custData.notes + " • " : "") + `Paid Online via Razorpay [Payment ID: ${response.razorpay_payment_id}]`
-                            };
-
-                            const existingOrders = STORE.getOrders();
-                            STORE.setOrders([newOrder, ...existingOrders]);
-                            await saveOrderToSupabase(newOrder);
-
-                            STORE.dispatchEmailNotification("order_placed", { order: newOrder });
-                            STORE.sendWhatsAppNotification("order", newOrder);
+                            // Secondary fallback check directly with Razorpay
+                            const fbRes = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(razorpayOrderId)}`);
+                            const fbData = await fbRes.json();
+                            if (fbData.success && fbData.paid) {
+                              finalizePresetOrder(fbData.paymentId || response.razorpay_payment_id);
+                              return;
+                            }
 
                             setIsProcessingPayment(false);
-                            setPlacedOrderSummary(newOrder);
-                            setCart([]);
-                            persistCart([]);
-                            setIsAuthModalOpen(false);
-                            triggerToast(`Order confirmed for ${custData.name}! 🎉`);
+                            triggerToast("Payment verification failed. Please contact studio.");
                           } catch (err) {
                             console.error("Verification error:", err);
+                            // Last ditch status check
+                            try {
+                              const lastCheck = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(razorpayOrderId)}`);
+                              const lastData = await lastCheck.json();
+                              if (lastData.success && lastData.paid) {
+                                finalizePresetOrder(lastData.paymentId || response?.razorpay_payment_id);
+                                return;
+                              }
+                            } catch (_) {}
                             setIsProcessingPayment(false);
                             triggerToast("Payment verification failed.");
                           }
                         },
                         modal: {
-                          ondismiss: function () {
+                          ondismiss: async function () {
+                            if (orderFinalized) return;
+                            if (pollTimer) clearInterval(pollTimer);
+
+                            // Inspect if the payment actually went through before declaring cancelled
+                            try {
+                              const chkRes = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(razorpayOrderId)}`);
+                              const chkData = await chkRes.json();
+                              if (chkData.success && chkData.paid) {
+                                finalizePresetOrder(chkData.paymentId);
+                                return;
+                              }
+                            } catch (e) {
+                              console.warn("Dismiss check error:", e);
+                            }
+
                             setIsProcessingPayment(false);
                             triggerToast("Payment cancelled. Order was not placed.");
                           }
