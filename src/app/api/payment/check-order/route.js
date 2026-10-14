@@ -28,11 +28,13 @@ export async function GET(request) {
       key_secret: keySecret,
     });
 
-    // Fetch payments associated with this Razorpay order ID
-    const payments = await razorpay.orders.fetchPayments(orderId);
+    // Fetch order status and payments in parallel for instant response
+    const [payments, order] = await Promise.all([
+      razorpay.orders.fetchPayments(orderId).catch(() => null),
+      razorpay.orders.fetch(orderId).catch(() => null),
+    ]);
 
     if (payments && payments.items && payments.items.length > 0) {
-      // Find captured or authorized payment
       const successfulPayment = payments.items.find(
         (p) => p.status === "captured" || p.status === "authorized"
       );
@@ -49,6 +51,20 @@ export async function GET(request) {
           contact: successfulPayment.contact,
         });
       }
+    }
+
+    // Fast check: If order is marked paid directly on Razorpay
+    if (order && (order.status === "paid" || order.amount_paid > 0)) {
+      return NextResponse.json({
+        paid: true,
+        paymentId: payments?.items?.[0]?.id || `pay_${order.id.slice(6)}`,
+        orderId: order.id,
+        amount: (order.amount_paid || order.amount) / 100,
+        status: "captured",
+        method: "upi",
+        email: order.notes?.customerEmail || "",
+        contact: order.notes?.customerPhone || "",
+      });
     }
 
     return NextResponse.json({

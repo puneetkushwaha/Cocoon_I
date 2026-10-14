@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
@@ -52,6 +52,8 @@ export default function CartPage() {
   const [pendingOrderToken, setPendingOrderToken] = useState(null);
   const [isVerifyingManual, setIsVerifyingManual] = useState(false);
   const [paymentVerificationState, setPaymentVerificationState] = useState(null);
+  const activeOrderShownRef = useRef(null);
+  const isFinalizingOrderRef = useRef(false);
 
   // Multi-Address Selection States
   const [savedAddresses, setSavedAddresses] = useState([]);
@@ -241,6 +243,7 @@ export default function CartPage() {
 
           const existingOrders = STORE.getOrders();
           STORE.setOrders([confirmedOrder, ...existingOrders]);
+          activeOrderShownRef.current = confirmedOrder.id;
           setIsSubmittingOrder(false);
           setPaymentVerificationState(null);
           setPlacedOrderSummary(confirmedOrder);
@@ -265,6 +268,9 @@ export default function CartPage() {
     }
 
     const reconcilePayments = async () => {
+      if (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed") return;
+      if (isFinalizingOrderRef.current) return;
+
       // 1. Check local pending payment token
       try {
         const rawPending = localStorage.getItem("cocoon_pending_payment") || sessionStorage.getItem("cocoon_pending_payment");
@@ -279,8 +285,9 @@ export default function CartPage() {
                 orderId: pending.razorpayOrderId
               });
 
-              // Active continuous check loop
-              for (let att = 1; att <= 12; att++) {
+              // Fast active continuous check loop (750ms interval)
+              for (let att = 1; att <= 15; att++) {
+                if (isFinalizingOrderRef.current || (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed")) return;
                 const res = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(pending.razorpayOrderId)}`);
                 const checkData = await res.json();
                 if (checkData && checkData.paid) {
@@ -300,15 +307,17 @@ export default function CartPage() {
                   );
                   return;
                 }
-                await new Promise((r) => setTimeout(r, 1200));
+                await new Promise((r) => setTimeout(r, 750));
               }
 
-              // After 12 attempts, if still pending
-              setPaymentVerificationState({
-                status: "waiting",
-                message: "Payment verification pending bank response.",
-                orderId: pending.razorpayOrderId
-              });
+              // After attempts, if still pending and not finalized
+              if (!isFinalizingOrderRef.current && !activeOrderShownRef.current) {
+                setPaymentVerificationState({
+                  status: "waiting",
+                  message: "Payment verification pending bank response.",
+                  orderId: pending.razorpayOrderId
+                });
+              }
             } else {
               localStorage.removeItem("cocoon_pending_payment");
               sessionStorage.removeItem("cocoon_pending_payment");
@@ -321,6 +330,7 @@ export default function CartPage() {
 
       // 2. Fallback check: If customer user has a captured order in the last 3 hours in Supabase
       try {
+        if (activeOrderShownRef.current || isFinalizingOrderRef.current) return;
         const savedUserRaw = localStorage.getItem("cocoon_customer_user");
         let email = "";
         let phone = "";
@@ -345,8 +355,16 @@ export default function CartPage() {
             });
 
             if (recentPaid) {
-              const sessionKey = `cocoon_shown_${recentPaid.id || recentPaid.order_id || recentPaid.utr}`;
-              if (!sessionStorage.getItem(sessionKey)) {
+              const orderKey = recentPaid.order_id || recentPaid.id || recentPaid.utr;
+              const sessionKey = `cocoon_shown_${orderKey}`;
+              const dismissedKey = `cocoon_dismissed_${orderKey}`;
+
+              if (
+                !activeOrderShownRef.current &&
+                !isFinalizingOrderRef.current &&
+                !sessionStorage.getItem(sessionKey) &&
+                !sessionStorage.getItem(dismissedKey)
+              ) {
                 sessionStorage.setItem(sessionKey, "true");
                 sessionStorage.removeItem("cocoon_temp_cart");
                 localStorage.removeItem("cocoon_temp_cart");
@@ -371,6 +389,7 @@ export default function CartPage() {
                   notes: recentPaid.notes || ""
                 };
 
+                activeOrderShownRef.current = recoveredOrder.id;
                 const existingOrders = STORE.getOrders();
                 STORE.setOrders([recoveredOrder, ...existingOrders]);
                 setPlacedOrderSummary(recoveredOrder);
@@ -678,6 +697,8 @@ export default function CartPage() {
     overrideCart = null,
     overrideTotal = null
   ) => {
+    if (isFinalizingOrderRef.current) return;
+    isFinalizingOrderRef.current = true;
     setIsSubmittingOrder(true);
     try {
       const userProfile = {
@@ -774,10 +795,11 @@ export default function CartPage() {
         }, 0);
       } catch (e) {}
 
-      // 3. Immediately display Order Confirmed Screen
+      // 3. Immediately display Order Confirmed Screen with deduplication guard
+      activeOrderShownRef.current = newOrder.id;
       setIsSubmittingOrder(false);
       setPlacedOrderSummary(newOrder);
-      triggerToast(`Order placed successfully! Total: ₹${grandTotal}`);
+      triggerToast(`Order placed successfully! Total: ₹${finalAmount}`);
 
       // 4. Background Database & Notification Syncs (Non-blocking)
       saveOrderToSupabase(newOrder).catch((e) => console.warn("Supabase order sync warning:", e));
@@ -790,6 +812,7 @@ export default function CartPage() {
     } catch (err) {
       console.error("Order finalization error:", err);
       setIsSubmittingOrder(false);
+      isFinalizingOrderRef.current = false;
       triggerToast("An error occurred while placing order. Please try again.");
     }
   };
@@ -841,6 +864,7 @@ export default function CartPage() {
 
           const existingOrders = STORE.getOrders();
           STORE.setOrders([newOrder, ...existingOrders]);
+          activeOrderShownRef.current = newOrder.id;
           setPlacedOrderSummary(newOrder);
           triggerToast(`Payment verified! Order confirmed 🎉`);
 
@@ -875,6 +899,7 @@ export default function CartPage() {
             sessionStorage.removeItem("cocoon_temp_cart");
             localStorage.removeItem("cocoon_temp_cart");
             setCart([]);
+            activeOrderShownRef.current = paidOrder.id;
             setPlacedOrderSummary(paidOrder);
             setPendingOrderToken(null);
             triggerToast(`Order confirmed for ${paidOrder.customerName}! 🎉`);
@@ -1023,7 +1048,7 @@ export default function CartPage() {
         let pollInterval = null;
 
         const checkAndFinalize = async () => {
-          if (isOrderFinalized) return true;
+          if (isOrderFinalized || isFinalizingOrderRef.current || (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed")) return true;
           try {
             const checkRes = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(razorpayOrderId)}`);
             const checkData = await checkRes.json();
@@ -1036,7 +1061,7 @@ export default function CartPage() {
         };
 
         const finalizeAndClear = async (payId) => {
-          if (isOrderFinalized) return;
+          if (isOrderFinalized || isFinalizingOrderRef.current || (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed")) return;
           isOrderFinalized = true;
           if (pollInterval) clearInterval(pollInterval);
           try {
@@ -1088,6 +1113,7 @@ export default function CartPage() {
           handler: async function (response) {
             // Direct handler verification
             try {
+              if (isOrderFinalized || isFinalizingOrderRef.current || (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed")) return;
               setPaymentVerificationState({
                 status: "verifying",
                 message: "Verifying payment with bank... ⏳",
@@ -1119,22 +1145,22 @@ export default function CartPage() {
               // Critical for mobile Google Pay / UPI intent app-switch:
               // When user returns to browser after paying in Google Pay, modal closes.
               // Bank capture can take 1-4 seconds, so KEEP POLLING and show verification screen!
-              if (isOrderFinalized) return;
+              if (isOrderFinalized || isFinalizingOrderRef.current || (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed")) return;
               setPaymentVerificationState({
                 status: "verifying",
                 message: "Confirming payment with your UPI app (Google Pay / PhonePe)... ⏳ Please keep this page open.",
                 orderId: razorpayOrderId
               });
 
-              // Burst loop: 25 attempts over 35 seconds
-              for (let attempt = 1; attempt <= 25; attempt++) {
-                if (isOrderFinalized) return;
+              // Burst loop: 30 attempts over 22 seconds (750ms interval for ultra-fast detection)
+              for (let attempt = 1; attempt <= 30; attempt++) {
+                if (isOrderFinalized || isFinalizingOrderRef.current || (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed")) return;
                 const paid = await checkAndFinalize();
                 if (paid) return;
-                await new Promise((r) => setTimeout(r, 1400));
+                await new Promise((r) => setTimeout(r, 750));
               }
 
-              if (!isOrderFinalized) {
+              if (!isOrderFinalized && !isFinalizingOrderRef.current && !activeOrderShownRef.current) {
                 setPaymentVerificationState({
                   status: "waiting",
                   message: "Payment confirmation is taking longer than usual.",
@@ -1147,7 +1173,7 @@ export default function CartPage() {
 
         const rzp = new window.Razorpay(options);
         rzp.on("payment.failed", function (resp) {
-          if (isOrderFinalized) return;
+          if (isOrderFinalized || isFinalizingOrderRef.current) return;
           if (pollInterval) clearInterval(pollInterval);
           setPaymentVerificationState({
             status: "failed",
@@ -1157,16 +1183,16 @@ export default function CartPage() {
         });
         rzp.open();
 
-        // 3. Background Poller (Checks every 1.8s for 90s - catches app switches seamlessly)
+        // 3. Background Poller (Checks every 1.0s for 60s - catches app switches seamlessly)
         let pollCount = 0;
         pollInterval = setInterval(async () => {
           pollCount += 1;
-          if (pollCount > 50 || isOrderFinalized) {
+          if (pollCount > 60 || isOrderFinalized || isFinalizingOrderRef.current || (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed")) {
             clearInterval(pollInterval);
             return;
           }
           await checkAndFinalize();
-        }, 1800);
+        }, 1000);
       } catch (err) {
         console.error("Payment initiation error:", err);
         triggerToast(err.message || "Failed to start payment. Please try again.");
@@ -2089,7 +2115,24 @@ export default function CartPage() {
       {/* ================= 3. PLACED ORDER SUCCESS MODAL ================= */}
       {placedOrderSummary && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-fadeIn">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center space-y-5 shadow-2xl border border-[#EFE8DD]">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center space-y-5 shadow-2xl border border-[#EFE8DD] relative">
+            <button
+              onClick={() => {
+                const oId = placedOrderSummary?.id;
+                if (oId) {
+                  sessionStorage.setItem(`cocoon_dismissed_${oId}`, "true");
+                  sessionStorage.setItem(`cocoon_shown_${oId}`, "true");
+                }
+                activeOrderShownRef.current = "dismissed";
+                setPlacedOrderSummary(null);
+              }}
+              className="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 transition cursor-pointer"
+              aria-label="Close"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
             <div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shadow-xs"><svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg></div>
 
             <div className="space-y-1">
@@ -2166,12 +2209,28 @@ export default function CartPage() {
             <div className="flex flex-col gap-2 pt-2">
               <Link
                 href="/profile"
+                onClick={() => {
+                  const oId = placedOrderSummary?.id;
+                  if (oId) {
+                    sessionStorage.setItem(`cocoon_dismissed_${oId}`, "true");
+                    sessionStorage.setItem(`cocoon_shown_${oId}`, "true");
+                  }
+                  activeOrderShownRef.current = "dismissed";
+                }}
                 className="w-full py-3 rounded-xl bg-[#526B57] hover:bg-[#405444] text-white text-xs font-bold uppercase tracking-wider block text-center transition"
               >
                 Track in My Account &rarr;
               </Link>
               <button
-                onClick={() => setPlacedOrderSummary(null)}
+                onClick={() => {
+                  const oId = placedOrderSummary?.id;
+                  if (oId) {
+                    sessionStorage.setItem(`cocoon_dismissed_${oId}`, "true");
+                    sessionStorage.setItem(`cocoon_shown_${oId}`, "true");
+                  }
+                  activeOrderShownRef.current = "dismissed";
+                  setPlacedOrderSummary(null);
+                }}
                 className="w-full py-2.5 rounded-xl text-stone-500 hover:text-stone-800 text-xs font-bold transition cursor-pointer"
               >
                 Continue Browsing Boutique
