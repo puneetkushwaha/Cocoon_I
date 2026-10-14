@@ -54,23 +54,38 @@ export default function Footer() {
             </h5>
             <ul className="space-y-2.5 text-sm text-[#2C2623]/75 font-serif">
               <li>
-                <Link href="/#shop" className="hover:text-[#B06B5B] transition">
-                  All Drops
+                <Link href="/shop" className="hover:text-[#B06B5B] transition">
+                  All Drops &amp; Catalog
                 </Link>
               </li>
               <li>
-                <Link href="/#categories" className="hover:text-[#B06B5B] transition">
-                  Handbags & Totes
+                <Link href="/category/bags" className="hover:text-[#B06B5B] transition">
+                  Handbags &amp; Totes
                 </Link>
               </li>
               <li>
-                <Link href="/#categories" className="hover:text-[#B06B5B] transition">
-                  Everlasting Flowers
+                <Link href="/category/bandanas" className="hover:text-[#B06B5B] transition">
+                  Bandanas &amp; Headscarves
                 </Link>
               </li>
               <li>
-                <Link href="/#categories" className="hover:text-[#B06B5B] transition">
-                  Wearables & Cardigans
+                <Link href="/category/belts" className="hover:text-[#B06B5B] transition">
+                  Waist Belts &amp; Hip Scarves
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/hair-accessories" className="hover:text-[#B06B5B] transition">
+                  Scrunchies &amp; Hair Ties
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/phone-cases" className="hover:text-[#B06B5B] transition">
+                  Phone Pouches &amp; Slings
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/keychains" className="hover:text-[#B06B5B] transition">
+                  Keychains &amp; Charms
                 </Link>
               </li>
               <li>
@@ -81,6 +96,11 @@ export default function Footer() {
               <li>
                 <Link href="/cart" className="hover:text-[#B06B5B] transition">
                   Shopping Basket
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="hover:text-[#B06B5B] transition text-[#B06B5B] font-semibold">
+                  Artisan Journal &amp; Guides
                 </Link>
               </li>
             </ul>

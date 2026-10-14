@@ -169,6 +169,9 @@ export default function Header({ onOpenCart, cartCountOverride }) {
               <Link href="/#our-story" className="px-4 py-2 rounded-full hover:bg-white/80 text-[#B06B5B] transition-all duration-200 flex items-center gap-1">
                 Letter from Mehak
               </Link>
+              <Link href="/blog" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
+                Journal &amp; Guides
+              </Link>
             </nav>
 
             {/* Actions: Wishlist, Cart, Profile/Login & Menu */}
@@ -469,6 +472,29 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                     </div>
                   </div>
                   <span className="text-[#B06B5B] group-hover:translate-x-1 transition-transform text-sm">
+                    &rarr;
+                  </span>
+                </Link>
+
+                <Link
+                  href="/blog"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-[#EAE0D2] hover:border-[#B06B5B]/40 transition-all shadow-2xs group"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-9 h-9 rounded-xl bg-[#FAF0ED] text-[#B06B5B] flex items-center justify-center font-bold text-xs">
+                      04
+                    </div>
+                    <div>
+                      <h4 className="font-header text-lg font-medium text-[#231F20] group-hover:text-[#B06B5B] transition-colors leading-tight">
+                        Artisan Journal &amp; Guides
+                      </h4>
+                      <p className="text-[11px] font-sans text-stone-400">
+                        Crochet care tips &amp; styling stories
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-stone-400 group-hover:text-[#B06B5B] group-hover:translate-x-1 transition-transform text-sm">
                     &rarr;
                   </span>
                 </Link>
