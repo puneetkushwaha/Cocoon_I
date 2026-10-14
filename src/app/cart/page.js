@@ -51,6 +51,7 @@ export default function CartPage() {
   const [placedOrderSummary, setPlacedOrderSummary] = useState(null);
   const [pendingOrderToken, setPendingOrderToken] = useState(null);
   const [isVerifyingManual, setIsVerifyingManual] = useState(false);
+  const [paymentVerificationState, setPaymentVerificationState] = useState(null);
 
   // Multi-Address Selection States
   const [savedAddresses, setSavedAddresses] = useState([]);
@@ -194,20 +195,16 @@ export default function CartPage() {
           const pId = searchParams.get("paymentId") || "";
           const oId = searchParams.get("orderId") || "";
 
-          // Clear cart and pending tokens immediately
-          sessionStorage.removeItem("cocoon_temp_cart");
-          localStorage.removeItem("cocoon_temp_cart");
-          localStorage.removeItem("cocoon_pending_payment");
-          setCart([]);
-
+          // Read pending payment data before clearing
           let cName = customerForm?.name || "Valued Customer";
           let cPhone = customerForm?.phone || "";
           let cEmail = customerForm?.email || "";
-          let cAddr = customerForm?.address || "Studio Courier Delivery";
+          let cAddr = customerForm?.address || "Studio Courier Delivery, India";
           let grandT = grandTotal || 1;
+          let pendingCart = null;
 
           try {
-            const raw = localStorage.getItem("cocoon_pending_payment") || localStorage.getItem("cocoon_customer_user");
+            const raw = localStorage.getItem("cocoon_pending_payment") || sessionStorage.getItem("cocoon_pending_payment") || localStorage.getItem("cocoon_customer_user");
             if (raw) {
               const parsed = JSON.parse(raw);
               cName = parsed.customerForm?.name || parsed.name || cName;
@@ -215,8 +212,16 @@ export default function CartPage() {
               cEmail = parsed.customerForm?.email || parsed.email || cEmail;
               cAddr = parsed.customerForm?.address || parsed.address || cAddr;
               grandT = parsed.grandTotal || grandT;
+              pendingCart = parsed.cart || null;
             }
           } catch (e) {}
+
+          // Clear cart and pending tokens
+          sessionStorage.removeItem("cocoon_temp_cart");
+          localStorage.removeItem("cocoon_temp_cart");
+          localStorage.removeItem("cocoon_pending_payment");
+          sessionStorage.removeItem("cocoon_pending_payment");
+          setCart([]);
 
           const confirmedOrder = {
             id: oId || generateOrderId(),
@@ -225,7 +230,7 @@ export default function CartPage() {
             customerPhone: cPhone,
             customerEmail: cEmail,
             address: cAddr,
-            items: cart.length > 0 ? cart : [{ id: "crochet-item", name: "Handcrafted Crochet Item", price: grandT, quantity: 1, color: "Artisanal" }],
+            items: (pendingCart && pendingCart.length > 0) ? pendingCart : (cart.length > 0 ? cart : [{ id: "crochet-item", name: "Handcrafted Crochet Item", price: grandT, quantity: 1, color: "Artisanal" }]),
             totalAmount: grandT,
             paymentMethod: "Online Payment (Razorpay)",
             utr: pId,
@@ -237,8 +242,10 @@ export default function CartPage() {
           const existingOrders = STORE.getOrders();
           STORE.setOrders([confirmedOrder, ...existingOrders]);
           setIsSubmittingOrder(false);
+          setPaymentVerificationState(null);
           setPlacedOrderSummary(confirmedOrder);
           triggerToast(`Order confirmed for ${cName}! 🎉`);
+          saveOrderToSupabase(confirmedOrder).catch((e) => console.warn("Supabase order sync warning:", e));
 
           // Clean URL without refresh
           window.history.replaceState({}, document.title, window.location.pathname);
@@ -246,7 +253,10 @@ export default function CartPage() {
         } else if (pStatus === "failed") {
           const reason = searchParams.get("reason") || "Payment was declined or cancelled by bank.";
           setIsSubmittingOrder(false);
-          triggerToast(`Payment Failed: ${reason}`);
+          setPaymentVerificationState({
+            status: "failed",
+            message: reason
+          });
           window.history.replaceState({}, document.title, window.location.pathname);
         }
       } catch (e) {
@@ -257,61 +267,51 @@ export default function CartPage() {
     const reconcilePayments = async () => {
       // 1. Check local pending payment token
       try {
-        const rawPending = localStorage.getItem("cocoon_pending_payment");
+        const rawPending = localStorage.getItem("cocoon_pending_payment") || sessionStorage.getItem("cocoon_pending_payment");
         if (rawPending) {
           const pending = JSON.parse(rawPending);
           if (pending && pending.razorpayOrderId) {
             // Only check if created in the last 45 minutes
             if (Date.now() - (pending.createdAt || 0) < 45 * 60 * 1000) {
-              const res = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(pending.razorpayOrderId)}`);
-              const checkData = await res.json();
-              if (checkData && checkData.paid) {
-                localStorage.removeItem("cocoon_pending_payment");
-                sessionStorage.removeItem("cocoon_temp_cart");
-                localStorage.removeItem("cocoon_temp_cart");
-                setCart([]);
+              setPaymentVerificationState({
+                status: "verifying",
+                message: "Confirming payment with bank (Google Pay / UPI)... ⏳",
+                orderId: pending.razorpayOrderId
+              });
 
-                const orderId = generateOrderId();
-                const newOrder = {
-                  id: orderId,
-                  date: new Date().toISOString(),
-                  customerName: pending.customerForm?.name || "Valued Customer",
-                  customerPhone: pending.customerForm?.phone || "",
-                  customerEmail: pending.customerForm?.email || "",
-                  address: `${pending.customerForm?.address || ""}, ${pending.customerForm?.city || ""} - ${pending.customerForm?.pincode || ""}`.replace(/^,\s*|-\s*$/g, "").trim(),
-                  items: (pending.cart || []).map((i) => ({
-                    id: i.id,
-                    name: i.name,
-                    price: i.price,
-                    quantity: i.quantity,
-                    color: i.color || "Standard",
-                    imgUrl: i.imgUrl
-                  })),
-                  totalAmount: pending.grandTotal || 0,
-                  paymentMethod: "Online Payment (Razorpay)",
-                  utr: checkData.paymentId,
-                  paymentStatus: `Paid via Razorpay (ID: ${checkData.paymentId})`,
-                  status: "Processing",
-                  notes: (pending.customerForm?.notes ? pending.customerForm.notes.trim() + " • " : "") +
-                    `Paid Online via Razorpay [Payment ID: ${checkData.paymentId}, Order: ${pending.razorpayOrderId}]`,
-                  timestamp: Date.now()
-                };
+              // Active continuous check loop
+              for (let att = 1; att <= 12; att++) {
+                const res = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(pending.razorpayOrderId)}`);
+                const checkData = await res.json();
+                if (checkData && checkData.paid) {
+                  localStorage.removeItem("cocoon_pending_payment");
+                  sessionStorage.removeItem("cocoon_pending_payment");
+                  sessionStorage.removeItem("cocoon_temp_cart");
+                  localStorage.removeItem("cocoon_temp_cart");
+                  setCart([]);
+                  setPaymentVerificationState(null);
 
-                const existingOrders = STORE.getOrders();
-                STORE.setOrders([newOrder, ...existingOrders]);
-                setIsSubmittingOrder(false);
-                setPlacedOrderSummary(newOrder);
-                triggerToast(`Order confirmed for ${newOrder.customerName}! 🎉`);
-
-                saveOrderToSupabase(newOrder).catch((e) => console.warn("Supabase order sync warning:", e));
-                try {
-                  STORE.dispatchEmailNotification("order_placed", { order: newOrder });
-                  STORE.sendWhatsAppNotification("order", newOrder);
-                } catch (e) {}
-                return;
+                  await executeOrderFinalization(
+                    "Online Payment (Razorpay)",
+                    checkData.paymentId,
+                    pending.customerForm,
+                    pending.cart,
+                    pending.grandTotal
+                  );
+                  return;
+                }
+                await new Promise((r) => setTimeout(r, 1200));
               }
+
+              // After 12 attempts, if still pending
+              setPaymentVerificationState({
+                status: "waiting",
+                message: "Payment verification pending bank response.",
+                orderId: pending.razorpayOrderId
+              });
             } else {
               localStorage.removeItem("cocoon_pending_payment");
+              sessionStorage.removeItem("cocoon_pending_payment");
             }
           }
         }
@@ -319,53 +319,62 @@ export default function CartPage() {
         console.warn("Reconcile pending payment error:", err);
       }
 
-      // 2. Fallback check: If customer user has a captured order in the last 2 hours in Supabase but local cart is still full
+      // 2. Fallback check: If customer user has a captured order in the last 3 hours in Supabase
       try {
         const savedUserRaw = localStorage.getItem("cocoon_customer_user");
+        let email = "";
+        let phone = "";
         if (savedUserRaw) {
           const user = JSON.parse(savedUserRaw);
-          const email = user?.email?.trim().toLowerCase();
-          const phone = user?.phone?.replace(/\D/g, "");
+          email = user?.email?.trim().toLowerCase() || "";
+          phone = user?.phone?.replace(/\D/g, "") || "";
+        }
+        if (!email && customerForm.email) email = customerForm.email.trim().toLowerCase();
+        if (!phone && customerForm.phone) phone = customerForm.phone.replace(/\D/g, "");
 
-          if (email || phone) {
-            const res = await fetch(`/api/orders/my-orders?email=${encodeURIComponent(email || "")}&phone=${encodeURIComponent(phone || "")}`);
-            if (res.ok) {
-              const data = await res.json();
-              const orders = data.orders || [];
-              const recentPaid = orders.find((o) => {
-                const orderTime = o.timestamp || new Date(o.date).getTime();
-                const isRecent = Date.now() - orderTime < 3 * 60 * 60 * 1000;
-                const isPaid = (o.status === "Processing" || o.status === "Delivered") && o.utr;
-                return isRecent && isPaid;
-              });
+        if (email || phone) {
+          const res = await fetch(`/api/orders/my-orders?email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`);
+          if (res.ok) {
+            const data = await res.json();
+            const orders = data.orders || [];
+            const recentPaid = orders.find((o) => {
+              const orderTime = o.timestamp || new Date(o.date || o.created_at).getTime();
+              const isRecent = Date.now() - orderTime < 3 * 60 * 60 * 1000;
+              const isPaid = (o.status === "Processing" || o.status === "Delivered") && o.utr;
+              return isRecent && isPaid;
+            });
 
-              if (recentPaid) {
-                const sessionKey = `cocoon_shown_${recentPaid.id}`;
-                if (!sessionStorage.getItem(sessionKey)) {
-                  sessionStorage.setItem(sessionKey, "true");
-                  sessionStorage.removeItem("cocoon_temp_cart");
-                  localStorage.removeItem("cocoon_temp_cart");
-                  setCart([]);
+            if (recentPaid) {
+              const sessionKey = `cocoon_shown_${recentPaid.id || recentPaid.order_id || recentPaid.utr}`;
+              if (!sessionStorage.getItem(sessionKey)) {
+                sessionStorage.setItem(sessionKey, "true");
+                sessionStorage.removeItem("cocoon_temp_cart");
+                localStorage.removeItem("cocoon_temp_cart");
+                localStorage.removeItem("cocoon_pending_payment");
+                sessionStorage.removeItem("cocoon_pending_payment");
+                setCart([]);
+                setPaymentVerificationState(null);
 
-                  const recoveredOrder = {
-                    id: recentPaid.id,
-                    date: recentPaid.date,
-                    customerName: recentPaid.customerName,
-                    customerPhone: recentPaid.customerPhone,
-                    customerEmail: recentPaid.customerEmail || "",
-                    address: recentPaid.address,
-                    items: recentPaid.items || [],
-                    totalAmount: recentPaid.totalAmount,
-                    paymentMethod: recentPaid.paymentMethod || "Online Payment (Razorpay)",
-                    utr: recentPaid.utr,
-                    paymentStatus: `Paid via Razorpay (ID: ${recentPaid.utr})`,
-                    status: recentPaid.status || "Processing",
-                    notes: recentPaid.notes || ""
-                  };
+                const recoveredOrder = {
+                  id: recentPaid.order_id || recentPaid.id,
+                  date: recentPaid.date || recentPaid.created_at || new Date().toISOString(),
+                  customerName: recentPaid.customerName || recentPaid.customer_name || "Valued Customer",
+                  customerPhone: recentPaid.customerPhone || recentPaid.customer_phone || "",
+                  customerEmail: recentPaid.customerEmail || recentPaid.customer_email || "",
+                  address: recentPaid.address || "Studio Courier Delivery, India",
+                  items: recentPaid.items || [],
+                  totalAmount: recentPaid.totalAmount || recentPaid.total_amount || 1,
+                  paymentMethod: recentPaid.paymentMethod || recentPaid.payment_method || "Online Payment (Razorpay)",
+                  utr: recentPaid.utr,
+                  paymentStatus: `Paid via Razorpay (ID: ${recentPaid.utr})`,
+                  status: recentPaid.status || "Processing",
+                  notes: recentPaid.notes || ""
+                };
 
-                  setPlacedOrderSummary(recoveredOrder);
-                  triggerToast(`Order confirmed for ${recentPaid.customerName}! 🎉`);
-                }
+                const existingOrders = STORE.getOrders();
+                STORE.setOrders([recoveredOrder, ...existingOrders]);
+                setPlacedOrderSummary(recoveredOrder);
+                triggerToast(`Order confirmed for ${recoveredOrder.customerName}! 🎉`);
               }
             }
           }
@@ -662,16 +671,22 @@ export default function CartPage() {
   };
 
   // Order Finalization Execution Helper
-  const executeOrderFinalization = async (chosenMethod = "Online Payment (Razorpay)", paymentId = null) => {
+  const executeOrderFinalization = async (
+    chosenMethod = "Online Payment (Razorpay)",
+    paymentId = null,
+    overrideProfile = null,
+    overrideCart = null,
+    overrideTotal = null
+  ) => {
     setIsSubmittingOrder(true);
     try {
       const userProfile = {
-        name: customerForm.name.trim(),
-        phone: customerForm.phone.trim(),
-        email: customerForm.email.trim(),
-        address: customerForm.address.trim(),
-        city: customerForm.city.trim(),
-        pincode: customerForm.pincode.trim()
+        name: (overrideProfile?.name || customerForm.name || "Valued Customer").trim(),
+        phone: (overrideProfile?.phone || customerForm.phone || "").trim(),
+        email: (overrideProfile?.email || customerForm.email || "").trim(),
+        address: (overrideProfile?.address || customerForm.address || "").trim(),
+        city: (overrideProfile?.city || customerForm.city || "").trim(),
+        pincode: (overrideProfile?.pincode || customerForm.pincode || "").trim()
       };
 
       const addrParts = [userProfile.address];
@@ -681,7 +696,7 @@ export default function CartPage() {
       if (userProfile.pincode && !userProfile.address.includes(userProfile.pincode)) {
         addrParts.push(userProfile.pincode);
       }
-      const orderDeliveryAddress = addrParts.filter(Boolean).join(", ");
+      const orderDeliveryAddress = addrParts.filter(Boolean).join(", ") || "Studio Courier Delivery, India";
 
       // Save user profile for next time
       try {
@@ -702,6 +717,26 @@ export default function CartPage() {
       const orderId = generateOrderId();
       const isOnlineOrder = chosenMethod.includes("Razorpay") || chosenMethod === "UPI" || chosenMethod.includes("Online");
       const isCodOrder = chosenMethod === "COD";
+
+      const sourceItems = (overrideCart && overrideCart.length > 0) ? overrideCart : cart;
+      const finalItems = sourceItems.length > 0 ? sourceItems.map((i) => ({
+        id: i.id || "crochet-item",
+        name: i.name || "Handcrafted Crochet Piece",
+        price: Number(i.price) || 1,
+        quantity: Number(i.quantity) || 1,
+        color: i.color || "Standard",
+        imgUrl: i.imgUrl || ""
+      })) : [{
+        id: "crochet-item",
+        name: "Handcrafted Crochet Piece",
+        price: overrideTotal || grandTotal || 1,
+        quantity: 1,
+        color: "Standard",
+        imgUrl: ""
+      }];
+
+      const finalAmount = overrideTotal !== null && overrideTotal !== undefined ? overrideTotal : grandTotal;
+
       const newOrder = {
         id: orderId,
         date: new Date().toISOString(),
@@ -709,15 +744,8 @@ export default function CartPage() {
         customerPhone: userProfile.phone,
         customerEmail: userProfile.email || "",
         address: orderDeliveryAddress,
-        items: cart.map((i) => ({
-          id: i.id,
-          name: i.name,
-          price: i.price,
-          quantity: i.quantity,
-          color: i.color || "Standard",
-          imgUrl: i.imgUrl
-        })),
-        totalAmount: grandTotal,
+        items: finalItems,
+        totalAmount: finalAmount,
         paymentMethod: isOnlineOrder ? "Online Payment (Razorpay)" : "COD",
         utr: paymentId || (utrNumber.trim() || null),
         paymentStatus: isOnlineOrder
@@ -977,21 +1005,35 @@ export default function CartPage() {
         }
 
         // Persist pending order to localStorage to survive mobile UPI app switches / page reloads
+        const pendingOrderData = {
+          razorpayOrderId,
+          customerForm: { ...customerForm },
+          cart: [...cart],
+          grandTotal,
+          appliedCoupon,
+          couponDiscount,
+          createdAt: Date.now()
+        };
         try {
-          const pendingOrderData = {
-            razorpayOrderId,
-            customerForm: { ...customerForm },
-            cart: [...cart],
-            grandTotal,
-            appliedCoupon,
-            couponDiscount,
-            createdAt: Date.now()
-          };
           localStorage.setItem("cocoon_pending_payment", JSON.stringify(pendingOrderData));
+          sessionStorage.setItem("cocoon_pending_payment", JSON.stringify(pendingOrderData));
         } catch (e) {}
 
         let isOrderFinalized = false;
         let pollInterval = null;
+
+        const checkAndFinalize = async () => {
+          if (isOrderFinalized) return true;
+          try {
+            const checkRes = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(razorpayOrderId)}`);
+            const checkData = await checkRes.json();
+            if (checkData && checkData.paid) {
+              await finalizeAndClear(checkData.paymentId);
+              return true;
+            }
+          } catch (e) {}
+          return false;
+        };
 
         const finalizeAndClear = async (payId) => {
           if (isOrderFinalized) return;
@@ -999,11 +1041,23 @@ export default function CartPage() {
           if (pollInterval) clearInterval(pollInterval);
           try {
             localStorage.removeItem("cocoon_pending_payment");
+            sessionStorage.removeItem("cocoon_pending_payment");
           } catch (e) {}
           try {
             if (rzp) rzp.close();
           } catch (e) {}
-          await executeOrderFinalization("Online Payment (Razorpay)", payId);
+          setPaymentVerificationState({
+            status: "verifying",
+            message: "Payment verified! Generating your official order confirmation... 🌸"
+          });
+          await executeOrderFinalization(
+            "Online Payment (Razorpay)",
+            payId,
+            customerForm,
+            cart,
+            grandTotal
+          );
+          setPaymentVerificationState(null);
         };
 
         // 2. Open Razorpay Checkout Modal
@@ -1032,9 +1086,13 @@ export default function CartPage() {
             color: "#B06B5B"
           },
           handler: async function (response) {
-            // 3. Verify Payment Signature on Server
+            // Direct handler verification
             try {
-              triggerToast("Verifying payment with bank... ⏳");
+              setPaymentVerificationState({
+                status: "verifying",
+                message: "Verifying payment with bank... ⏳",
+                orderId: razorpayOrderId
+              });
               const verifyRes = await fetch("/api/payment/verify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -1044,64 +1102,44 @@ export default function CartPage() {
                   razorpay_signature: response.razorpay_signature
                 })
               });
-
               const verifyData = await verifyRes.json();
               if (verifyRes.ok && (verifyData.success || verifyData.verified)) {
                 await finalizeAndClear(response.razorpay_payment_id || verifyData.paymentId);
                 return;
               }
-
-              // Fallback verification check directly from Razorpay API
-              const checkRes = await fetch(`/api/payment/check-order?orderId=${razorpayOrderId}`);
-              const checkData = await checkRes.json();
-              if (checkData && checkData.paid) {
-                await finalizeAndClear(checkData.paymentId || response.razorpay_payment_id);
-                return;
-              }
-
-              triggerToast("Payment verification failed. Please contact studio WhatsApp.");
-              setIsSubmittingOrder(false);
+              const ok = await checkAndFinalize();
+              if (ok) return;
             } catch (err) {
-              console.error("Verification error:", err);
-              // Second fallback check
-              try {
-                const checkRes = await fetch(`/api/payment/check-order?orderId=${razorpayOrderId}`);
-                const checkData = await checkRes.json();
-                if (checkData && checkData.paid) {
-                  await finalizeAndClear(checkData.paymentId || response.razorpay_payment_id);
-                  return;
-                }
-              } catch (e) {}
-              setIsSubmittingOrder(false);
-              triggerToast("Unable to verify payment. Please contact studio support.");
+              const ok = await checkAndFinalize();
+              if (ok) return;
             }
           },
           modal: {
             ondismiss: async function () {
               // Critical for mobile Google Pay / UPI intent app-switch:
-              // When user returns to browser after paying in Google Pay, modal closes immediately.
-              // Bank capture can take 1-3 seconds, so DO NOT ABORT polling immediately!
-              try {
-                triggerToast("Verifying payment with UPI/Bank... ⏳");
-                setIsSubmittingOrder(true);
-                // Active burst polling: check 8 times over 20 seconds
-                for (let attempt = 1; attempt <= 8; attempt++) {
-                  if (isOrderFinalized) return;
-                  const checkRes = await fetch(`/api/payment/check-order?orderId=${razorpayOrderId}`);
-                  const checkData = await checkRes.json();
-                  if (checkData && checkData.paid) {
-                    await finalizeAndClear(checkData.paymentId);
-                    return;
-                  }
-                  // wait 2.5s before next attempt
-                  await new Promise((r) => setTimeout(r, 2500));
-                }
-              } catch (e) {}
+              // When user returns to browser after paying in Google Pay, modal closes.
+              // Bank capture can take 1-4 seconds, so KEEP POLLING and show verification screen!
+              if (isOrderFinalized) return;
+              setPaymentVerificationState({
+                status: "verifying",
+                message: "Confirming payment with your UPI app (Google Pay / PhonePe)... ⏳ Please keep this page open.",
+                orderId: razorpayOrderId
+              });
+
+              // Burst loop: 25 attempts over 35 seconds
+              for (let attempt = 1; attempt <= 25; attempt++) {
+                if (isOrderFinalized) return;
+                const paid = await checkAndFinalize();
+                if (paid) return;
+                await new Promise((r) => setTimeout(r, 1400));
+              }
 
               if (!isOrderFinalized) {
-                if (pollInterval) clearInterval(pollInterval);
-                setIsSubmittingOrder(false);
-                triggerToast("Payment not detected yet. If money was debited, click 'Verify Payment Now' above.");
+                setPaymentVerificationState({
+                  status: "waiting",
+                  message: "Payment confirmation is taking longer than usual.",
+                  orderId: razorpayOrderId
+                });
               }
             }
           }
@@ -1109,33 +1147,31 @@ export default function CartPage() {
 
         const rzp = new window.Razorpay(options);
         rzp.on("payment.failed", function (resp) {
+          if (isOrderFinalized) return;
           if (pollInterval) clearInterval(pollInterval);
-          setIsSubmittingOrder(false);
-          triggerToast(resp.error?.description || "Payment failed or declined. Please try again.");
+          setPaymentVerificationState({
+            status: "failed",
+            message: resp.error?.description || "Payment failed or declined by your bank. Please try again.",
+            orderId: razorpayOrderId
+          });
         });
         rzp.open();
 
-        // 3. Background Poller (Checks every 3s for 90s - catches app switches seamlessly)
+        // 3. Background Poller (Checks every 1.8s for 90s - catches app switches seamlessly)
         let pollCount = 0;
         pollInterval = setInterval(async () => {
           pollCount += 1;
-          if (pollCount > 30 || isOrderFinalized) {
+          if (pollCount > 50 || isOrderFinalized) {
             clearInterval(pollInterval);
             return;
           }
-          try {
-            const checkRes = await fetch(`/api/payment/check-order?orderId=${razorpayOrderId}`);
-            const checkData = await checkRes.json();
-            if (checkData && checkData.paid) {
-              clearInterval(pollInterval);
-              await finalizeAndClear(checkData.paymentId);
-            }
-          } catch (e) {}
-        }, 3000);
+          await checkAndFinalize();
+        }, 1800);
       } catch (err) {
         console.error("Payment initiation error:", err);
         triggerToast(err.message || "Failed to start payment. Please try again.");
         setIsSubmittingOrder(false);
+        setPaymentVerificationState(null);
       }
       return;
     }
@@ -1942,6 +1978,113 @@ export default function CartPage() {
         )}
 
       </main>
+
+      {/* ================= 2.5 ONLINE PAYMENT VERIFICATION OVERLAY (ACTIVE UPI/BANK POLLER) ================= */}
+      {paymentVerificationState && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fadeIn">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-5 shadow-2xl border border-[#EFE8DD]">
+            {paymentVerificationState.status === "verifying" && (
+              <>
+                <div className="w-16 h-16 mx-auto rounded-full bg-[#FAF0ED] text-[#B06B5B] flex items-center justify-center relative">
+                  <div className="w-16 h-16 rounded-full border-4 border-[#B06B5B]/20 border-t-[#B06B5B] animate-spin absolute inset-0"></div>
+                  <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-sans font-bold tracking-[0.2em] text-[#B06B5B] uppercase block">
+                    Secured Payment Gateway
+                  </span>
+                  <h3 className="text-xl font-header font-bold text-[#2C2623]">
+                    Verifying Payment with Bank
+                  </h3>
+                  <p className="text-xs text-stone-500 font-serif leading-relaxed">
+                    {paymentVerificationState.message || "Confirming transaction with Google Pay / UPI. Please keep this screen open."}
+                  </p>
+                </div>
+                <div className="p-3 bg-[#FAF7F2] rounded-xl text-[11px] text-stone-600 border border-[#EAE1D3] flex items-center justify-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>Direct Bank Verification in Progress...</span>
+                </div>
+              </>
+            )}
+
+            {paymentVerificationState.status === "failed" && (
+              <>
+                <div className="w-16 h-16 mx-auto rounded-full bg-rose-100 text-rose-600 flex items-center justify-center">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-sans font-bold tracking-[0.2em] text-rose-600 uppercase block">
+                    Transaction Declined
+                  </span>
+                  <h3 className="text-xl font-header font-bold text-[#2C2623]">
+                    Payment Unsuccessful
+                  </h3>
+                  <p className="text-xs text-stone-500 font-serif leading-relaxed">
+                    {paymentVerificationState.message || "Your bank or UPI app could not complete this payment. No money was charged."}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPaymentVerificationState(null);
+                      setIsSubmittingOrder(false);
+                    }}
+                    className="w-full py-3 rounded-xl bg-[#B06B5B] hover:bg-[#975647] text-white text-xs font-bold uppercase tracking-wider transition cursor-pointer shadow-md"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              </>
+            )}
+
+            {paymentVerificationState.status === "waiting" && (
+              <>
+                <div className="w-16 h-16 mx-auto rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-sans font-bold tracking-[0.2em] text-amber-700 uppercase block">
+                    Status Pending
+                  </span>
+                  <h3 className="text-xl font-header font-bold text-[#2C2623]">
+                    Checking Bank Confirmation
+                  </h3>
+                  <p className="text-xs text-stone-500 font-serif leading-relaxed">
+                    If money was debited from your bank account, tap below to verify and confirm your order immediately:
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={handleManualVerifyPending}
+                    disabled={isVerifyingManual}
+                    className="w-full py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold uppercase tracking-wider transition cursor-pointer shadow-md flex items-center justify-center gap-2"
+                  >
+                    <span>{isVerifyingManual ? "Checking Bank..." : "Verify Payment Now ✓"}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPaymentVerificationState(null);
+                      setIsSubmittingOrder(false);
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition cursor-pointer"
+                  >
+                    Close & Check Later
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ================= 3. PLACED ORDER SUCCESS MODAL ================= */}
       {placedOrderSummary && (

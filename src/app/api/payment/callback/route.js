@@ -14,7 +14,16 @@ export async function POST(request) {
     const errorCode = formData.get("error[code]")?.toString();
     const errorDescription = formData.get("error[description]")?.toString();
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.gococoon.store";
+    const originHeader = request.headers.get("origin") || request.headers.get("referer") || "";
+    let baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.gococoon.store";
+    if (originHeader) {
+      try {
+        const u = new URL(originHeader);
+        baseUrl = u.origin;
+      } catch (e) {}
+    } else if (request.nextUrl?.origin) {
+      baseUrl = request.nextUrl.origin;
+    }
 
     if (errorCode || !razorpay_payment_id) {
       console.warn("Razorpay callback payment failed:", { errorCode, errorDescription });
