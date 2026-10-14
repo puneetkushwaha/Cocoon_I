@@ -7,13 +7,14 @@ export async function generateMetadata({ params }) {
 
   if (!product) {
     return {
-      title: "Handcrafted Crochet Treasure | COCOON",
+      title: "Handcrafted Crochet Treasure | GoCocoon",
       description: "Artisanal slow-fashion crochet piece handcrafted in India with pure organic milk cotton.",
     };
   }
 
-  const title = `${product.name} | Handcrafted Crochet | COCOON`;
-  const description = `${product.desc} Handcrafted knot-by-knot in India using 100% pure organic milk cotton. Price: ₹${product.price}. All-India express dispatch.`;
+  const categoryName = product.category ? (product.category.charAt(0).toUpperCase() + product.category.slice(1).replace("-", " ")) : "Crochet";
+  const title = `${product.name} | Handcrafted ${categoryName} | GoCocoon`;
+  const description = `${product.desc} Handcrafted knot-by-knot in India using 100% pure organic milk cotton. Price: ₹${product.price}. All-India express delivery.`;
   const pageUrl = `https://www.gococoon.store/product/${product.id}`;
   const imageUrl = product.imgUrl?.startsWith("http")
     ? product.imgUrl
@@ -22,6 +23,16 @@ export async function generateMetadata({ params }) {
   return {
     title,
     description,
+    keywords: [
+      product.name,
+      `handmade ${product.name}`,
+      `crochet ${categoryName}`,
+      "GoCocoon",
+      "GoCocoon store",
+      "COCOON crochet",
+      "organic milk cotton crochet",
+      "crochet boutique India"
+    ],
     alternates: {
       canonical: pageUrl,
     },
@@ -29,13 +40,13 @@ export async function generateMetadata({ params }) {
       title,
       description,
       url: pageUrl,
-      siteName: "COCOON",
+      siteName: "GoCocoon",
       images: [
         {
           url: imageUrl,
           width: 800,
           height: 800,
-          alt: product.name,
+          alt: `${product.name} - Handcrafted Crochet by GoCocoon`,
         },
       ],
       locale: "en_IN",
@@ -55,6 +66,10 @@ export default async function ProductDetailLayout({ children, params }) {
   const productId = Number(unwrappedParams.id);
   const product = PRODUCTS.find((p) => p.id === productId);
 
+  const categoryName = product?.category 
+    ? (product.category.charAt(0).toUpperCase() + product.category.slice(1).replace("-", " ")) 
+    : "Crochet";
+
   const productSchema = product
     ? {
         "@context": "https://schema.org/",
@@ -64,21 +79,68 @@ export default async function ProductDetailLayout({ children, params }) {
           ? product.imgUrl
           : `https://www.gococoon.store${product.imgUrl}`,
         description: product.desc,
+        sku: `COCOON-${product.id}`,
+        mpn: `GC-PRD-${product.id}`,
+        category: categoryName,
+        material: product.materials || "100% Pure Organic Milk Cotton",
+        color: product.colors?.join(", ") || "Artisanal Multi",
+        countryOfOrigin: {
+          "@type": "Country",
+          name: "India"
+        },
         brand: {
           "@type": "Brand",
-          name: "COCOON",
+          name: "GoCocoon",
+          url: "https://www.gococoon.store"
         },
         offers: {
           "@type": "Offer",
           url: `https://www.gococoon.store/product/${product.id}`,
           priceCurrency: "INR",
           price: product.price,
+          priceValidUntil: "2027-12-31",
           availability: "https://schema.org/InStock",
           itemCondition: "https://schema.org/NewCondition",
           seller: {
             "@type": "Organization",
-            name: "COCOON",
+            name: "GoCocoon",
+            url: "https://www.gococoon.store"
           },
+          hasMerchantReturnPolicy: {
+            "@type": "MerchantReturnPolicy",
+            applicableCountry: "IN",
+            returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+            merchantReturnDays: 7,
+            returnMethod: "https://schema.org/ReturnByMail",
+            returnFees: "https://schema.org/FreeReturn"
+          },
+          shippingDetails: {
+            "@type": "OfferShippingDetails",
+            shippingRate: {
+              "@type": "MonetaryAmount",
+              value: "0",
+              currency: "INR"
+            },
+            shippingDestination: {
+              "@type": "DefinedRegion",
+              addressCountry: "IN"
+            },
+            deliveryTime: {
+              "@type": "ShippingDeliveryTime",
+              handlingTime: {
+                "@type": "QuantitativeValue",
+                minValue: 1,
+                maxValue: 2,
+                unitCode: "d"
+              },
+              transitTime: {
+                "@type": "QuantitativeValue",
+                minValue: 2,
+                maxValue: 5,
+                unitCode: "d"
+              }
+            }
+          }
         },
         aggregateRating: {
           "@type": "AggregateRating",
@@ -88,12 +150,51 @@ export default async function ProductDetailLayout({ children, params }) {
       }
     : null;
 
+  const breadcrumbSchema = product
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://www.gococoon.store"
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Shop All",
+            item: "https://www.gococoon.store/shop"
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: categoryName,
+            item: `https://www.gococoon.store/shop?category=${product.category || "all"}`
+          },
+          {
+            "@type": "ListItem",
+            position: 4,
+            name: product.name,
+            item: `https://www.gococoon.store/product/${product.id}`
+          }
+        ]
+      }
+    : null;
+
   return (
     <>
       {productSchema && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        />
+      )}
+      {breadcrumbSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
       )}
       {children}

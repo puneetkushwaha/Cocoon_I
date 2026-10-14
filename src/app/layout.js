@@ -3,28 +3,37 @@ import "./globals.css";
 
 export const metadata = {
   title: {
-    default: "COCOON | Handcrafted Crochet Boutique India",
-    template: "%s | COCOON",
+    default: "GoCocoon | Handcrafted Crochet Bags, Tops & Accessories India",
+    template: "%s | GoCocoon Crochet Boutique",
   },
-  description: "Discover slow-crafted organic milk cotton crochet essentials, handbags, hair accessories, waist belts, bandanas, and bespoke heirloom gifts handmade knot-by-knot in India by Mehak.",
+  description: "Discover authentic handcrafted crochet bags, statement totes, hair accessories, waist wraps, bandanas & heirloom gifts at GoCocoon. 100% pure organic milk cotton, hand-crocheted knot-by-knot in India by Mehak Agarwal. All-India express delivery.",
   keywords: [
-    "crochet",
-    "crochet bags India",
-    "handcrafted crochet boutique",
-    "COCOON crochet",
-    "gococoon",
+    "GoCocoon",
+    "GoCocoon store",
     "gococoon.store",
-    "organic milk cotton crochet",
-    "handmade gifts India",
-    "crochet bandanas",
-    "crochet hair ties",
+    "COCOON crochet",
+    "cocoon crochet boutique",
+    "handmade crochet bags India",
+    "crochet handbag online India",
+    "crochet tops online India",
+    "chunky crochet bag",
+    "crochet bow knot handbag",
+    "crochet bandanas India",
+    "crochet waist scarf belt",
+    "crochet hair scrunchies",
+    "crochet claw clip",
     "sunflower crochet backpack",
-    "bespoke crochet order",
-    "crochet slow fashion",
+    "crochet phone pouch sling",
+    "evil eye crochet keychain",
+    "organic milk cotton crochet",
+    "slow fashion knitwear India",
+    "handmade crochet gifts India",
+    "artisanal crochet boutique",
+    "bespoke custom crochet orders"
   ],
   authors: [{ name: "Mehak Agarwal", url: "https://www.gococoon.store" }],
   creator: "Mehak Agarwal",
-  publisher: "COCOON",
+  publisher: "GoCocoon",
   metadataBase: new URL("https://www.gococoon.store"),
   alternates: {
     canonical: "https://www.gococoon.store",
@@ -52,16 +61,16 @@ export const metadata = {
     apple: "/icon.svg?v=3",
   },
   openGraph: {
-    title: "COCOON | Handcrafted Crochet Boutique India",
-    description: "Slow-crafted organic milk cotton crochet pieces made with care and patience.",
+    title: "GoCocoon | Handcrafted Crochet Boutique India",
+    description: "Slow-crafted organic milk cotton crochet essentials, handbags, hair accessories & bespoke gifts handmade knot-by-knot in India by Mehak Agarwal.",
     url: "https://www.gococoon.store",
-    siteName: "COCOON",
+    siteName: "GoCocoon",
     images: [
       {
         url: "/instagram-post.jpg",
         width: 1200,
         height: 1600,
-        alt: "COCOON Handcrafted Luxury Crochet Essentials",
+        alt: "GoCocoon Handcrafted Luxury Crochet Essentials",
       },
     ],
     locale: "en_IN",
@@ -69,8 +78,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "COCOON | Handcrafted Crochet Boutique",
-    description: "100% Pure Organic Milk Cotton • Handmade with Care in India",
+    title: "GoCocoon | Handcrafted Crochet Boutique India",
+    description: "100% Pure Organic Milk Cotton • Handmade with Care in India by Mehak",
     images: ["/instagram-post.jpg"],
   },
 };
@@ -85,6 +94,62 @@ export const viewport = {
 import CookieConsent from "@/components/CookieConsent";
 
 export default function RootLayout({ children }) {
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://www.gococoon.store/#website",
+      name: "GoCocoon",
+      alternateName: ["COCOON", "GoCocoon Crochet", "GoCocoon Store", "COCOON Handcrafted Crochet"],
+      url: "https://www.gococoon.store",
+      description: "Authentic handcrafted crochet boutique in India specializing in slow-crafted organic milk cotton bags, bandanas, belts & accessories.",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: "https://www.gococoon.store/shop?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      },
+      inLanguage: "en-IN"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "ClothingStore",
+      "@id": "https://www.gococoon.store/#store",
+      name: "GoCocoon",
+      alternateName: "COCOON Handcrafted Crochet Boutique",
+      url: "https://www.gococoon.store",
+      logo: "https://www.gococoon.store/icon.svg",
+      image: "https://www.gococoon.store/instagram-post.jpg",
+      description: "Slow-crafted organic milk cotton crochet essentials, handbags, hair accessories, waist belts, bandanas, and bespoke heirloom gifts handmade knot-by-knot in India by Mehak Agarwal.",
+      founder: {
+        "@type": "Person",
+        name: "Mehak Agarwal",
+        jobTitle: "Lead Artisan & Founder",
+        url: "https://www.gococoon.store"
+      },
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "IN"
+      },
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: "+91-8171902255",
+        contactType: "Customer Support",
+        areaServed: "IN",
+        availableLanguage: ["English", "Hindi"]
+      },
+      sameAs: [
+        "https://www.instagram.com/cocoon._.u/",
+        "https://wa.me/918171902255"
+      ],
+      priceRange: "₹ - ₹₹₹",
+      currenciesAccepted: "INR",
+      paymentAccepted: "Cash on Delivery, UPI, Credit Card, Debit Card, Net Banking"
+    }
+  ];
+
   return (
     <html lang="en" className="max-w-full overflow-x-hidden overflow-x-clip">
       <head>
@@ -100,25 +165,7 @@ export default function RootLayout({ children }) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "OnlineStore",
-              name: "COCOON",
-              url: "https://www.gococoon.store",
-              logo: "https://www.gococoon.store/icon.svg",
-              description: "Handcrafted Slow Crochet Essentials & Heirloom Boutique by Mehak Agarwal.",
-              founder: {
-                "@type": "Person",
-                name: "Mehak Agarwal",
-              },
-              contactPoint: {
-                "@type": "ContactPoint",
-                telephone: "+91-8171902255",
-                contactType: "Customer Service",
-                areaServed: "IN",
-                availableLanguage: ["English", "Hindi"],
-              },
-            }),
+            __html: JSON.stringify(structuredData),
           }}
         />
       </head>

@@ -332,12 +332,17 @@ export default function Preset4() {
             
             {/* Left Content */}
             <div className="lg:col-span-6 space-y-6 text-left">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF0EA] border border-[#F3D5CF] text-[#B06B5B] text-xs font-bold uppercase tracking-[0.2em]">
+                <span>🌸</span>
+                <span>GoCocoon • Handcrafted Crochet India</span>
+              </div>
+
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light font-header text-[#2C2623] leading-[1.06] tracking-tight">
-                Crochet is where <span className="italic font-normal text-[#B06B5B] underline decoration-[#F3D5CF] decoration-wavy">art</span> meets needle and thread.
+                Handcrafted Crochet where <span className="italic font-normal text-[#B06B5B] underline decoration-[#F3D5CF] decoration-wavy">art</span> meets needle and thread.
               </h1>
 
               <p className="text-base text-[#2C2623]/75 font-light leading-relaxed max-w-lg font-serif">
-                Handcrafted crochet is more than just an accessory; it is a gentle way of expressing individuality, slow beauty, and warmth. Every piece is woven by hand with care.
+                Welcome to <strong>GoCocoon</strong>, an artisanal slow-fashion boutique by <strong>Mehak Agarwal</strong>. Explore handcrafted crochet handbags, statement bandanas, waist wraps, and bespoke heirloom gifts woven knot-by-knot with pure organic milk cotton.
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-4">

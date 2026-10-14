@@ -9,6 +9,7 @@ export default function sitemap() {
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1.0,
+      images: [`${baseUrl}/instagram-post.jpg`, `${baseUrl}/icon.svg`],
     },
     {
       url: `${baseUrl}/shop`,
@@ -32,19 +33,19 @@ export default function sitemap() {
       url: `${baseUrl}/terms`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.3,
+      priority: 0.4,
     },
     {
       url: `${baseUrl}/privacy`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.3,
+      priority: 0.4,
     },
     {
       url: `${baseUrl}/refund`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.3,
+      priority: 0.4,
     },
     {
       url: `${baseUrl}/cookies`,
@@ -54,12 +55,33 @@ export default function sitemap() {
     },
   ];
 
+  const categories = [
+    "bags",
+    "belts",
+    "bandanas",
+    "keychains",
+    "hair-accessories",
+    "phone-cases",
+  ];
+
+  const categoryPages = categories.map((cat) => ({
+    url: `${baseUrl}/shop?category=${cat}`,
+    lastModified: new Date(),
+    changeFrequency: "daily",
+    priority: 0.85,
+  }));
+
   const productPages = PRODUCTS.map((product) => ({
     url: `${baseUrl}/product/${product.id}`,
     lastModified: new Date(),
     changeFrequency: "weekly",
     priority: 0.8,
+    images: [
+      product.imgUrl?.startsWith("http")
+        ? product.imgUrl
+        : `${baseUrl}${product.imgUrl}`
+    ],
   }));
 
-  return [...staticPages, ...productPages];
+  return [...staticPages, ...categoryPages, ...productPages];
 }
