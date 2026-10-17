@@ -100,7 +100,7 @@ export const BLOG_POSTS = [
     readTime: "4 min read",
     author: "Mehak Agarwal",
     authorRole: "Founder & Lead Artisan at GoCocoon",
-    image: "/products/items/sunflower-baguette-bag.jpg",
+    image: "/products/items/sunflower-baguette-shoulder-bag.jpg",
     tags: ["Craftsmanship", "Sustainability", "Materials"],
     excerpt: "Understand why GoCocoon prioritizes soft milk cotton and curated artisan yarns over mass-market synthetic acrylics. Discover the difference in breathability and hand-feel.",
     metaDescription: "Explore why milk cotton and curated natural blends are ideal for premium handcrafted crochet. Gentle on skin, breathable, durable, and butter-soft.",
