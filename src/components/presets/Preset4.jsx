@@ -818,394 +818,313 @@ export default function Preset4() {
       <InstagramShowcase />
 
       {/* 7. BESPOKE STUDIO ORDER: COMMISSION A CUSTOM HEIRLOOM */}
-      <section id="custom-order" className="py-20 bg-gradient-to-b from-[#FAF7F2] via-[#FAF5EE] to-[#FAF7F2] border-t border-[#EAE0D2] relative overflow-hidden">
+      <section id="custom-order" className="py-20 sm:py-24 bg-gradient-to-b from-[#FAF7F2] via-[#FDFBF7] to-[#FAF6F0] border-t border-[#EAE0D2] relative overflow-hidden font-sans">
         <span id="p4-commission-slip" className="sr-only" />
-        <div className="absolute top-10 right-10 w-96 h-96 bg-[#F8E5E1]/50 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 left-10 w-96 h-96 bg-[#EDF3EE]/50 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-10 right-10 w-96 h-96 bg-[#F8E5E1]/40 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-96 h-96 bg-[#EDF3EE]/40 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto px-6 sm:px-10 relative z-10 text-left font-sans">
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 relative z-10 text-left">
           
-          <div className="text-center max-w-2xl mx-auto space-y-2 mb-14">
-            <span className="text-[11px] font-sans font-bold uppercase tracking-[0.3em] text-[#B06B5B] inline-block bg-[#F8E5E1] px-4 py-1.5 rounded-full border border-[#ECCEC7] shadow-xs">
-              Bespoke Heirloom Orders
+          {/* HEADER */}
+          <div className="text-center max-w-2xl mx-auto space-y-3 mb-14">
+            <span className="text-[11px] font-sans font-bold uppercase tracking-[0.28em] text-[#B06B5B] inline-block bg-[#FAF0ED] px-4 py-1.5 rounded-full border border-[#ECCEC7] shadow-2xs">
+              ✦ Made-To-Order Atelier
             </span>
             <h2 className="text-3xl sm:text-5xl font-light font-header text-[#2C2623] tracking-tight">
-              Design Your Custom Piece
+              Design Your Bespoke Heirloom
             </h2>
-            <p className="text-xs sm:text-sm font-sans text-[#2C2623]/70 font-normal leading-relaxed max-w-lg mx-auto">
-              Want a custom colorway, your favorite reference from Instagram/Pinterest, or a special bridal fit? Share your details with Mehak below.
+            <p className="text-xs sm:text-sm font-serif text-[#2C2623]/70 leading-relaxed max-w-lg mx-auto">
+              Have a dream colorway, an outfit to match, or a Pinterest look you adore? Mehak hand-knits your vision stitch-by-stitch with premium artisan yarns.
             </p>
           </div>
 
+          {/* 4 MOODBOARD INSPIRATION PILLS */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 mb-12">
+            {[
+              {
+                icon: "🎨",
+                title: "Custom Palettes",
+                desc: "Match your favorite outfit or aesthetic with curated milk cotton yarn shades."
+              },
+              {
+                icon: "🌸",
+                title: "Motif & Petal Swaps",
+                desc: "Personalize with 3D daisies, sunflowers, roses, or evil eye charms."
+              },
+              {
+                icon: "📐",
+                title: "Tailored Sizing",
+                desc: "Custom strap lengths, specific phone models, and adjustable waist wraps."
+              },
+              {
+                icon: "💍",
+                title: "Bridal & Occasions",
+                desc: "Romantic ivory, champagne, and blush palettes with delicate pearl beadwork."
+              }
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="bg-white/80 backdrop-blur-xs p-4 rounded-2xl border border-[#EDE3D6] shadow-2xs space-y-1.5 hover:border-[#B06B5B]/40 hover:-translate-y-0.5 transition-all duration-300"
+              >
+                <span className="text-xl block">{item.icon}</span>
+                <p className="font-header font-bold text-sm text-[#2C2623]">{item.title}</p>
+                <p className="text-[11px] font-serif text-[#2C2623]/65 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* TWO MAIN INTERACTIVE PATHS */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            {/* LEFT: MAKER'S STUDIO CARD & DIRECT WHATSAPP */}
-            <div className="lg:col-span-4 bg-white rounded-3xl p-6 sm:p-7 border border-[#EAE0D2] shadow-sm space-y-6 sticky top-28">
+            {/* PATH 1: THE VIP WHATSAPP ATELIER CONCIERGE (FASTEST & EASIEST) */}
+            <div className="lg:col-span-5 bg-gradient-to-br from-[#FAF5EE] via-white to-[#FAF0ED]/40 rounded-3xl p-6 sm:p-8 border border-[#E8DFC9] shadow-md space-y-6 lg:sticky lg:top-28">
               
-              <div className="flex items-center gap-3.5 pb-5 border-b border-[#FAF4ED]">
-                <div className="w-12 h-12 rounded-2xl bg-[#FAF0ED] border border-[#ECCEC7] flex items-center justify-center font-header font-bold text-lg text-[#B06B5B] shadow-xs">
-                  C
+              <div className="flex items-center justify-between pb-4 border-b border-[#FAF4ED]">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-2xl bg-[#B06B5B] text-white flex items-center justify-center font-header font-bold text-lg shadow-xs">
+                    M
+                  </div>
+                  <div>
+                    <h3 className="font-header font-bold text-base text-[#2C2623] leading-tight">Chat with Mehak</h3>
+                    <p className="text-[11px] text-[#526B57] font-sans font-bold flex items-center gap-1.5 mt-0.5">
+                      <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse"></span>
+                      Studio Online • Fast Reply
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-header font-bold text-lg text-[#2C2623] leading-tight">Handmade with Love</h3>
-                  <p className="text-[11px] text-[#526B57] font-sans font-bold flex items-center gap-1 mt-0.5">
-                    <span className="w-2 h-2 rounded-full bg-[#526B57] animate-pulse"></span>
-                    Custom Slots Open
-                  </p>
-                </div>
+                <span className="text-[10px] uppercase font-bold tracking-wider bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">
+                  Fastest
+                </span>
               </div>
 
-              <div className="space-y-4 text-left">
-                <h4 className="text-[11px] font-sans font-bold uppercase tracking-wider text-[#2C2623]/70">
-                  How Custom Commissions Work:
+              <div className="space-y-3 text-left">
+                <h4 className="font-header font-bold text-lg text-[#2C2623] leading-snug">
+                  Skip the form! Just send your photo on WhatsApp
                 </h4>
-
-                <div className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-[#FAF0ED] text-[#B06B5B] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span>
-                  <div>
-                    <p className="text-xs font-bold text-[#2C2623]">Share Product & Visual Reference</p>
-                    <p className="text-[11px] text-[#2C2623]/60 leading-relaxed">Tell what you want knitted, upload a reference photo/video, or paste an Instagram Reel.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-[#FAF0ED] text-[#B06B5B] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span>
-                  <div>
-                    <p className="text-xs font-bold text-[#2C2623]">Approve 100% Milk Cotton Swatches</p>
-                    <p className="text-[11px] text-[#2C2623]/60 leading-relaxed">Mehak shares authentic yarn shade photos directly on WhatsApp for your confirmation.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-[#FAF0ED] text-[#B06B5B] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span>
-                  <div>
-                    <p className="text-xs font-bold text-[#2C2623]">Hand-Knitted & Boxed with Love</p>
-                    <p className="text-[11px] text-[#2C2623]/60 leading-relaxed">Handcrafted in 4–7 days and dispatched in our signature plastic-free luxury gift box.</p>
-                  </div>
-                </div>
+                <p className="text-xs font-serif text-[#2C2623]/70 leading-relaxed">
+                  Got a Pinterest screenshot, an Instagram Reel, or a color swatch? Message Mehak directly. She will discuss your design, share live yarn shade photos, and quote you right away.
+                </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-white border border-[#E8DFC9] shadow-xs space-y-3.5 text-left">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-stone-500">Direct Support</span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Instant Reply
-                  </span>
-                </div>
+              {/* WHATSAPP ACTION BUTTON */}
+              <a
+                href="https://wa.me/918171902255?text=Hi%20Mehak!%20I%20want%20to%20discuss%20a%20custom%20crochet%20order%20with%20you.%20Here%20is%20my%20idea:"
+                target="_blank"
+                rel="noreferrer"
+                className="w-full py-3.5 px-4 rounded-2xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-sans text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2.5 cursor-pointer text-center group"
+              >
+                <svg className="w-5 h-5 fill-current shrink-0 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                </svg>
+                <span>Chat on WhatsApp (+91 8171902255)</span>
+              </a>
 
-                <div>
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-stone-400 block font-sans">Helpline Number</span>
-                  <a
-                    href="https://wa.me/918171902255"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-base sm:text-lg font-bold font-sans text-[#2C2623] hover:text-[#25D366] transition block"
-                  >
-                    +91 8171902255
-                  </a>
-                  <p className="text-[11px] font-serif text-stone-500 mt-0.5">
-                    Mehak is active on WhatsApp for custom designs & inquiries.
-                  </p>
+              {/* THREE REASSURANCES */}
+              <div className="pt-2 border-t border-[#FAF4ED] space-y-2 text-xs font-serif text-[#2C2623]/75">
+                <div className="flex items-center gap-2">
+                  <span className="text-[#526B57] font-bold">✓</span>
+                  <span>Personal yarn advice & live shade confirmation</span>
                 </div>
-
-                <a
-                  href="https://wa.me/918171902255?text=Hi%20Mehak!%20I%20have%20a%20question%20regarding%20Cocoon%20handcrafted%20crochet."
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full py-2.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-bold tracking-wide transition flex items-center justify-center gap-2 cursor-pointer shadow-xs hover:shadow-md"
-                >
-                  <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
-                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-                  </svg>
-                  <span>Chat on WhatsApp</span>
-                </a>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#526B57] font-bold">✓</span>
+                  <span>Zero deposit required to explore ideas & quotes</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#526B57] font-bold">✓</span>
+                  <span>Lovingly crafted in 4–7 days with luxury gift packaging</span>
+                </div>
               </div>
 
             </div>
 
-            {/* RIGHT: THE CUSTOM INQUIRY SLIP */}
-            <div className="lg:col-span-8 bg-[#FFFDF9] rounded-3xl p-6 sm:p-9 border border-[#EAE0D2] shadow-sm space-y-6">
+            {/* PATH 2: THE MODERN STREAMLINED BESPOKE INQUIRY SLIP */}
+            <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-9 border border-[#EAE0D2] shadow-sm space-y-6">
               
-              <div className="border-b border-[#FAF4ED] pb-3">
-                <span className="text-[10px] font-sans uppercase font-bold tracking-widest text-[#B06B5B] block">Custom Order Request</span>
-                <h3 className="font-header font-bold text-2xl text-[#2C2623]">Tell Mehak About Your Custom Creation</h3>
+              <div className="border-b border-[#FAF4ED] pb-3.5">
+                <span className="text-[10px] font-sans uppercase font-bold tracking-widest text-[#B06B5B] block">
+                  Online Inquiry Slip
+                </span>
+                <h3 className="font-header font-bold text-2xl text-[#2C2623]">
+                  Tell Us About Your Vision
+                </h3>
+                <p className="text-xs font-serif text-[#2C2623]/60 mt-0.5">
+                  Mehak will review your details and send you a personalized quote with yarn swatches.
+                </p>
               </div>
 
-              {/* 1. PRODUCT NAME & CATEGORY PILLS */}
-              <div className="space-y-2.5">
-                <label className="text-xs font-sans font-bold text-[#2C2623] block">
-                  1. What would you like us to customize? <span className="text-[#B06B5B]">*</span>
+              {/* STEP 1: CHOOSE PIECE TYPE */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-[#2C2623] block">
+                  What piece would you like created?
                 </label>
-                
-                <input
-                  type="text"
-                  value={formData.productName}
-                  onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
-                  placeholder="e.g. Sunflower Granny Square Bag, Cherry Bow Phone Sleeve, Lace Waist Wrap..."
-                  className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-4 py-2.5 text-xs font-sans focus:outline-none shadow-xs"
-                />
-
-                <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                  <span className="text-[10px] text-[#2C2623]/50 uppercase tracking-wider font-semibold mr-1">Quick Select:</span>
+                <div className="flex flex-wrap gap-2">
                   {[
-                    "Handbag / Backpack",
-                    "Phone Sleeve",
-                    "Waist Scarf & Belt",
-                    "Hair Ties & Bows",
-                    "Other Custom Idea"
+                    { label: "Handbag / Tote", icon: "👜" },
+                    { label: "Phone Sleeve", icon: "📱" },
+                    { label: "Waist Belt / Scarf", icon: "🌸" },
+                    { label: "Charms & Bows", icon: "🎀" },
+                    { label: "Other Dream Idea", icon: "✨" }
                   ].map((cat) => {
-                    const isSelected = formData.category === cat;
+                    const isSelected = formData.category === cat.label;
                     return (
                       <button
-                        key={cat}
+                        key={cat.label}
                         type="button"
                         onClick={() => setFormData({
                           ...formData,
-                          category: cat,
-                          productName: formData.productName || cat.replace(/ [^ ]+$/, "")
+                          category: cat.label,
+                          productName: formData.productName || cat.label
                         })}
-                        className={`px-3 py-1 rounded-full text-[11px] font-sans font-medium transition cursor-pointer border ${
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-sans font-medium transition cursor-pointer border flex items-center gap-1.5 ${
                           isSelected
-                            ? "bg-[#B06B5B] text-white border-[#B06B5B] shadow-xs"
-                            : "bg-white text-[#2C2623]/70 border-[#EAE0D2] hover:bg-[#FAF4ED]"
+                            ? "bg-[#B06B5B] text-white border-[#B06B5B] shadow-xs font-bold"
+                            : "bg-[#FAF7F2] text-[#2C2623]/75 border-[#EDE3D6] hover:bg-white"
                         }`}
                       >
-                        {cat}
+                        <span>{cat.icon}</span>
+                        <span>{cat.label}</span>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* 2. PHOTO & VIDEO UPLOAD OR REEL LINK */}
-              <div className="space-y-3 pt-3 border-t border-[#F2ECE1]">
-                <label className="text-xs font-sans font-bold text-[#2C2623] flex items-center justify-between">
-                  <span>2. Reference Photo / Video or Reel Link</span>
-                  <span className="text-[10px] text-[#2C2623]/50 font-normal font-sans">Visual references help Mehak knit your vision</span>
-                </label>
-
+              {/* STEP 2: YOUR VISION, COLORS & REFERENCE */}
+              <div className="space-y-3 pt-2 border-t border-[#F5ECE1]">
                 <div>
+                  <label className="text-xs font-bold text-[#2C2623] block mb-1">
+                    Describe your vision (Colors, motifs, size, or occasion)
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={formData.idea}
+                    onChange={(e) => setFormData({ ...formData, idea: e.target.value })}
+                    placeholder="e.g. Sage green and vanilla cream daisy tote bag, or matching phone pouch with blush pink bows..."
+                    className="w-full bg-[#FAF7F2] focus:bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-2xl p-3.5 text-xs font-sans focus:outline-none transition shadow-2xs resize-none"
+                  />
+                </div>
+
+                {/* MEDIA ATTACHMENT OR LINK */}
+                <div className="space-y-2">
                   <input
                     type="file"
-                    id="custom-media-file"
+                    id="bespoke-media-file"
                     accept="image/*,video/*"
                     onChange={handleMediaUpload}
                     className="hidden"
                   />
 
                   {formData.mediaPreview ? (
-                    <div className="p-3.5 bg-white rounded-2xl border-2 border-[#B06B5B]/30 flex items-center justify-between gap-3 shadow-xs animate-fadeIn">
+                    <div className="p-3 bg-[#FAF7F2] rounded-2xl border border-[#B06B5B]/30 flex items-center justify-between gap-3 shadow-2xs animate-fadeIn">
                       <div className="flex items-center gap-3 min-w-0">
                         {formData.mediaType === "image" ? (
                           <img
                             src={formData.mediaPreview}
                             alt="Reference"
-                            className="w-16 h-16 rounded-xl object-cover border border-[#EAE0D2]"
+                            className="w-12 h-12 rounded-xl object-cover border border-[#EAE0D2]"
                           />
                         ) : (
                           <video
                             src={formData.mediaPreview}
-                            className="w-16 h-16 rounded-xl object-cover border border-[#EAE0D2] bg-black"
+                            className="w-12 h-12 rounded-xl object-cover border border-[#EAE0D2] bg-black"
                           />
                         )}
                         <div className="min-w-0">
                           <p className="text-xs font-bold text-[#2C2623] truncate">
                             {formData.mediaFile?.name || "Reference Media"}
                           </p>
-                          <p className="text-[10px] text-[#526B57] font-semibold flex items-center gap-1">
-                            <span>✓ Attached ({formData.mediaType === "video" ? "Video" : "Photo"})</span>
-                          </p>
+                          <span className="text-[10px] text-[#526B57] font-semibold">
+                            ✓ Attached successfully
+                          </span>
                         </div>
                       </div>
 
                       <button
                         type="button"
                         onClick={removeMedia}
-                        className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition cursor-pointer"
+                        className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition cursor-pointer"
                       >
                         Remove ✕
                       </button>
                     </div>
                   ) : (
-                    <label
-                      htmlFor="custom-media-file"
-                      className="p-4 rounded-2xl border-2 border-dashed border-[#DDD3C4] hover:border-[#B06B5B] bg-[#FAF8F5] hover:bg-white transition flex flex-col sm:flex-row items-center justify-center gap-3 cursor-pointer text-center sm:text-left group"
-                    >
-                      <span className="w-10 h-10 rounded-full bg-white border border-[#EAE0D2] flex items-center justify-center text-sm font-bold text-[#B06B5B] group-hover:scale-110 transition-transform">
-                        IMG
-                      </span>
-                      <div>
-                        <p className="text-xs font-bold text-[#2C2623] group-hover:text-[#B06B5B] transition">
-                          Upload Reference Photo or Video
-                        </p>
-                        <p className="text-[11px] text-[#2C2623]/50">
-                          Click to browse from your device (JPG, PNG, MP4, MOV)
-                        </p>
-                      </div>
-                    </label>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <label
+                        htmlFor="bespoke-media-file"
+                        className="px-4 py-2.5 rounded-xl border border-dashed border-[#DDD3C4] hover:border-[#B06B5B] bg-[#FAF7F2] hover:bg-white transition flex items-center justify-center gap-2 cursor-pointer text-xs font-medium text-[#2C2623]/80 shrink-0"
+                      >
+                        <span>📎</span>
+                        <span>Attach Reference Photo</span>
+                      </label>
+                      <input
+                        type="url"
+                        value={formData.socialLink}
+                        onChange={(e) => setFormData({ ...formData, socialLink: e.target.value })}
+                        placeholder="Or paste Instagram Reel / Pinterest URL..."
+                        className="w-full bg-[#FAF7F2] focus:bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-3.5 py-2 text-xs font-sans focus:outline-none transition"
+                      />
+                    </div>
                   )}
                 </div>
+              </div>
 
-                <div className="flex items-center gap-2 pt-1">
-                  <div className="h-[1px] flex-1 bg-[#EAE0D2]"></div>
-                  <span className="text-[10px] uppercase font-bold text-[#2C2623]/40 tracking-wider">OR PASTE A LINK</span>
-                  <div className="h-[1px] flex-1 bg-[#EAE0D2]"></div>
-                </div>
-
-                <div className="relative">
+              {/* STEP 3: CONTACT & TIMELINE */}
+              <div className="space-y-3 pt-2 border-t border-[#F5ECE1]">
+                <label className="text-xs font-bold text-[#2C2623] block">
+                  Where should Mehak send your quote & yarn swatches? <span className="text-[#B06B5B]">*</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input
-                    type="url"
-                    value={formData.socialLink}
-                    onChange={(e) => setFormData({ ...formData, socialLink: e.target.value })}
-                    placeholder="Paste Instagram Reel / Post link or Pinterest pin URL..."
-                    className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-4 py-2.5 text-xs font-sans focus:outline-none shadow-xs"
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Your Name *"
+                    className="w-full bg-[#FAF7F2] focus:bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-3.5 py-2.5 text-xs font-sans focus:outline-none transition"
+                  />
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="WhatsApp / Phone Number *"
+                    className="w-full bg-[#FAF7F2] focus:bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-3.5 py-2.5 text-xs font-sans focus:outline-none transition"
                   />
                 </div>
-              </div>
-
-              {/* 3. COLOR PREFERENCE */}
-              <div className="space-y-2 pt-3 border-t border-[#F2ECE1]">
-                <label className="text-xs font-sans font-bold text-[#2C2623] block">
-                  3. Color Preference & Yarn Palette
-                </label>
-                <input
-                  type="text"
-                  value={formData.colorway}
-                  onChange={(e) => setFormData({ ...formData, colorway: e.target.value })}
-                  placeholder="e.g. Matcha Sage Green with Cream Daisy, or Soft Blush Pink & Mocha..."
-                  className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-4 py-2.5 text-xs font-sans focus:outline-none shadow-xs"
-                />
-
-                <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                  <span className="text-[10px] text-[#2C2623]/50 uppercase tracking-wider font-semibold mr-1">Popular:</span>
-                  {[
-                    { name: "Dusty Rose", hex: "#B06B5B" },
-                    { name: "Matcha Sage", hex: "#526B57" },
-                    { name: "Mocha Espresso", hex: "#4A3B2C" },
-                    { name: "Vanilla Cream", hex: "#F3ECE1" },
-                    { name: "Soft Lilac", hex: "#B8A3C7" },
-                    { name: "Sunflower Yellow", hex: "#E8B244" }
-                  ].map((s) => (
-                    <button
-                      key={s.name}
-                      type="button"
-                      onClick={() => {
-                        const current = formData.colorway.trim();
-                        setFormData({
-                          ...formData,
-                          colorway: current ? `${current}, ${s.name}` : s.name
-                        });
-                      }}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-[#EAE0D2] hover:border-[#B06B5B] text-[10px] text-[#2C2623]/80 font-medium transition cursor-pointer"
-                    >
-                      <span className="w-2.5 h-2.5 rounded-full border border-stone-200" style={{ backgroundColor: s.hex }}></span>
-                      <span>{s.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 4. IDEA & SPECIFICATIONS */}
-              <div className="space-y-1.5 pt-3 border-t border-[#F2ECE1]">
-                <label className="text-xs font-sans font-bold text-[#2C2623] block">
-                  4. Your Custom Idea & Design Details
-                </label>
-                <textarea
-                  rows={3}
-                  value={formData.idea}
-                  onChange={(e) => setFormData({ ...formData, idea: e.target.value })}
-                  placeholder="Describe your vision — specific dimensions, strap length, motifs, custom monogram initials, or any specific instructions..."
-                  className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl p-3.5 text-xs font-sans focus:outline-none shadow-xs resize-none"
-                />
-              </div>
-
-              {/* 5. NEED-BY DATE & BUDGET */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-[#F2ECE1]">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-sans font-bold text-[#2C2623] block">
-                    5. Needed By / Occasion Date
-                  </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="Email Address (Optional)"
+                    className="w-full bg-[#FAF7F2] focus:bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-3.5 py-2.5 text-xs font-sans focus:outline-none transition"
+                  />
                   <input
                     type="text"
                     value={formData.neededBy}
                     onChange={(e) => setFormData({ ...formData, neededBy: e.target.value })}
-                    placeholder="e.g. Birthday gift on 25th Oct, Wedding, or No rush"
-                    className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-4 py-2.5 text-xs font-sans focus:outline-none shadow-xs"
+                    placeholder="Needed by date (e.g. 25th Oct, or No rush)"
+                    className="w-full bg-[#FAF7F2] focus:bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-3.5 py-2.5 text-xs font-sans focus:outline-none transition"
                   />
                 </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-sans font-bold text-[#2C2623] block">
-                    6. Target Budget Range
-                  </label>
-                  <select
-                    value={formData.budget}
-                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                    className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-3.5 py-2.5 text-xs font-sans text-[#2C2623] focus:outline-none shadow-2xs cursor-pointer truncate"
-                  >
-                    <option value="Under Rs. 1,000">Under ₹1,000 (Charms & Ties)</option>
-                    <option value="Rs. 1,000 - Rs. 2,000">₹1,000 - ₹2,000 (Bandanas & Belts)</option>
-                    <option value="Rs. 2,000 - Rs. 3,500">₹2,000 - ₹3,500 (Handbags & Totes)</option>
-                    <option value="Above Rs. 3,500">Above ₹3,500 (Bespoke Luxury Sets)</option>
-                    <option value="Flexible / As Quoted">Flexible / Discuss with Mehak</option>
-                  </select>
-                </div>
               </div>
 
-              {/* 6. CONTACT DETAILS */}
-              <div className="space-y-2 pt-3 border-t border-[#F2ECE1]">
-                <label className="text-xs font-sans font-bold text-[#2C2623] block">
-                  7. Your Contact Details <span className="text-[#B06B5B]">*</span>
-                </label>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Your Full Name *"
-                      className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-3.5 py-2.5 text-xs font-sans focus:outline-none shadow-xs"
-                    />
-                  </div>
-
-                  <div>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="WhatsApp / Phone *"
-                      className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-3.5 py-2.5 text-xs font-sans focus:outline-none shadow-xs"
-                    />
-                  </div>
-
-                  <div>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="Email Address"
-                      className="w-full bg-white border border-[#DDD3C4] focus:border-[#B06B5B] rounded-xl px-3.5 py-2.5 text-xs font-sans focus:outline-none shadow-xs"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* ACTION BUTTONS */}
-              <div className="pt-3 space-y-2.5">
+              {/* ACTION SUBMIT */}
+              <div className="pt-2 space-y-2.5">
                 <button
                   type="button"
                   onClick={async () => {
+                    if (!formData.name && !formData.phone) {
+                      triggerToast("Please enter your name and phone number");
+                      return;
+                    }
                     let uploadedUrl = null;
                     if (formData.mediaFile) {
-                      triggerToast("Uploading media to storage... ⏳");
+                      triggerToast("Uploading reference photo... ⏳");
                       uploadedUrl = await uploadMediaToSupabase(formData.mediaFile);
                     }
                     const custItem = {
                       id: "CUST-" + Math.floor(100 + Math.random() * 900),
                       date: new Date().toISOString(),
-                      name: formData.name || "A Customer",
+                      name: formData.name || "Customer",
                       phone: formData.phone || "N/A",
                       email: formData.email || "",
                       productName: formData.productName || formData.category,
@@ -1223,76 +1142,25 @@ export default function Preset4() {
                     STORE.setCustomizations([custItem, ...existing]);
                     await saveCustomizationToSupabase(custItem);
 
-                    // Dispatch Resend Email notification to Customer & Admin
+                    // Dispatch notifications
                     STORE.dispatchEmailNotification("custom_inquiry", { inquiry: custItem });
-
                     STORE.sendWhatsAppNotification("customization", custItem);
-                    setShowSuccessModal(true);
-                    triggerToast("Inquiry saved & email confirmation sent.");
-                  }}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-sans text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2.5 cursor-pointer text-center"
-                >
-                  <svg className="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24">
-                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-                  </svg>
-                  <span>Order via WhatsApp</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={async () => {
-                    if (!formData.name && !formData.phone) {
-                      triggerToast("Please enter your name and phone number");
-                      return;
-                    }
-                    let uploadedUrl = null;
-                    if (formData.mediaFile) {
-                      triggerToast("Uploading media to storage... ⏳");
-                      uploadedUrl = await uploadMediaToSupabase(formData.mediaFile);
-                    }
-                    const custItem = {
-                      id: "CUST-" + Math.floor(100 + Math.random() * 900),
-                      date: new Date().toISOString(),
-                      name: formData.name,
-                      phone: formData.phone,
-                      email: formData.email || "",
-                      productName: formData.productName || formData.category,
-                      category: formData.category,
-                      colorway: formData.colorway,
-                      idea: formData.idea,
-                      neededBy: formData.neededBy,
-                      budget: formData.budget,
-                      socialLink: formData.socialLink,
-                      mediaName: formData.mediaFile ? formData.mediaFile.name : "",
-                      mediaUrl: uploadedUrl,
-                      status: "New"
-                    };
-                    const existing = STORE.getCustomizations();
-                    STORE.setCustomizations([custItem, ...existing]);
-                    await saveCustomizationToSupabase(custItem);
-
-                    // Dispatch Resend Email notification to Customer & Admin
-                    STORE.dispatchEmailNotification("custom_inquiry", { inquiry: custItem });
 
                     setShowSuccessModal(true);
-                    triggerToast("Custom Order Request Saved & Email Confirmation Sent.");
+                    triggerToast("Bespoke inquiry submitted! Mehak will reach out on WhatsApp.");
                   }}
-                  className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-[#FAF4ED] text-[#2C2623] border border-[#DDD3C4] hover:border-[#B06B5B] font-sans text-xs uppercase tracking-wider font-bold transition cursor-pointer shadow-2xs"
+                  className="w-full py-3.5 px-4 rounded-2xl bg-[#B06B5B] hover:bg-[#975647] text-white font-sans text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
                 >
-                  Submit Order Inquiry Online
+                  <span>Submit Bespoke Inquiry</span>
+                  <span>✨</span>
                 </button>
               </div>
 
-              <p className="text-[11px] text-center text-[#2C2623]/60 font-sans">
-                No advance fee required to inquire. Mehak reviews all references and responds on WhatsApp within 24 hours.
-              </p>
-              <p className="text-[10px] text-center text-stone-400 font-sans">
-                By submitting this form, you consent to our{" "}
-                <a href="/privacy" target="_blank" className="underline hover:text-[#B06B5B]">
-                  Privacy Policy
-                </a>{" "}
-                under India&apos;s DPDP Act 2023.
-              </p>
+              <div className="flex items-center justify-center gap-4 text-[11px] text-[#2C2623]/60 font-serif pt-1 text-center">
+                <span>🔒 No advance payment needed</span>
+                <span>•</span>
+                <span>💬 Personal WhatsApp confirmation</span>
+              </div>
 
             </div>
 
