@@ -1,11 +1,89 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function InstagramShowcase() {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [activeReelIndex, setActiveReelIndex] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const videoRef = useRef(null);
 
-  // Spotlight cards on the right of the top feature card
+  // 3 authentic Instagram Reels downloaded directly from GoCocoon
+  const reelsList = [
+    {
+      id: "ruby-bow",
+      title: "Ruby Red Bow Keyring",
+      subtitle: "Handcrafted with 100% organic milk cotton ♡",
+      duration: "0:10",
+      videoUrl: "/reels/reel-ruby-bow.mp4",
+      poster: "/ruby-bow-post.jpg",
+      link: "https://www.instagram.com/reel/Dd0V_kfygu-/",
+      badge: "KEYCHAIN MAKING",
+      price: "₹199",
+    },
+    {
+      id: "sunflower-bag",
+      title: "Sunflower Baguette Bag",
+      subtitle: "Dense double-crochet stitches petal-by-petal",
+      duration: "0:14",
+      videoUrl: "/reels/reel-sunflower-bag.mp4",
+      poster: "/products/items/sunflower-baguette-shoulder-bag.jpg",
+      link: "https://www.instagram.com/reel/Dd-hMLvSdQa/",
+      badge: "BAG ATELIER",
+      price: "₹1,199",
+    },
+    {
+      id: "rose-tie",
+      title: "Handmade Rose Bloom Tie",
+      subtitle: "Soft ruffled blooms gentle on hair strands",
+      duration: "0:11",
+      videoUrl: "/reels/reel-rose-tie.mp4",
+      poster: "/products/items/rose-ponytail-tie-pink.jpg",
+      link: "https://www.instagram.com/reel/Dd5WQmFSn7C/",
+      badge: "HAIR ACCENT",
+      price: "₹249",
+    },
+  ];
+
+  const currentReel = reelsList[activeReelIndex];
+
+  // Auto-play and manage video lifecycle
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      if (isPlaying) {
+        const playPromise = videoRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            setIsPlaying(false);
+          });
+        }
+      }
+    }
+  }, [activeReelIndex]);
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        videoRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+      }
+    }
+  };
+
+  const toggleSound = (e) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      const nextMuted = !isMuted;
+      videoRef.current.muted = nextMuted;
+      setIsMuted(nextMuted);
+    }
+  };
+
+  // Spotlight cards on the right of the featured reel
   const spotlightCards = [
     {
       id: "details",
@@ -14,6 +92,7 @@ export default function InstagramShowcase() {
       badge: "DETAILS MATTER",
       imgUrl: "/products/items/white-rose-twin-buds-charm-hand.jpg",
       link: "https://www.instagram.com/p/Dd-hD66kmfv/?utm_source=ig_web_copy_link",
+      reelIndex: 1,
     },
     {
       id: "style",
@@ -22,6 +101,7 @@ export default function InstagramShowcase() {
       badge: "STYLE IT YOUR WAY",
       imgUrl: "/products/items/sunflower-crossbody-tote.jpg",
       link: "https://www.instagram.com/p/Dd5dKRUS7rW/?utm_source=ig_web_copy_link",
+      reelIndex: 1,
     },
     {
       id: "shop",
@@ -30,6 +110,7 @@ export default function InstagramShowcase() {
       badge: "SHOP THIS PIECE",
       imgUrl: "/products/items/blush-pink-floral-case.jpg",
       link: "https://www.instagram.com/reel/Dd5WQmFSn7C/?utm_source=ig_web_copy_link",
+      reelIndex: 2,
     },
     {
       id: "bow",
@@ -38,16 +119,44 @@ export default function InstagramShowcase() {
       badge: "HEIRLOOM CHARM",
       imgUrl: "/ruby-bow-post.jpg",
       link: "https://www.instagram.com/reel/Dd0V_kfygu-/?utm_source=ig_web_copy_link",
+      reelIndex: 0,
+    },
+    {
+      id: "scrunchie",
+      title: "Soft Ruffles",
+      icon: "✨",
+      badge: "ORGANIC COTTON",
+      imgUrl: "/products/items/candy-festive-crochet-scrunchie.jpg",
+      link: "https://www.instagram.com/p/Dd5dKRUS7rW/?utm_source=ig_web_copy_link",
+      reelIndex: 2,
+    },
+    {
+      id: "phone",
+      title: "Granny Sleeve",
+      icon: "📱",
+      badge: "PHONE SLEEVE",
+      imgUrl: "/products/items/sage-granny-phone-case.jpg",
+      link: "https://www.instagram.com/p/Dd0V3GRS6C9/?utm_source=ig_web_copy_link",
+      reelIndex: 0,
     },
   ];
 
-  const handleNextSlide = () => {
+  const handleNextSlide = (e) => {
+    e?.stopPropagation?.();
     setActiveSlideIndex((prev) => (prev + 1) % spotlightCards.length);
   };
 
-  const handlePrevSlide = () => {
+  const handlePrevSlide = (e) => {
+    e?.stopPropagation?.();
     setActiveSlideIndex((prev) => (prev - 1 + spotlightCards.length) % spotlightCards.length);
   };
+
+  // Derive visible cards based on activeSlideIndex
+  const visibleSpotlightCards = [
+    spotlightCards[activeSlideIndex % spotlightCards.length],
+    spotlightCards[(activeSlideIndex + 1) % spotlightCards.length],
+    spotlightCards[(activeSlideIndex + 2) % spotlightCards.length],
+  ];
 
   // 6 square feed posts from user's links
   const feedPosts = [
@@ -57,6 +166,7 @@ export default function InstagramShowcase() {
       imgUrl: "/products/items/sunflower-baguette-shoulder-bag.jpg",
       caption: "Sunflower Baguette Bag in the making",
       link: "https://www.instagram.com/reel/Dd-hMLvSdQa/?utm_source=ig_web_copy_link",
+      reelIndex: 1,
     },
     {
       id: "post-2",
@@ -71,6 +181,7 @@ export default function InstagramShowcase() {
       imgUrl: "/products/items/candy-festive-crochet-scrunchie.jpg",
       caption: "Cloud-soft ruffled scrunchies gentle on hair",
       link: "https://www.instagram.com/p/Dd5dKRUS7rW/?utm_source=ig_web_copy_link",
+      reelIndex: 2,
     },
     {
       id: "post-4",
@@ -78,6 +189,7 @@ export default function InstagramShowcase() {
       imgUrl: "/products/items/rose-ponytail-tie-pink.jpg",
       caption: "Handmade bloom hair accents",
       link: "https://www.instagram.com/reel/Dd5WQmFSn7C/?utm_source=ig_web_copy_link",
+      reelIndex: 2,
     },
     {
       id: "post-5",
@@ -85,6 +197,7 @@ export default function InstagramShowcase() {
       imgUrl: "/ruby-bow-post.jpg",
       caption: "Ruby red bow & freshwater faux pearl keychain",
       link: "https://www.instagram.com/reel/Dd0V_kfygu-/?utm_source=ig_web_copy_link",
+      reelIndex: 0,
     },
     {
       id: "post-6",
@@ -102,7 +215,7 @@ export default function InstagramShowcase() {
         {/* ================= 1. SECTION HEADER WITH DOODLES ================= */}
         <div className="relative text-center max-w-3xl mx-auto space-y-3">
           
-          {/* Left Doodle: Arrow & "Instagram Reels + Posts showcase" */}
+          {/* Left Doodle */}
           <div className="hidden lg:flex items-center gap-2 absolute -left-28 -top-3 text-[#2C2623]/70 select-none pointer-events-none transform -rotate-6">
             <span className="font-serif italic text-xs leading-tight text-right block max-w-[110px]">
               Instagram<br />Reels + Posts<br />showcase
@@ -113,7 +226,7 @@ export default function InstagramShowcase() {
             </svg>
           </div>
 
-          {/* Right Doodle: "Shoppable & Interactive ♡" */}
+          {/* Right Doodle */}
           <div className="hidden lg:flex items-center gap-2 absolute -right-28 -top-1 text-[#2C2623]/70 select-none pointer-events-none transform rotate-3">
             <svg className="w-6 h-6 text-[#B06B5B]/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
               <path d="M4 12 L8 12 M6 6 L9 9 M6 18 L9 15" strokeLinecap="round" />
@@ -136,54 +249,113 @@ export default function InstagramShowcase() {
           </p>
         </div>
 
-        {/* ================= 2. FEATURE SPOTLIGHT HERO CARD ================= */}
-        <div className="bg-[#F5EFEB]/80 rounded-[2.5rem] p-6 sm:p-9 border border-[#EAE0D2] shadow-sm relative">
+        {/* ================= 2. FEATURE SPOTLIGHT HERO CARD WITH AUTOPLAYING REAL REEL ================= */}
+        <div className="bg-[#F5EFEB]/90 rounded-[2.5rem] p-6 sm:p-9 border border-[#EAE0D2] shadow-sm relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             
-            {/* LEFT: FEATURED REEL PLAYER CARD */}
+            {/* LEFT: FEATURED AUTOPLAY REEL VIDEO PLAYER */}
             <div className="lg:col-span-4">
-              <a
-                href="https://www.instagram.com/reel/Dd-hMLvSdQa/?utm_source=ig_web_copy_link"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group block relative aspect-[4/5] sm:aspect-[9/13] rounded-3xl overflow-hidden shadow-lg border border-[#EDE2D4] bg-stone-900 cursor-pointer"
+              <div
+                onClick={togglePlay}
+                className="group relative aspect-[4/5] sm:aspect-[9/13] rounded-3xl overflow-hidden shadow-xl border border-[#EDE2D4] bg-stone-900 cursor-pointer select-none"
               >
-                <img
-                  src="/instagram-post.jpg"
-                  alt="Watch the making of GoCocoon crochet"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-95"
+                {/* HTML5 Autoplay Video */}
+                <video
+                  ref={videoRef}
+                  key={currentReel.videoUrl}
+                  src={currentReel.videoUrl}
+                  poster={currentReel.poster}
+                  autoPlay
+                  loop
+                  muted={isMuted}
+                  playsInline
+                  className="w-full h-full object-cover transition-opacity duration-300"
                 />
 
-                {/* Top Badge: REEL */}
-                <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider">
-                  <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
-                  </svg>
-                  <span>REEL</span>
+                {/* Top Badge: REEL + Pulse Indicator */}
+                <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/65 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                    <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                    <span>REEL</span>
+                  </div>
+                  <span className="text-[10px] font-mono bg-black/45 backdrop-blur-md px-2.5 py-1 rounded-full text-white/90">
+                    {currentReel.duration}
+                  </span>
                 </div>
 
-                {/* Center Play Button */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-14 h-14 rounded-full bg-white/85 backdrop-blur-md shadow-2xl flex items-center justify-center text-[#2C2623] group-hover:scale-115 group-hover:bg-[#B06B5B] group-hover:text-white transition-all duration-300">
-                    <svg className="w-6 h-6 fill-current translate-x-0.5" viewBox="0 0 24 24">
-                      <polygon points="5 3 19 12 5 21 5 3" />
+                {/* Top Right: Sound Toggle Button */}
+                <button
+                  type="button"
+                  onClick={toggleSound}
+                  aria-label={isMuted ? "Unmute video" : "Mute video"}
+                  className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/60 hover:bg-[#B06B5B] backdrop-blur-md text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105"
+                >
+                  {isMuted ? (
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
                     </svg>
+                  ) : (
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                    </svg>
+                  )}
+                </button>
+
+                {/* Center Play/Pause Overlay indicator when paused */}
+                {!isPlaying && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-2xs z-10">
+                    <div className="w-14 h-14 rounded-full bg-white/90 backdrop-blur-md shadow-2xl flex items-center justify-center text-[#2C2623] hover:scale-110 transition-transform">
+                      <svg className="w-6 h-6 fill-current translate-x-0.5" viewBox="0 0 24 24">
+                        <polygon points="5 3 19 12 5 21 5 3" />
+                      </svg>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Bottom Overlay Info */}
-                <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/85 via-black/40 to-transparent text-white space-y-1">
+                <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent text-white space-y-1.5 z-10">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-header font-bold text-sm tracking-wide">Watch the making</p>
-                      <p className="text-[11px] font-serif text-white/85">From yarn to your hands ♡</p>
+                      <p className="font-header font-bold text-sm tracking-wide text-white drop-shadow-xs">
+                        {currentReel.title}
+                      </p>
+                      <p className="text-[11px] font-serif text-white/85">
+                        {currentReel.subtitle}
+                      </p>
                     </div>
-                    <span className="text-[10px] font-mono bg-white/20 backdrop-blur-xs px-2 py-0.5 rounded-md text-white/90">
-                      0:45
-                    </span>
+                    <a
+                      href={currentReel.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="px-2.5 py-1 rounded-lg bg-white/20 hover:bg-[#B06B5B] backdrop-blur-xs text-[10px] font-bold text-white transition cursor-pointer"
+                    >
+                      IG Link ↗
+                    </a>
                   </div>
                 </div>
-              </a>
+              </div>
+
+              {/* 3 Reel Switcher Pills Below Video */}
+              <div className="flex items-center justify-center gap-1.5 mt-3">
+                {reelsList.map((r, idx) => (
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveReelIndex(idx);
+                      setIsPlaying(true);
+                    }}
+                    className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide transition-all cursor-pointer ${
+                      activeReelIndex === idx
+                        ? "bg-[#B06B5B] text-white shadow-xs scale-102"
+                        : "bg-white/80 hover:bg-white text-stone-700 border border-[#EAE0D2]"
+                    }`}
+                  >
+                    Reel {idx + 1}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* CENTER: EDITORIAL NARRATIVE */}
@@ -193,7 +365,7 @@ export default function InstagramShowcase() {
                 Behind<br className="hidden lg:block" /> the Stitches
               </h3>
               <p className="text-xs font-serif text-[#2C2623]/70 leading-relaxed max-w-sm mx-auto lg:mx-0">
-                Get a closer look at the hands, threads and little details that make every piece special.
+                Get a closer look at the hands, threads and little details that make every piece special. Watch our reels in action above.
               </p>
               
               <div className="pt-2 space-y-2.5">
@@ -223,44 +395,89 @@ export default function InstagramShowcase() {
               </div>
             </div>
 
-            {/* RIGHT: INTERACTIVE CAROUSEL / SPOTLIGHT CARDS */}
+            {/* RIGHT: INTERACTIVE CAROUSEL / SPOTLIGHT CARDS WITH FULLY FUNCTIONAL NEXT & PREV */}
             <div className="lg:col-span-5 relative">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {spotlightCards.slice(0, 3).map((card) => (
-                  <a
-                    key={card.id}
-                    href={card.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group block relative aspect-[3/4] rounded-2xl overflow-hidden bg-white shadow-md border border-[#EAE0D2] cursor-pointer"
-                  >
-                    <img
-                      src={card.imgUrl}
-                      alt={card.title}
-                      className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
-                    />
+              <div className="relative">
+                {/* 3 Active Visible Cards */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 transition-all duration-300">
+                  {visibleSpotlightCards.map((card, i) => (
+                    <div
+                      key={`${card.id}-${activeSlideIndex}-${i}`}
+                      onClick={() => {
+                        if (typeof card.reelIndex === "number") {
+                          setActiveReelIndex(card.reelIndex);
+                          setIsPlaying(true);
+                        }
+                      }}
+                      className="group block relative aspect-[3/4] rounded-2xl overflow-hidden bg-white shadow-md border border-[#EAE0D2] cursor-pointer"
+                    >
+                      <img
+                        src={card.imgUrl}
+                        alt={card.title}
+                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                      />
 
-                    {/* Bottom Pill Badge */}
-                    <div className="absolute inset-x-2 bottom-2 z-10">
-                      <span className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-xl bg-white/95 backdrop-blur-md text-[9px] font-sans font-bold tracking-wider text-[#2C2623] group-hover:bg-[#B06B5B] group-hover:text-white transition-all shadow-xs truncate">
-                        <span>{card.icon}</span>
-                        <span className="truncate">{card.badge}</span>
-                      </span>
+                      {/* Play Reel Indicator on cards that switch reel */}
+                      {typeof card.reelIndex === "number" && (
+                        <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <svg className="w-3 h-3 fill-current translate-x-0.5" viewBox="0 0 24 24">
+                            <polygon points="5 3 19 12 5 21 5 3" />
+                          </svg>
+                        </div>
+                      )}
+
+                      {/* Bottom Pill Badge */}
+                      <div className="absolute inset-x-2 bottom-2 z-10">
+                        <span className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-xl bg-white/95 backdrop-blur-md text-[9px] font-sans font-bold tracking-wider text-[#2C2623] group-hover:bg-[#B06B5B] group-hover:text-white transition-all shadow-xs truncate">
+                          <span>{card.icon}</span>
+                          <span className="truncate">{card.badge}</span>
+                        </span>
+                      </div>
                     </div>
-                  </a>
-                ))}
+                  ))}
+                </div>
+
+                {/* Slider Previous Navigation Button */}
+                <button
+                  type="button"
+                  onClick={handlePrevSlide}
+                  aria-label="Previous spotlight slide"
+                  className="absolute -left-3.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-xl border border-[#EAE0D2] flex items-center justify-center text-stone-700 hover:text-[#B06B5B] hover:scale-110 active:scale-95 transition-all cursor-pointer z-30"
+                >
+                  <svg className="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
+                    <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+
+                {/* Slider Next Navigation Button */}
+                <button
+                  type="button"
+                  onClick={handleNextSlide}
+                  aria-label="Next spotlight slide"
+                  className="absolute -right-3.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-xl border border-[#EAE0D2] flex items-center justify-center text-stone-700 hover:text-[#B06B5B] hover:scale-110 active:scale-95 transition-all cursor-pointer z-30"
+                >
+                  <svg className="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
+                    <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
               </div>
 
-              {/* Slider Next Navigation Button */}
-              <button
-                onClick={handleNextSlide}
-                aria-label="Next spotlight slide"
-                className="hidden sm:flex absolute -right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-lg border border-[#EAE0D2] items-center justify-center text-stone-700 hover:text-[#B06B5B] hover:scale-110 transition-all cursor-pointer z-20"
-              >
-                <svg className="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
-                  <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
+              {/* Slider Dots Indicator */}
+              <div className="flex items-center justify-center gap-1.5 mt-3.5">
+                {spotlightCards.map((_, dotIdx) => (
+                  <button
+                    key={dotIdx}
+                    type="button"
+                    onClick={() => setActiveSlideIndex(dotIdx)}
+                    aria-label={`Go to slide ${dotIdx + 1}`}
+                    className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                      activeSlideIndex === dotIdx
+                        ? "w-5 bg-[#B06B5B]"
+                        : "w-1.5 bg-stone-300 hover:bg-stone-400"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
 
           </div>
@@ -294,11 +511,17 @@ export default function InstagramShowcase() {
           {/* 6 Square Posts Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
             {feedPosts.map((post) => (
-              <a
+              <div
                 key={post.id}
-                href={post.link}
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={() => {
+                  if (typeof post.reelIndex === "number") {
+                    setActiveReelIndex(post.reelIndex);
+                    setIsPlaying(true);
+                    document.getElementById("social-showcase")?.scrollIntoView({ behavior: "smooth" });
+                  } else {
+                    window.open(post.link, "_blank", "noopener,noreferrer");
+                  }
+                }}
                 className="group relative aspect-square rounded-2xl overflow-hidden bg-white shadow-sm border border-[#EAE0D2] cursor-pointer"
               >
                 <img
@@ -322,12 +545,12 @@ export default function InstagramShowcase() {
 
                 {/* Hover Gradient Overlay */}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2 text-center text-white">
-                  <span className="text-xl mb-1">📸</span>
+                  <span className="text-xl mb-1">{post.type === "reel" ? "▶" : "📸"}</span>
                   <span className="text-[10px] font-sans font-bold uppercase tracking-wider bg-white/20 backdrop-blur-xs px-2.5 py-1 rounded-full">
-                    View Post
+                    {post.type === "reel" ? "Play Reel" : "View Post"}
                   </span>
                 </div>
-              </a>
+              </div>
             ))}
           </div>
         </div>
@@ -388,26 +611,6 @@ export default function InstagramShowcase() {
                 <span>→</span>
               </a>
             </div>
-          </div>
-        </div>
-
-        {/* ================= 5. TRUST PILLARS BAR ================= */}
-        <div className="pt-4 border-t border-[#EAE0D2]/80 flex flex-wrap items-center justify-around gap-4 sm:gap-8 text-xs font-serif text-[#2C2623]/75 select-none">
-          <div className="flex items-center gap-2">
-            <span className="text-[#B06B5B]">✦</span>
-            <span>Handmade Creations</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#B06B5B]">♡</span>
-            <span>Small Business</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#526B57]">🍃</span>
-            <span>Sustainable Choices</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#B06B5B]">☺</span>
-            <span>A Little More Kindness</span>
           </div>
         </div>
 
