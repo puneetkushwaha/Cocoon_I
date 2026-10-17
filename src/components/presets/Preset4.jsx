@@ -334,7 +334,10 @@ export default function Preset4() {
             {/* Left Content */}
             <div className="lg:col-span-6 space-y-6 text-left">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF0EA] border border-[#F3D5CF] text-[#B06B5B] text-xs font-bold uppercase tracking-[0.2em]">
-                <span>🌸</span>
+                <svg className="w-3.5 h-3.5 text-[#B06B5B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M12 2a4 4 0 0 1 4 4c0 2-4 6-4 6s-4-4-4-6a4 4 0 0 1 4-4zM22 12a4 4 0 0 1-4 4c-2 0-6-4-6-4s4-4 6-4a4 4 0 0 1 4 4zM12 22a4 4 0 0 1-4-4c0-2 4-6 4-6s4 4 4 6a4 4 0 0 1-4 4zM2 12a4 4 0 0 1 4-4c2 0 6 4 6 4s-4 4-6 4a4 4 0 0 1-4-4z"/>
+                </svg>
                 <span>GoCocoon • Handcrafted Crochet India</span>
               </div>
 
@@ -818,7 +821,7 @@ export default function Preset4() {
       <InstagramShowcase />
 
       {/* 7. BESPOKE STUDIO ORDER: COMMISSION A CUSTOM HEIRLOOM */}
-      <section id="custom-order" className="py-20 sm:py-24 bg-gradient-to-b from-[#FAF7F2] via-[#FDFBF7] to-[#FAF6F0] border-t border-[#EAE0D2] relative overflow-hidden font-sans">
+      <section id="custom-order" className="pt-16 pb-16 sm:pt-20 sm:pb-20 bg-[#FAF7F2] border-t border-[#EAE0D2] relative overflow-hidden font-sans">
         <span id="p4-commission-slip" className="sr-only" />
         <div className="absolute top-10 right-10 w-96 h-96 bg-[#F8E5E1]/40 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-10 left-10 w-96 h-96 bg-[#EDF3EE]/40 rounded-full blur-3xl pointer-events-none" />
@@ -842,31 +845,54 @@ export default function Preset4() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 mb-12">
             {[
               {
-                icon: "🎨",
                 title: "Custom Palettes",
-                desc: "Match your favorite outfit or aesthetic with curated milk cotton yarn shades."
+                desc: "Match your favorite outfit or aesthetic with curated milk cotton yarn shades.",
+                iconSvg: (
+                  <svg className="w-5 h-5 text-[#B06B5B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 2a14.5 14.5 0 0 0 0 20 10 10 0 0 0 9.5-6.8" />
+                    <circle cx="8" cy="10" r="1.2" fill="currentColor" />
+                    <circle cx="12" cy="7" r="1.2" fill="currentColor" />
+                    <circle cx="16" cy="10" r="1.2" fill="currentColor" />
+                  </svg>
+                )
               },
               {
-                icon: "🌸",
                 title: "Motif & Petal Swaps",
-                desc: "Personalize with 3D daisies, sunflowers, roses, or evil eye charms."
+                desc: "Personalize with 3D daisies, sunflowers, roses, or evil eye charms.",
+                iconSvg: (
+                  <svg className="w-5 h-5 text-[#B06B5B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M12 7.5a4.5 4.5 0 1 1 4.5 4.5M12 7.5A4.5 4.5 0 1 0 7.5 12M12 7.5V3m4.5 9a4.5 4.5 0 1 1-4.5 4.5M16.5 12H21m-9 4.5a4.5 4.5 0 1 1-4.5-4.5M12 16.5V21m-4.5-9H3" />
+                  </svg>
+                )
               },
               {
-                icon: "📐",
                 title: "Tailored Sizing",
-                desc: "Custom strap lengths, specific phone models, and adjustable waist wraps."
+                desc: "Custom strap lengths, specific phone models, and adjustable waist wraps.",
+                iconSvg: (
+                  <svg className="w-5 h-5 text-[#B06B5B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M21.3 8.7 8.7 21.3c-1 1-2.5 1-3.5 0l-2.5-2.5c-1-1-1-2.5 0-3.5L15.3 2.7c1-1 2.5-1 3.5 0l2.5 2.5c1 1 1 2.5 0 3.5z" />
+                    <path d="m14.5 6.5 2 2M11.5 9.5l2 2M8.5 12.5l2 2M5.5 15.5l2 2" />
+                  </svg>
+                )
               },
               {
-                icon: "💍",
                 title: "Bridal & Occasions",
-                desc: "Romantic ivory, champagne, and blush palettes with delicate pearl beadwork."
+                desc: "Romantic ivory, champagne, and blush palettes with delicate pearl beadwork.",
+                iconSvg: (
+                  <svg className="w-5 h-5 text-[#B06B5B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                )
               }
             ].map((item, idx) => (
               <div
                 key={idx}
-                className="bg-white/80 backdrop-blur-xs p-4 rounded-2xl border border-[#EDE3D6] shadow-2xs space-y-1.5 hover:border-[#B06B5B]/40 hover:-translate-y-0.5 transition-all duration-300"
+                className="bg-white/80 backdrop-blur-xs p-4 rounded-2xl border border-[#EDE3D6] shadow-2xs space-y-2 hover:border-[#B06B5B]/40 hover:-translate-y-0.5 transition-all duration-300"
               >
-                <span className="text-xl block">{item.icon}</span>
+                <div className="w-8 h-8 rounded-xl bg-[#FAF0ED] flex items-center justify-center">
+                  {item.iconSvg}
+                </div>
                 <p className="font-header font-bold text-sm text-[#2C2623]">{item.title}</p>
                 <p className="text-[11px] font-serif text-[#2C2623]/65 leading-relaxed">{item.desc}</p>
               </div>
@@ -959,11 +985,11 @@ export default function Preset4() {
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { label: "Handbag / Tote", icon: "👜" },
-                    { label: "Phone Sleeve", icon: "📱" },
-                    { label: "Waist Belt / Scarf", icon: "🌸" },
-                    { label: "Charms & Bows", icon: "🎀" },
-                    { label: "Other Dream Idea", icon: "✨" }
+                    { label: "Handbag / Tote" },
+                    { label: "Phone Sleeve" },
+                    { label: "Waist Belt / Scarf" },
+                    { label: "Charms & Bows" },
+                    { label: "Other Dream Idea" }
                   ].map((cat) => {
                     const isSelected = formData.category === cat.label;
                     return (
@@ -975,13 +1001,12 @@ export default function Preset4() {
                           category: cat.label,
                           productName: formData.productName || cat.label
                         })}
-                        className={`px-3.5 py-1.5 rounded-full text-xs font-sans font-medium transition cursor-pointer border flex items-center gap-1.5 ${
+                        className={`px-4 py-2 rounded-full text-xs font-sans transition cursor-pointer border ${
                           isSelected
                             ? "bg-[#B06B5B] text-white border-[#B06B5B] shadow-xs font-bold"
-                            : "bg-[#FAF7F2] text-[#2C2623]/75 border-[#EDE3D6] hover:bg-white"
+                            : "bg-[#FAF7F2] text-[#2C2623]/80 border-[#EDE3D6] hover:bg-white font-medium"
                         }`}
                       >
-                        <span>{cat.icon}</span>
                         <span>{cat.label}</span>
                       </button>
                     );
@@ -1034,7 +1059,7 @@ export default function Preset4() {
                             {formData.mediaFile?.name || "Reference Media"}
                           </p>
                           <span className="text-[10px] text-[#526B57] font-semibold">
-                            ✓ Attached successfully
+                            Attached successfully
                           </span>
                         </div>
                       </div>
@@ -1044,7 +1069,7 @@ export default function Preset4() {
                         onClick={removeMedia}
                         className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition cursor-pointer"
                       >
-                        Remove ✕
+                        Remove
                       </button>
                     </div>
                   ) : (
@@ -1053,7 +1078,9 @@ export default function Preset4() {
                         htmlFor="bespoke-media-file"
                         className="px-4 py-2.5 rounded-xl border border-dashed border-[#DDD3C4] hover:border-[#B06B5B] bg-[#FAF7F2] hover:bg-white transition flex items-center justify-center gap-2 cursor-pointer text-xs font-medium text-[#2C2623]/80 shrink-0"
                       >
-                        <span>📎</span>
+                        <svg className="w-4 h-4 text-[#B06B5B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                        </svg>
                         <span>Attach Reference Photo</span>
                       </label>
                       <input
@@ -1118,7 +1145,7 @@ export default function Preset4() {
                     }
                     let uploadedUrl = null;
                     if (formData.mediaFile) {
-                      triggerToast("Uploading reference photo... ⏳");
+                      triggerToast("Uploading reference photo...");
                       uploadedUrl = await uploadMediaToSupabase(formData.mediaFile);
                     }
                     const custItem = {
@@ -1152,14 +1179,14 @@ export default function Preset4() {
                   className="w-full py-3.5 px-4 rounded-2xl bg-[#B06B5B] hover:bg-[#975647] text-white font-sans text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
                 >
                   <span>Submit Bespoke Inquiry</span>
-                  <span>✨</span>
+                  <span className="text-base font-normal">→</span>
                 </button>
               </div>
 
-              <div className="flex items-center justify-center gap-4 text-[11px] text-[#2C2623]/60 font-serif pt-1 text-center">
-                <span>🔒 No advance payment needed</span>
+              <div className="flex items-center justify-center gap-3 text-[11px] text-[#2C2623]/65 font-serif pt-1 text-center">
+                <span>Zero advance fee to inquire</span>
                 <span>•</span>
-                <span>💬 Personal WhatsApp confirmation</span>
+                <span>Personal WhatsApp confirmation</span>
               </div>
 
             </div>
@@ -1368,7 +1395,7 @@ export default function Preset4() {
                         setCart([]);
                         persistCart([]);
                         setIsAuthModalOpen(false);
-                        triggerToast(`Order confirmed for ${custData.name}! 🎉`);
+                        triggerToast(`Order confirmed for ${custData.name}!`);
 
                         // 2. Background non-blocking persistence and notifications
                         (async () => {
@@ -1409,8 +1436,8 @@ export default function Preset4() {
                         key: orderData.keyId,
                         amount: orderData.amount,
                         currency: orderData.currency || "INR",
-                        name: "COCOON 🧶",
-                        description: "Stitched with love, packed with care 🌸✨",
+                        name: "COCOON",
+                        description: "Stitched with love, packed with care",
                         image: "https://www.gococoon.store/icon.svg",
                         order_id: razorpayOrderId,
                         callback_url: `${typeof window !== "undefined" ? window.location.origin : "https://www.gococoon.store"}/api/payment/callback`,
@@ -1596,7 +1623,10 @@ export default function Preset4() {
                   {/* Online Payment Info Banner */}
                   <div className="p-3 bg-[#FAF7F2] rounded-2xl border border-[#E8DFC9] space-y-1 text-left">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-stone-800">
-                      <span>🔒</span>
+                      <svg className="w-3.5 h-3.5 text-[#526B57]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                      </svg>
                       <span>100% Secured by Razorpay</span>
                     </div>
                     <p className="text-[11px] text-stone-600 font-serif leading-relaxed">
@@ -1610,9 +1640,9 @@ export default function Preset4() {
                     className="w-full py-3.5 rounded-2xl bg-[#B06B5B] hover:bg-[#975647] text-white text-xs font-bold uppercase tracking-wider transition shadow-md cursor-pointer mt-2 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {isProcessingPayment ? (
-                      <span>Opening Payment Window... ⏳</span>
+                      <span>Opening Payment Window...</span>
                     ) : (
-                      <span>🔒 Pay ₹{subtotal} via UPI / Card & Confirm Order →</span>
+                      <span>Pay ₹{subtotal} via UPI / Card & Confirm Order →</span>
                     )}
                   </button>
 

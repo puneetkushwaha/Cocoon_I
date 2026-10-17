@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#FAF5EE] border-t border-[#EAE0D2] pt-20 pb-16 sm:pb-20 relative overflow-hidden text-left font-sans mt-20 max-w-full" style={{ contain: "paint" }}>
+    <footer className="bg-[#FAF5EE] border-t border-[#EAE0D2] pt-16 sm:pt-20 pb-16 sm:pb-20 relative overflow-hidden text-left font-sans mt-0 max-w-full" style={{ contain: "paint" }}>
       {/* Background Ambience Blobs */}
       <div className="absolute top-0 right-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-[#F8E5E1]/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 left-4 sm:left-10 w-64 sm:w-80 h-64 sm:h-80 bg-[#EDF3EE]/50 rounded-full blur-3xl pointer-events-none" />

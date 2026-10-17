@@ -14,13 +14,13 @@ export default function InstagramShowcase() {
     {
       id: "ruby-bow",
       title: "Ruby Red Bow Keyring",
-      subtitle: "Handcrafted with 100% organic milk cotton ♡",
+      subtitle: "Handcrafted with 100% organic milk cotton",
       duration: "0:10",
       videoUrl: "/reels/reel-ruby-bow.mp4",
       poster: "/ruby-bow-post.jpg",
       link: "https://www.instagram.com/reel/Dd0V_kfygu-/",
       badge: "KEYCHAIN MAKING",
-      price: "₹199",
+      price: "Rs. 199",
     },
     {
       id: "sunflower-bag",
@@ -31,7 +31,7 @@ export default function InstagramShowcase() {
       poster: "/products/items/sunflower-baguette-shoulder-bag.jpg",
       link: "https://www.instagram.com/reel/Dd-hMLvSdQa/",
       badge: "BAG ATELIER",
-      price: "₹1,199",
+      price: "Rs. 1,199",
     },
     {
       id: "rose-tie",
@@ -42,13 +42,21 @@ export default function InstagramShowcase() {
       poster: "/products/items/rose-ponytail-tie-pink.jpg",
       link: "https://www.instagram.com/reel/Dd5WQmFSn7C/",
       badge: "HAIR ACCENT",
-      price: "₹249",
+      price: "Rs. 249",
     },
   ];
 
   const currentReel = reelsList[activeReelIndex];
 
-  // Auto-play and manage video lifecycle
+  // Auto-switch reels every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveReelIndex((prev) => (prev + 1) % reelsList.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [reelsList.length]);
+
+  // Video playback lifecycle
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
@@ -83,12 +91,11 @@ export default function InstagramShowcase() {
     }
   };
 
-  // Spotlight cards on the right of the featured reel
+  // Spotlight cards on the right of the featured reel (with clean SVGs instead of emojis)
   const spotlightCards = [
     {
       id: "details",
       title: "Details Matter",
-      icon: "👁️",
       badge: "DETAILS MATTER",
       imgUrl: "/products/items/white-rose-twin-buds-charm-hand.jpg",
       link: "https://www.instagram.com/p/Dd-hD66kmfv/?utm_source=ig_web_copy_link",
@@ -97,7 +104,6 @@ export default function InstagramShowcase() {
     {
       id: "style",
       title: "Style It Your Way",
-      icon: "👗",
       badge: "STYLE IT YOUR WAY",
       imgUrl: "/products/items/sunflower-crossbody-tote.jpg",
       link: "https://www.instagram.com/p/Dd5dKRUS7rW/?utm_source=ig_web_copy_link",
@@ -106,7 +112,6 @@ export default function InstagramShowcase() {
     {
       id: "shop",
       title: "Shop This Piece",
-      icon: "🛍️",
       badge: "SHOP THIS PIECE",
       imgUrl: "/products/items/blush-pink-floral-case.jpg",
       link: "https://www.instagram.com/reel/Dd5WQmFSn7C/?utm_source=ig_web_copy_link",
@@ -115,7 +120,6 @@ export default function InstagramShowcase() {
     {
       id: "bow",
       title: "Heirloom Charms",
-      icon: "🎀",
       badge: "HEIRLOOM CHARM",
       imgUrl: "/ruby-bow-post.jpg",
       link: "https://www.instagram.com/reel/Dd0V_kfygu-/?utm_source=ig_web_copy_link",
@@ -124,7 +128,6 @@ export default function InstagramShowcase() {
     {
       id: "scrunchie",
       title: "Soft Ruffles",
-      icon: "✨",
       badge: "ORGANIC COTTON",
       imgUrl: "/products/items/candy-festive-crochet-scrunchie.jpg",
       link: "https://www.instagram.com/p/Dd5dKRUS7rW/?utm_source=ig_web_copy_link",
@@ -133,7 +136,6 @@ export default function InstagramShowcase() {
     {
       id: "phone",
       title: "Granny Sleeve",
-      icon: "📱",
       badge: "PHONE SLEEVE",
       imgUrl: "/products/items/sage-granny-phone-case.jpg",
       link: "https://www.instagram.com/p/Dd0V3GRS6C9/?utm_source=ig_web_copy_link",
@@ -212,36 +214,15 @@ export default function InstagramShowcase() {
     <section id="social-showcase" className="py-20 sm:py-24 bg-[#FAF6F0] relative overflow-hidden text-left font-sans">
       <div className="max-w-7xl mx-auto px-6 sm:px-10 space-y-16">
         
-        {/* ================= 1. SECTION HEADER WITH DOODLES ================= */}
+        {/* ================= 1. SECTION HEADER ================= */}
         <div className="relative text-center max-w-3xl mx-auto space-y-3">
           
-          {/* Left Doodle */}
-          <div className="hidden lg:flex items-center gap-2 absolute -left-28 -top-3 text-[#2C2623]/70 select-none pointer-events-none transform -rotate-6">
-            <span className="font-serif italic text-xs leading-tight text-right block max-w-[110px]">
-              Instagram<br />Reels + Posts<br />showcase
-            </span>
-            <svg className="w-8 h-8 text-[#B06B5B]/80" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <path d="M5 10 C 15 5, 28 15, 25 32" strokeLinecap="round" />
-              <path d="M19 28 L 25 33 L 30 27" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-
-          {/* Right Doodle */}
-          <div className="hidden lg:flex items-center gap-2 absolute -right-28 -top-1 text-[#2C2623]/70 select-none pointer-events-none transform rotate-3">
-            <svg className="w-6 h-6 text-[#B06B5B]/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <path d="M4 12 L8 12 M6 6 L9 9 M6 18 L9 15" strokeLinecap="round" />
-            </svg>
-            <span className="font-serif italic text-xs leading-tight text-left block max-w-[110px]">
-              Shoppable<br />&amp; Interactive<br />♡
-            </span>
-          </div>
-
           <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-[#B06B5B] block">
             Real People • Real Moments • Real Cocoon
           </span>
 
           <h2 className="text-3xl sm:text-5xl font-header font-light text-[#2C2623] tracking-tight">
-            Follow Our Instagram Journey <span className="font-serif italic text-[#B06B5B]">♡</span>
+            Follow Our Instagram Journey
           </h2>
 
           <p className="text-xs sm:text-sm font-serif text-[#2C2623]/70 leading-relaxed max-w-xl mx-auto">
@@ -249,11 +230,11 @@ export default function InstagramShowcase() {
           </p>
         </div>
 
-        {/* ================= 2. FEATURE SPOTLIGHT HERO CARD WITH AUTOPLAYING REAL REEL ================= */}
+        {/* ================= 2. FEATURE SPOTLIGHT HERO CARD WITH 5-SEC AUTO-SWITCHING REEL ================= */}
         <div className="bg-[#F5EFEB]/90 rounded-[2.5rem] p-6 sm:p-9 border border-[#EAE0D2] shadow-sm relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             
-            {/* LEFT: FEATURED AUTOPLAY REEL VIDEO PLAYER */}
+            {/* LEFT: FEATURED AUTOPLAY REEL VIDEO PLAYER (5-SEC AUTO-CYCLE) */}
             <div className="lg:col-span-4">
               <div
                 onClick={togglePlay}
@@ -272,10 +253,35 @@ export default function InstagramShowcase() {
                   className="w-full h-full object-cover transition-opacity duration-300"
                 />
 
-                {/* Top Badge: REEL + Pulse Indicator */}
-                <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
+                {/* Top Story-Style 3 Progress Indicators (5-sec auto-switching) */}
+                <div className="absolute top-3 inset-x-4 z-20 flex items-center gap-1.5">
+                  {reelsList.map((_, i) => (
+                    <div
+                      key={i}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveReelIndex(i);
+                        setIsPlaying(true);
+                      }}
+                      className="h-1 flex-1 rounded-full bg-white/30 backdrop-blur-xs overflow-hidden cursor-pointer"
+                    >
+                      <div
+                        className={`h-full bg-white transition-all duration-300 ${
+                          activeReelIndex === i
+                            ? "w-full"
+                            : activeReelIndex > i
+                            ? "w-full opacity-60"
+                            : "w-0"
+                        }`}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Top Badge: REEL + Pulse Dot */}
+                <div className="absolute top-7 left-4 z-20 flex items-center gap-2">
                   <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/65 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
-                    <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
                     <span>REEL</span>
                   </div>
                   <span className="text-[10px] font-mono bg-black/45 backdrop-blur-md px-2.5 py-1 rounded-full text-white/90">
@@ -288,7 +294,7 @@ export default function InstagramShowcase() {
                   type="button"
                   onClick={toggleSound}
                   aria-label={isMuted ? "Unmute video" : "Mute video"}
-                  className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/60 hover:bg-[#B06B5B] backdrop-blur-md text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105"
+                  className="absolute top-7 right-4 z-20 w-8 h-8 rounded-full bg-black/60 hover:bg-[#B06B5B] backdrop-blur-md text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105"
                 >
                   {isMuted ? (
                     <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -313,7 +319,7 @@ export default function InstagramShowcase() {
                 )}
 
                 {/* Bottom Overlay Info */}
-                <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent text-white space-y-1.5 z-10">
+                <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent text-white space-y-1 z-10">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-header font-bold text-sm tracking-wide text-white drop-shadow-xs">
@@ -335,32 +341,13 @@ export default function InstagramShowcase() {
                   </div>
                 </div>
               </div>
-
-              {/* 3 Reel Switcher Pills Below Video */}
-              <div className="flex items-center justify-center gap-1.5 mt-3">
-                {reelsList.map((r, idx) => (
-                  <button
-                    key={r.id}
-                    type="button"
-                    onClick={() => {
-                      setActiveReelIndex(idx);
-                      setIsPlaying(true);
-                    }}
-                    className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wide transition-all cursor-pointer ${
-                      activeReelIndex === idx
-                        ? "bg-[#B06B5B] text-white shadow-xs scale-102"
-                        : "bg-white/80 hover:bg-white text-stone-700 border border-[#EAE0D2]"
-                    }`}
-                  >
-                    Reel {idx + 1}
-                  </button>
-                ))}
-              </div>
             </div>
 
             {/* CENTER: EDITORIAL NARRATIVE */}
             <div className="lg:col-span-3 text-center lg:text-left space-y-3.5 py-4 px-2">
-              <div className="inline-block text-xl text-[#B06B5B] font-serif">♡</div>
+              <span className="text-[10px] font-sans uppercase font-bold tracking-widest text-[#B06B5B] block">
+                Atelier Showcase
+              </span>
               <h3 className="font-header text-2xl sm:text-3xl text-[#2C2623] leading-snug">
                 Behind<br className="hidden lg:block" /> the Stitches
               </h3>
@@ -426,10 +413,9 @@ export default function InstagramShowcase() {
                         </div>
                       )}
 
-                      {/* Bottom Pill Badge */}
+                      {/* Bottom Pill Badge without emojis */}
                       <div className="absolute inset-x-2 bottom-2 z-10">
                         <span className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-xl bg-white/95 backdrop-blur-md text-[9px] font-sans font-bold tracking-wider text-[#2C2623] group-hover:bg-[#B06B5B] group-hover:text-white transition-all shadow-xs truncate">
-                          <span>{card.icon}</span>
                           <span className="truncate">{card.badge}</span>
                         </span>
                       </div>
@@ -543,9 +529,21 @@ export default function InstagramShowcase() {
                   )}
                 </div>
 
-                {/* Hover Gradient Overlay */}
+                {/* Hover Gradient Overlay with clean SVG icons */}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2 text-center text-white">
-                  <span className="text-xl mb-1">{post.type === "reel" ? "▶" : "📸"}</span>
+                  <div className="w-7 h-7 rounded-full bg-white/20 backdrop-blur-xs flex items-center justify-center mb-1">
+                    {post.type === "reel" ? (
+                      <svg className="w-3.5 h-3.5 fill-current translate-x-0.5" viewBox="0 0 24 24">
+                        <polygon points="5 3 19 12 5 21 5 3" />
+                      </svg>
+                    ) : (
+                      <svg className="w-3.5 h-3.5 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                      </svg>
+                    )}
+                  </div>
                   <span className="text-[10px] font-sans font-bold uppercase tracking-wider bg-white/20 backdrop-blur-xs px-2.5 py-1 rounded-full">
                     {post.type === "reel" ? "Play Reel" : "View Post"}
                   </span>
@@ -558,33 +556,6 @@ export default function InstagramShowcase() {
         {/* ================= 4. ORGANIC COMMUNITY WAVE BANNER ================= */}
         <div className="relative rounded-[2.5rem] bg-[#E3ECE3] border border-[#D5E2D5] p-8 sm:p-12 text-center overflow-hidden">
           
-          {/* Left Decorative Botanical Doodle */}
-          <div className="hidden md:flex items-center gap-2 absolute left-8 top-1/2 -translate-y-1/2 select-none pointer-events-none text-[#2C2623]/70">
-            <span className="font-serif italic text-xs leading-tight text-right block max-w-[100px]">
-              ✨ More<br />on Instagram<br />♡
-            </span>
-            <svg className="w-8 h-8 text-[#526B57]/70" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <path d="M5 25 C 15 28, 25 22, 28 8" strokeLinecap="round" />
-              <path d="M22 10 L 29 7 L 31 15" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-
-          {/* Right Decorative Botanical Flower */}
-          <div className="hidden md:flex items-center gap-2 absolute right-8 top-1/2 -translate-y-1/2 select-none pointer-events-none text-[#2C2623]/70">
-            <svg className="w-12 h-12 text-[#526B57]/60" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.6">
-              <path d="M24 24 L24 44 M24 34 Q18 32 16 38 M24 38 Q30 36 32 42" strokeLinecap="round" />
-              <circle cx="24" cy="18" r="4" fill="currentColor" fillOpacity="0.2" />
-              <circle cx="24" cy="11" r="3" />
-              <circle cx="31" cy="18" r="3" />
-              <circle cx="24" cy="25" r="3" />
-              <circle cx="17" cy="18" r="3" />
-            </svg>
-            <span className="font-serif italic text-xs leading-tight text-left block max-w-[100px]">
-              Handmade<br />with love<br />♡
-            </span>
-          </div>
-
-          {/* Center Community Content */}
           <div className="max-w-xl mx-auto space-y-3.5 relative z-10">
             <div className="w-10 h-10 rounded-2xl bg-white/80 border border-[#CBDCCB] shadow-2xs mx-auto flex items-center justify-center text-[#3D4F42]">
               <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
