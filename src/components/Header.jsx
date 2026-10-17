@@ -583,9 +583,9 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                 href="https://wa.me/918171902255"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#EBF5ED] text-[#236338] hover:bg-[#236338] hover:text-white transition-all font-bold text-[11px]"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#FAF0ED] text-[#B06B5B] hover:bg-[#B06B5B] hover:text-white transition-all font-bold text-[11px] border border-[#ECCEC7]"
               >
-                <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse"></span>
+                <span className="w-2 h-2 rounded-full bg-[#B06B5B] animate-pulse"></span>
                 WhatsApp Concierge
               </a>
               <a

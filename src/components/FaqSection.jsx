@@ -114,10 +114,10 @@ export default function FaqSection() {
             href="https://wa.me/918171902255?text=Hi%20Mehak!%20I%20have%20a%20question%20regarding%20GoCocoon%20crochet."
             target="_blank"
             rel="noopener noreferrer"
-            className="px-6 py-3 rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-bold font-sans transition shadow-sm hover:shadow-md cursor-pointer shrink-0 inline-flex items-center gap-2"
+            className="px-6 py-3 rounded-full bg-[#2C2623] hover:bg-[#B06B5B] text-white text-xs font-bold font-sans transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer shrink-0 inline-flex items-center gap-2 group"
           >
             <span>Ask on WhatsApp</span>
-            <span>→</span>
+            <span className="group-hover:translate-x-0.5 transition-transform">→</span>
           </a>
         </div>
 
