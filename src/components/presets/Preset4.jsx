@@ -8,6 +8,7 @@ import { saveOrderToSupabase, saveCustomizationToSupabase, uploadMediaToSupabase
 import { captureLiveGpsAddress } from "@/lib/location";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import InstagramShowcase from "@/components/InstagramShowcase";
 import { generateOrderId } from "@/lib/orderUtils";
 
 export default function Preset4() {
@@ -812,6 +813,9 @@ export default function Preset4() {
 
         </div>
       </section>
+
+      {/* 6.5 SOCIAL SHOWCASE: "Follow Our Instagram Journey" */}
+      <InstagramShowcase />
 
       {/* 7. BESPOKE STUDIO ORDER: COMMISSION A CUSTOM HEIRLOOM */}
       <section id="custom-order" className="py-20 bg-gradient-to-b from-[#FAF7F2] via-[#FAF5EE] to-[#FAF7F2] border-t border-[#EAE0D2] relative overflow-hidden">
