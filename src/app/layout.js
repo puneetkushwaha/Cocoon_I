@@ -1,4 +1,5 @@
 import { ReactLenis } from "lenis/react";
+import Script from "next/script";
 import "./globals.css";
 
 export const metadata = {
@@ -237,6 +238,24 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-screen w-full max-w-full overflow-x-hidden overflow-x-clip flex flex-col bg-[#FAF6F0] text-[#221F1F] antialiased">
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-NKN54560S4"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-NKN54560S4', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
         <ReactLenis root options={{ autoRaf: true, smoothTouch: false }}>
           {children}
         </ReactLenis>
