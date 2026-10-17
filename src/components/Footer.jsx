@@ -182,34 +182,36 @@ export default function Footer() {
 
         </div>
 
-        {/* Compliance & Legal Navigation */}
-        <div className="pt-6 pb-4 border-b border-[#EAE0D2]/60 flex flex-wrap items-center justify-center sm:justify-start gap-x-6 gap-y-2 text-xs text-[#2C2623]/75 font-sans font-medium">
-          <Link href="/privacy" className="hover:text-[#B06B5B] transition underline-offset-4 hover:underline">
-            Privacy Policy
-          </Link>
-          <span className="text-[#DDD3C4]">•</span>
-          <Link href="/terms" className="hover:text-[#B06B5B] transition underline-offset-4 hover:underline">
-            Terms & Conditions
-          </Link>
-          <span className="text-[#DDD3C4]">•</span>
-          <Link href="/refund" className="hover:text-[#B06B5B] transition underline-offset-4 hover:underline">
-            Refund & Cancellation Policy
-          </Link>
-          <span className="text-[#DDD3C4]">•</span>
-          <Link href="/cookies" className="hover:text-[#B06B5B] transition underline-offset-4 hover:underline">
-            Cookie Policy
-          </Link>
-        </div>
+        {/* Bottom Bar: Copyright on Left, Legal Links & Back to Top on Right */}
+        <div className="pt-8 pb-4 flex flex-col lg:flex-row items-center justify-between gap-4 text-xs text-[#2C2623]/70 font-serif border-t border-[#EAE0D2]/70 mt-4">
+          <p className="tracking-wide text-center lg:text-left">
+            © 2026 COCOON • ALL RIGHTS RESERVED • CRAFTED WITH LOVE &amp; YARN
+          </p>
 
-        <div className="pt-6 pb-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-[#2C2623]/70 font-serif">
-          <p>© 2026 COCOON • ALL RIGHTS RESERVED • CRAFTED WITH LOVE & YARN</p>
-
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="text-xs text-[#B06B5B] hover:text-[#2C2623] transition flex items-center gap-1.5 cursor-pointer font-bold font-sans uppercase tracking-wider"
-          >
-            <span>↑ Back to Top</span>
-          </button>
+          <div className="flex flex-wrap items-center justify-center lg:justify-end gap-x-4 gap-y-2 text-[11px] font-sans font-medium text-[#2C2623]/75">
+            <Link href="/privacy" className="hover:text-[#B06B5B] transition">
+              Privacy Policy
+            </Link>
+            <span className="text-[#DDD3C4]">•</span>
+            <Link href="/terms" className="hover:text-[#B06B5B] transition">
+              Terms &amp; Conditions
+            </Link>
+            <span className="text-[#DDD3C4]">•</span>
+            <Link href="/refund" className="hover:text-[#B06B5B] transition">
+              Refund &amp; Cancellation Policy
+            </Link>
+            <span className="text-[#DDD3C4]">•</span>
+            <Link href="/cookies" className="hover:text-[#B06B5B] transition">
+              Cookie Policy
+            </Link>
+            <span className="text-[#DDD3C4]">•</span>
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="text-[#B06B5B] hover:text-[#2C2623] transition flex items-center gap-1 cursor-pointer font-bold uppercase tracking-wider"
+            >
+              <span>↑ Back to Top</span>
+            </button>
+          </div>
         </div>
 
       </div>
