@@ -57,7 +57,10 @@ export default function BlogIndexPage() {
         {/* Hero Header */}
         <div className="space-y-4 max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF0EA] border border-[#F3D5CF] text-[#B06B5B] text-xs font-bold uppercase tracking-[0.2em]">
-            <span>📖</span>
+            <svg className="w-3.5 h-3.5 text-[#B06B5B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
             <span>The GoCocoon Journal</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-header font-bold text-[#2C2623] tracking-tight">

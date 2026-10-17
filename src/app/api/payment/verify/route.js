@@ -1,10 +1,32 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import Razorpay from "razorpay";
+import { checkRateLimit } from "@/lib/rateLimit";
+
+function timingSafeMatch(a, b) {
+  if (typeof a !== "string" || typeof b !== "string") return false;
+  const bufA = Buffer.from(a, "hex");
+  const bufB = Buffer.from(b, "hex");
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
 
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const rateLimit = checkRateLimit(request, {
+      limit: 30,
+      windowMs: 60 * 1000,
+      identifier: "verify_payment"
+    });
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: "Too many verification requests. Please wait a moment." },
+        { status: 429 }
+      );
+    }
+
+    const body = await request.json().catch(() => ({}));
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
 
     const keyId = (process.env.RAZORPAY_KEY_ID || "").trim();
@@ -17,14 +39,14 @@ export async function POST(request) {
       );
     }
 
-    if (!razorpay_payment_id) {
+    if (!razorpay_payment_id || typeof razorpay_payment_id !== "string") {
       return NextResponse.json(
         { success: false, error: "Missing required razorpay_payment_id field." },
         { status: 400 }
       );
     }
 
-    // 1. Primary Check: Cryptographic HMAC Signature Verification
+    // 1. Primary Check: Cryptographic Timing-Safe HMAC Signature Verification
     if (razorpay_order_id && razorpay_signature) {
       const payload = `${razorpay_order_id}|${razorpay_payment_id}`;
       const expectedSignature = crypto
@@ -32,24 +54,23 @@ export async function POST(request) {
         .update(payload)
         .digest("hex");
 
-      if (expectedSignature === razorpay_signature) {
+      if (timingSafeMatch(expectedSignature, razorpay_signature)) {
         return NextResponse.json({
           success: true,
           verified: true,
-          message: "Payment signature verified successfully via HMAC.",
+          message: "Payment signature verified successfully via timing-safe HMAC.",
           paymentId: razorpay_payment_id,
           orderId: razorpay_order_id,
         });
       } else {
         console.warn("Razorpay HMAC signature mismatch, checking official API fallback...", {
-          expected: expectedSignature,
-          received: razorpay_signature,
+          expectedLen: expectedSignature.length,
+          receivedLen: (razorpay_signature || "").length,
         });
       }
     }
 
     // 2. Secondary Bulletproof Check: Direct Verification via Razorpay REST API
-    // This catches Google Pay / UPI intent app switches where signature or order_id wasn't returned cleanly to client
     if (keyId) {
       try {
         const razorpay = new Razorpay({

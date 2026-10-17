@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { sendCodVerificationOtpEmail } from "@/lib/email";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 const SECRET = process.env.AUTH_SECRET || "cocoon_production_secret_key_8171902255";
 
@@ -41,6 +42,18 @@ function verifyOtpToken(token) {
 
 export async function POST(request) {
   try {
+    const rateLimit = checkRateLimit(request, {
+      limit: 10,
+      windowMs: 60 * 1000,
+      identifier: "otp_service"
+    });
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: "Too many verification requests. Please wait a minute and try again." },
+        { status: 429 }
+      );
+    }
     const body = await request.json();
     const { action, email, otp, otpToken, customerName, totalAmount } = body;
 

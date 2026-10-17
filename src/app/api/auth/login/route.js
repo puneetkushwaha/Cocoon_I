@@ -1,9 +1,23 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { createSessionToken } from "@/lib/auth";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function POST(request) {
   try {
+    const rateLimit = checkRateLimit(request, {
+      limit: 12,
+      windowMs: 60 * 1000,
+      identifier: "login_auth"
+    });
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: "Too many login attempts. Please wait a minute and try again." },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const identifier = (body.identifier || "").trim().toLowerCase();
     const password = (body.password || "").trim();

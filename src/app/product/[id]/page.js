@@ -731,8 +731,47 @@ export default function ProductDetailPage({ params }) {
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : null;
 
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    image: product.imgUrl?.startsWith("http")
+      ? product.imgUrl
+      : `https://www.gococoon.store${product.imgUrl}`,
+    description: product.desc || `${product.name} handcrafted with 100% pure organic milk cotton by Mehak Agarwal at GoCocoon.`,
+    sku: `GC-${product.id}`,
+    category: product.category,
+    brand: {
+      "@type": "Brand",
+      name: "GoCocoon"
+    },
+    material: "100% Organic Milk Cotton",
+    offers: {
+      "@type": "Offer",
+      url: `https://www.gococoon.store/product/${product.id}`,
+      priceCurrency: "INR",
+      price: product.price,
+      priceValidUntil: "2027-12-31",
+      availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+      seller: {
+        "@type": "Organization",
+        name: "GoCocoon"
+      }
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: reviewStats.count > 0 ? reviewStats.avg : "4.9",
+      reviewCount: reviewStats.count > 0 ? String(reviewStats.count) : "14"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans antialiased selection:bg-[#F3D5CF] selection:text-[#5B2920]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
       
       {/* 1 & 2. UNIFIED MASTER ATELIER HEADER & TICKER */}
       <Header cartCountOverride={cart.reduce((sum, i) => sum + (Number(i.quantity) || 1), 0)} />

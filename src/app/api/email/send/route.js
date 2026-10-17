@@ -7,9 +7,23 @@ import {
   sendOfferBroadcast,
   sendNewsletterWelcome,
 } from "@/lib/email";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function POST(request) {
   try {
+    const rateLimit = checkRateLimit(request, {
+      limit: 15,
+      windowMs: 60 * 1000,
+      identifier: "email_dispatch"
+    });
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: "Too many email requests. Please slow down." },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const { action, payload } = body;
 

@@ -1,9 +1,27 @@
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function POST(request) {
   try {
-    const body = await request.json();
+    // 1. Rate limiting: prevent bot spamming and Razorpay quota exhaustion
+    const rateLimit = checkRateLimit(request, {
+      limit: 25,
+      windowMs: 60 * 1000,
+      identifier: "razorpay_order"
+    });
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Too many order requests from this IP. Please wait a minute and try again."
+        },
+        { status: 429 }
+      );
+    }
+
+    const body = await request.json().catch(() => ({}));
     const { amount, receipt, notes } = body;
 
     const keyId = (process.env.RAZORPAY_KEY_ID || "").trim();
@@ -17,7 +35,7 @@ export async function POST(request) {
     }
 
     const numericAmount = Math.round(Number(amount));
-    if (!numericAmount || numericAmount <= 0) {
+    if (!numericAmount || numericAmount <= 0 || numericAmount > 200000) {
       return NextResponse.json(
         { success: false, error: "Invalid payment amount." },
         { status: 400 }
@@ -32,8 +50,8 @@ export async function POST(request) {
     const options = {
       amount: numericAmount * 100, // Razorpay expects amount in paise
       currency: "INR",
-      receipt: receipt || `rcpt_${Date.now()}`,
-      notes: notes || {},
+      receipt: String(receipt || `rcpt_${Date.now()}`).slice(0, 40),
+      notes: typeof notes === "object" && notes !== null ? notes : {},
     };
 
     const order = await razorpay.orders.create(options);

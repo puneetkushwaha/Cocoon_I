@@ -11,6 +11,62 @@ export function generateStaticParams() {
   }));
 }
 
+export async function generateMetadata({ params }) {
+  const unwrappedParams = await params;
+  const post = BLOG_POSTS.find((p) => p.slug === unwrappedParams.slug);
+
+  if (!post) {
+    return {
+      title: "Artisan Crochet Guide | GoCocoon",
+      description: "Handcrafted crochet guides and styling insights by Mehak Agarwal.",
+    };
+  }
+
+  const postUrl = `https://www.gococoon.store/blog/${post.slug}`;
+  const imageUrl = post.image.startsWith("http")
+    ? post.image
+    : `https://www.gococoon.store${post.image}`;
+
+  return {
+    title: `${post.title} | GoCocoon Artisan Journal`,
+    description: post.subtitle,
+    keywords: [
+      ...post.tags,
+      "crochet guide India",
+      "organic milk cotton care",
+      "slow fashion journal",
+      "Mehak Agarwal"
+    ],
+    authors: [{ name: post.author, url: "https://www.gococoon.store" }],
+    alternates: {
+      canonical: postUrl,
+    },
+    openGraph: {
+      title: post.title,
+      description: post.subtitle,
+      url: postUrl,
+      siteName: "GoCocoon",
+      type: "article",
+      publishedTime: post.date,
+      authors: [post.author],
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 800,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.subtitle,
+      images: [imageUrl],
+    },
+  };
+}
+
 export default async function BlogPostPage({ params }) {
   const unwrappedParams = await params;
   const post = BLOG_POSTS.find((p) => p.slug === unwrappedParams.slug);
@@ -21,8 +77,46 @@ export default async function BlogPostPage({ params }) {
 
   const relatedProducts = PRODUCTS.filter((p) => p.category === post.relatedCategory).slice(0, 4);
 
+  const postUrl = `https://www.gococoon.store/blog/${post.slug}`;
+  const imageUrl = post.image.startsWith("http")
+    ? post.image
+    : `https://www.gococoon.store${post.image}`;
+
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.subtitle,
+    image: [imageUrl],
+    datePublished: post.date,
+    dateModified: post.date,
+    author: {
+      "@type": "Person",
+      name: post.author,
+      jobTitle: post.authorRole,
+      url: "https://www.gococoon.store"
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "GoCocoon",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://www.gococoon.store/icon.svg"
+      }
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": postUrl
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans selection:bg-[#F3D5CF] selection:text-[#5B2920]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      
       <Header />
 
       <article className="max-w-4xl mx-auto px-6 sm:px-10 py-16 sm:py-20 text-left space-y-12">
@@ -120,7 +214,7 @@ export default async function BlogPostPage({ params }) {
                     <h4 className="font-header font-bold text-sm text-[#2C2623] group-hover:text-[#B06B5B] transition-colors line-clamp-1">
                       {prod.name}
                     </h4>
-                    <p className="text-xs font-bold text-stone-900">₹{prod.price}</p>
+                    <p className="text-xs font-bold text-stone-900">Rs. {prod.price}</p>
                   </div>
                   <span className="mt-3 w-full py-2 rounded-lg bg-stone-50 group-hover:bg-[#2C2623] group-hover:text-white text-stone-800 text-[10px] font-bold uppercase tracking-wider text-center transition block">
                     View Treasure &rarr;

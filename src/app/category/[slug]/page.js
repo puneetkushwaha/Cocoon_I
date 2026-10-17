@@ -11,6 +11,46 @@ export function generateStaticParams() {
   }));
 }
 
+export async function generateMetadata({ params }) {
+  const unwrappedParams = await params;
+  const catData = CATEGORY_SEO_DATA[unwrappedParams.slug];
+
+  if (!catData) {
+    return {
+      title: "Handcrafted Crochet Collections | GoCocoon",
+      description: "Explore authentic organic milk cotton crochet essentials handmade in India.",
+    };
+  }
+
+  return {
+    title: `${catData.metaTitle || catData.name} | GoCocoon Handcrafted Crochet`,
+    description: catData.metaDescription || catData.intro,
+    keywords: [
+      catData.name,
+      `crochet ${catData.name.toLowerCase()} India`,
+      `handmade ${catData.name.toLowerCase()}`,
+      "GoCocoon",
+      "organic milk cotton crochet",
+      "slow fashion knitwear India"
+    ],
+    alternates: {
+      canonical: `https://www.gococoon.store/category/${catData.slug}`,
+    },
+    openGraph: {
+      title: `${catData.name} - Handcrafted Crochet Collection | GoCocoon`,
+      description: catData.metaDescription || catData.intro,
+      url: `https://www.gococoon.store/category/${catData.slug}`,
+      siteName: "GoCocoon",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${catData.name} | GoCocoon Handcrafted Crochet India`,
+      description: catData.metaDescription || catData.intro,
+    },
+  };
+}
+
 export default async function CategoryPage({ params }) {
   const unwrappedParams = await params;
   const catData = CATEGORY_SEO_DATA[unwrappedParams.slug];
@@ -22,8 +62,31 @@ export default async function CategoryPage({ params }) {
   const categoryProducts = PRODUCTS.filter((p) => p.category === catData.slug);
   const otherCategories = Object.values(CATEGORY_SEO_DATA).filter((c) => c.slug !== catData.slug);
 
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: catData.name,
+    description: catData.metaDescription || catData.intro,
+    url: `https://www.gococoon.store/category/${catData.slug}`,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: categoryProducts.map((p, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `https://www.gococoon.store/product/${p.id}`,
+        name: p.name,
+        image: p.imgUrl?.startsWith("http") ? p.imgUrl : `https://www.gococoon.store${p.imgUrl}`,
+      })),
+    },
+  };
+
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans selection:bg-[#F3D5CF] selection:text-[#5B2920]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+      />
+      
       <Header />
 
       <main className="max-w-7xl mx-auto px-6 sm:px-10 py-16 sm:py-20 text-left space-y-16">
@@ -39,7 +102,10 @@ export default async function CategoryPage({ params }) {
         {/* Category Hero Banner */}
         <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-[#FAF5EE] via-[#FCEEEA]/40 to-[#FAF5EE] border border-[#EAE1D3] space-y-4 relative overflow-hidden">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-[#F3D5CF] text-[#B06B5B] text-xs font-bold uppercase tracking-[0.2em]">
-            <span>🧶</span>
+            <svg className="w-3.5 h-3.5 text-[#B06B5B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 3a9 9 0 0 1 9 9M12 21a9 9 0 0 1-9-9"/>
+            </svg>
             <span>{catData.heroBadge}</span>
           </div>
 
@@ -50,73 +116,70 @@ export default async function CategoryPage({ params }) {
           <p className="text-stone-600 font-serif text-sm sm:text-base leading-relaxed max-w-3xl">
             {catData.intro}
           </p>
-
-          <div className="pt-2 flex flex-wrap gap-4 text-xs font-sans text-stone-500">
-            <span>✨ Pure Artisan Fibers & Yarns</span>
-            <span>•</span>
-            <span>📦 All-India Express Dispatch</span>
-            <span>•</span>
-            <span>🌸 Made Knot-by-Knot by Mehak</span>
-          </div>
         </div>
 
         {/* Product Grid */}
         <div className="space-y-6">
           <div className="flex items-center justify-between border-b border-[#EAE1D3] pb-4">
-            <h2 className="text-2xl font-header font-bold text-[#2C2623]">
-              Available Treasures ({categoryProducts.length})
+            <h2 className="font-header text-2xl font-bold text-[#2C2623]">
+              {catData.name} ({categoryProducts.length} Pieces)
             </h2>
-            <Link href="/#shop" className="text-xs font-bold uppercase tracking-wider text-[#B06B5B] hover:text-stone-900 transition">
-              View All Catalog &rarr;
-            </Link>
+            <span className="text-xs font-mono text-stone-500">
+              100% Organic Milk Cotton
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {categoryProducts.map((prod) => (
-              <Link
-                key={prod.id}
-                href={`/product/${prod.id}`}
-                className="group bg-white rounded-3xl p-4 border border-[#EAE1D3] shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <div className="aspect-square rounded-2xl overflow-hidden bg-stone-100 relative">
+          {categoryProducts.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {categoryProducts.map((product) => (
+                <Link
+                  key={product.id}
+                  href={`/product/${product.id}`}
+                  className="group bg-white rounded-3xl p-3 border border-[#EAE1D3] hover:border-[#B06B5B] shadow-2xs hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+                >
+                  <div className="aspect-square rounded-2xl overflow-hidden bg-[#FAF5EE] relative mb-3">
                     <img
-                      src={prod.imgUrl}
-                      alt={prod.name}
+                      src={product.imgUrl}
+                      alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    {prod.badge && (
-                      <span className="absolute top-2 left-2 bg-[#B06B5B] text-white text-[9px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                        {prod.badge}
+                    {product.badge && (
+                      <span className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-xs text-[10px] font-bold uppercase tracking-wider text-[#B06B5B]">
+                        {product.badge}
                       </span>
                     )}
                   </div>
 
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-bold uppercase text-[#B06B5B] tracking-wider block">
-                      {catData.name}
-                    </span>
-                    <h3 className="font-header font-bold text-base text-[#2C2623] line-clamp-1 group-hover:text-[#B06B5B] transition-colors">
-                      {prod.name}
+                  <div className="space-y-1.5 p-1 text-left">
+                    <h3 className="font-header font-bold text-base text-[#2C2623] group-hover:text-[#B06B5B] transition-colors line-clamp-1">
+                      {product.name}
                     </h3>
                     <p className="text-xs text-stone-500 font-serif line-clamp-2 leading-relaxed">
-                      {prod.desc}
+                      {product.desc}
                     </p>
-                    <div className="flex items-center gap-2 pt-1">
-                      <span className="text-sm font-bold text-stone-900">₹{prod.price}</span>
-                      {prod.originalPrice && (
-                        <span className="text-xs text-stone-400 line-through">₹{prod.originalPrice}</span>
+                    <div className="flex items-baseline gap-2 pt-1">
+                      <span className="text-sm font-bold text-[#2C2623]">
+                        Rs. {product.price}
+                      </span>
+                      {product.originalPrice && (
+                        <span className="text-xs text-stone-400 line-through">
+                          Rs. {product.originalPrice}
+                        </span>
                       )}
                     </div>
                   </div>
-                </div>
-
-                <span className="mt-4 w-full py-2.5 rounded-xl bg-[#FAF5EE] group-hover:bg-[#2C2623] group-hover:text-white text-stone-800 text-[11px] font-bold uppercase tracking-wider text-center transition block">
-                  Select &amp; Customise &rarr;
-                </span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-white rounded-3xl border border-[#EAE1D3] space-y-3">
+              <p className="font-header text-xl text-stone-700">New drops weaving in the atelier.</p>
+              <p className="text-xs text-stone-500 font-serif">Check back shortly or request a custom order.</p>
+              <Link href="/#custom-order" className="inline-block mt-2 px-6 py-2.5 rounded-full bg-[#B06B5B] text-white text-xs font-bold">
+                Commission Custom {catData.name}
               </Link>
-            ))}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Category FAQ Accordion Section */}

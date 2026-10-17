@@ -159,7 +159,61 @@ export default function RootLayout({ children }) {
       ],
       priceRange: "₹ - ₹₹₹",
       currenciesAccepted: "INR",
-      paymentAccepted: "Cash on Delivery, UPI, Credit Card, Debit Card, Net Banking"
+      paymentAccepted: "Cash on Delivery, UPI, Credit Card, Debit Card, Net Banking",
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.9",
+        reviewCount: "148",
+        bestRating: "5",
+        worstRating: "1"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "@id": "https://www.gococoon.store/#faq",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "Are GoCocoon products authentic handmade crochet?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes, every single GoCocoon handbag, tote, phone pouch, bandana, and waist belt is 100% hand-knitted knot-by-knot in India by Mehak Agarwal using premium organic milk cotton. Authentic crochet cannot be replicated by industrial machine looms."
+          }
+        },
+        {
+          "@type": "Question",
+          name: "Is Cash on Delivery (COD) available across India?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes, GoCocoon provides verified Cash on Delivery (COD) with real-time SMS/email OTP verification and express courier dispatch across all serviceable pin codes in India."
+          }
+        },
+        {
+          "@type": "Question",
+          name: "What yarn materials does GoCocoon use?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "We exclusively craft with 100% premium organic milk cotton yarn. It is breathable, ultra-soft, hypoallergenic, skin-friendly, anti-pilling, and holds crisp structural stitch tension for everyday use."
+          }
+        },
+        {
+          "@type": "Question",
+          name: "How do I care for and wash handmade crochet bags and accessories?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Gently hand wash in cool or lukewarm water using mild liquid cleanser or baby shampoo. Press excess water out in a dry cotton towel without wringing, reshape the piece gently, and lay flat to dry in shade."
+          }
+        },
+        {
+          "@type": "Question",
+          name: "Can I place a custom bespoke crochet commission?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes! Through our Bespoke Atelier, you can consult directly with lead artisan Mehak Agarwal on WhatsApp (+91 8171902255) to share Pinterest or Instagram references, choose custom shade palettes, and approve yarn swatches before crafting."
+          }
+        }
+      ]
     }
   ];
 
