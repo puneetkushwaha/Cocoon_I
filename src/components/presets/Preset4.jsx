@@ -544,9 +544,10 @@ export default function Preset4() {
 
                       <img
                         src={item.imgUrl}
-                        alt={item.title}
+                        alt={`${item.title} - Handcrafted Crochet Bestseller GoCocoon`}
                         onClick={() => openQuickView(product)}
                         className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-700 cursor-pointer"
+                        loading="lazy"
                       />
 
                       <div
@@ -688,9 +689,10 @@ export default function Preset4() {
 
                       <img
                         src={product.imgUrl}
-                        alt={product.name}
+                        alt={`${product.name} - Handcrafted Crochet by GoCocoon`}
                         onClick={() => openQuickView(product)}
                         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        loading="lazy"
                       />
                     </div>
 

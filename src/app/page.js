@@ -1,8 +1,8 @@
 import Preset4 from "@/components/presets/Preset4";
 
 export const metadata = {
-  title: "GoCocoon | Handcrafted Crochet Boutique India - Bags, Tops & Accessories",
-  description: "Shop authentic artisanal crochet bags, floral bandanas, waist wraps, bow keychains & hair accessories. 100% pure organic milk cotton, handmade knot-by-knot in India by Mehak Agarwal. Free pan-India delivery available.",
+  title: "GoCocoon | Handcrafted Crochet Bags, Belts & Accessories India",
+  description: "Shop authentic artisanal crochet bags, floral bandanas, waist wraps, bow keychains & hair accessories. Slow-crafted knot-by-knot in India by Mehak Agarwal. Free all-India express delivery.",
   keywords: [
     "GoCocoon",
     "GoCocoon store",
@@ -10,7 +10,7 @@ export const metadata = {
     "COCOON crochet",
     "handmade crochet bags India",
     "crochet boutique India",
-    "crochet tops online",
+    "crochet waist belt India",
     "organic milk cotton crochet",
     "sunflower crochet bag",
     "crochet bandanas",
@@ -22,7 +22,7 @@ export const metadata = {
   },
   openGraph: {
     title: "GoCocoon | Handcrafted Crochet Boutique India",
-    description: "Slow-crafted organic milk cotton crochet essentials handmade knot-by-knot in India by Mehak Agarwal.",
+    description: "Slow-crafted artisanal crochet bags, waist belts, bandanas & heirloom accessories handmade knot-by-knot in India by Mehak Agarwal.",
     url: "https://www.gococoon.store",
     siteName: "GoCocoon",
     images: [

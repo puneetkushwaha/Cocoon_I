@@ -4,11 +4,20 @@ export default function robots() {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/", "/cart", "/profile"],
+        disallow: ["/admin/", "/api/", "/cart", "/profile", "/shop"],
       },
       {
         userAgent: "Googlebot-Image",
         allow: ["/", "/products/", "/instagram-post.jpg", "/*.jpg", "/*.png", "/*.webp", "/*.svg"],
+      },
+      {
+        userAgent: "Pinterestbot",
+        allow: ["/", "/products/", "/category/", "/blog/"],
+      },
+      {
+        userAgent: "Bingbot",
+        allow: "/",
+        disallow: ["/admin/", "/api/", "/cart", "/profile", "/shop"],
       },
     ],
     sitemap: "https://www.gococoon.store/sitemap.xml",

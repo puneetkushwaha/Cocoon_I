@@ -131,18 +131,31 @@ export default function RootLayout({ children }) {
       },
       address: {
         "@type": "PostalAddress",
+        addressLocality: "Agra",
+        addressRegion: "Uttar Pradesh",
+        postalCode: "282001",
         addressCountry: "IN"
       },
+      email: "support@gococoon.store",
+      telephone: "+91-8171902255",
       contactPoint: {
         "@type": "ContactPoint",
         telephone: "+91-8171902255",
         contactType: "Customer Support",
+        email: "support@gococoon.store",
         areaServed: "IN",
         availableLanguage: ["English", "Hindi"]
       },
       sameAs: [
         "https://www.instagram.com/cocoon._.u/",
         "https://wa.me/918171902255"
+      ],
+      knowsAbout: [
+        "Handcrafted Crochet Bags",
+        "Crochet Waist Belts",
+        "Bohemian Bandanas",
+        "Zero-Damage Crochet Hairwear",
+        "Slow Fashion Knitwear India"
       ],
       priceRange: "₹ - ₹₹₹",
       currenciesAccepted: "INR",

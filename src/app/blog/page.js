@@ -3,6 +3,44 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { BLOG_POSTS } from "@/data/blogPosts";
 
+export const metadata = {
+  title: "Artisan Crochet Journal, Care Guides & Styling Tips | GoCocoon India",
+  description: "Read artisan guides on washing handcrafted crochet bags, styling bandanas & waist wraps, and the tactile beauty of milk cotton yarn. Written by Mehak Agarwal.",
+  keywords: [
+    "crochet care guide",
+    "how to wash crochet bags",
+    "crochet styling tips India",
+    "milk cotton crochet",
+    "slow fashion knitwear guide",
+    "crochet bandana styling"
+  ],
+  alternates: {
+    canonical: "https://www.gococoon.store/blog",
+  },
+  openGraph: {
+    title: "Artisan Crochet Journal & Craftsmanship Guides | GoCocoon",
+    description: "Expert advice on washing, preserving, and styling handcrafted crochet essentials.",
+    url: "https://www.gococoon.store/blog",
+    siteName: "GoCocoon",
+    images: [
+      {
+        url: "https://www.gococoon.store/instagram-post.jpg",
+        width: 1200,
+        height: 1600,
+        alt: "The GoCocoon Journal - Handcrafted Crochet Guides",
+      },
+    ],
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Artisan Crochet Journal & Guides | GoCocoon India",
+    description: "Expert tips on caring for and styling handmade crochet pieces.",
+    images: ["https://www.gococoon.store/instagram-post.jpg"],
+  },
+};
+
 export default function BlogIndexPage() {
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans selection:bg-[#F3D5CF] selection:text-[#5B2920]">

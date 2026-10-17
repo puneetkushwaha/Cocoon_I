@@ -13,8 +13,9 @@ export async function generateMetadata({ params }) {
   }
 
   const categoryName = product.category ? (product.category.charAt(0).toUpperCase() + product.category.slice(1).replace("-", " ")) : "Crochet";
+  const materialLabel = product.materials || "Handcrafted Cotton Cord";
   const title = `${product.name} | Handcrafted ${categoryName} | GoCocoon`;
-  const description = `${product.desc} Handcrafted knot-by-knot in India using 100% pure organic milk cotton. Price: ₹${product.price}. All-India express delivery.`;
+  const description = `${product.desc} Artisanal slow-fashion handcrafted knot-by-knot in India (${materialLabel}). Price: ₹${product.price}. Express pan-India dispatch.`;
   const pageUrl = `https://www.gococoon.store/product/${product.id}`;
   const imageUrl = product.imgUrl?.startsWith("http")
     ? product.imgUrl
@@ -82,7 +83,7 @@ export default async function ProductDetailLayout({ children, params }) {
         sku: `COCOON-${product.id}`,
         mpn: `GC-PRD-${product.id}`,
         category: categoryName,
-        material: product.materials || "100% Pure Organic Milk Cotton",
+        material: product.materials || "Handcrafted Cotton Cord",
         color: product.colors?.join(", ") || "Artisanal Multi",
         countryOfOrigin: {
           "@type": "Country",
@@ -129,8 +130,8 @@ export default async function ProductDetailLayout({ children, params }) {
               "@type": "ShippingDeliveryTime",
               handlingTime: {
                 "@type": "QuantitativeValue",
-                minValue: 1,
-                maxValue: 2,
+                minValue: 3,
+                maxValue: 5,
                 unitCode: "d"
               },
               transitTime: {
@@ -142,11 +143,13 @@ export default async function ProductDetailLayout({ children, params }) {
             }
           }
         },
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "5.0",
-          reviewCount: product.reviews || 16,
-        },
+        ...(Number(product.reviews) > 0 ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: "5.0",
+            reviewCount: Number(product.reviews),
+          }
+        } : {}),
       }
     : null;
 
