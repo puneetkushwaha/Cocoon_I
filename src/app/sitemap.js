@@ -13,12 +13,6 @@ export default function sitemap() {
       images: [`${baseUrl}/instagram-post.jpg`, `${baseUrl}/icon.svg`],
     },
     {
-      url: `${baseUrl}/shop`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),
       changeFrequency: "daily",
@@ -71,13 +65,6 @@ export default function sitemap() {
     "phone-cases",
   ];
 
-  const categoryPages = categories.map((cat) => ({
-    url: `${baseUrl}/shop?category=${cat}`,
-    lastModified: new Date(),
-    changeFrequency: "daily",
-    priority: 0.85,
-  }));
-
   const categoryLandingPages = categories.map((cat) => ({
     url: `${baseUrl}/category/${cat}`,
     lastModified: new Date(),
@@ -105,5 +92,5 @@ export default function sitemap() {
     ],
   }));
 
-  return [...staticPages, ...categoryLandingPages, ...categoryPages, ...blogPages, ...productPages];
+  return [...staticPages, ...categoryLandingPages, ...blogPages, ...productPages];
 }

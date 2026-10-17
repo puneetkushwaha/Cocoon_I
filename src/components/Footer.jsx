@@ -54,7 +54,7 @@ export default function Footer() {
             </h5>
             <ul className="space-y-2.5 text-sm text-[#2C2623]/75 font-serif">
               <li>
-                <Link href="/shop" className="hover:text-[#B06B5B] transition">
+                <Link href="/#shop" className="hover:text-[#B06B5B] transition">
                   All Drops &amp; Catalog
                 </Link>
               </li>

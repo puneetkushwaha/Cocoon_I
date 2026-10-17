@@ -179,14 +179,14 @@ function ReviewContent() {
       {/* TOP HEADER (Exact typography as website) */}
       <header className="sticky top-0 z-30 bg-[#FAF7F2]/90 backdrop-blur-xl border-b border-[#EAE0D2]/60 shadow-[0_4px_20px_rgba(0,0,0,0.03)] px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <Link href="/shop" className="group flex items-center select-none py-1">
+          <Link href="/#shop" className="group flex items-center select-none py-1">
             <span className="font-header text-2xl sm:text-3xl font-light tracking-[0.28em] uppercase text-[#231F20] group-hover:text-[#B06B5B] transition-colors duration-300 leading-none">
               COCOON
             </span>
           </Link>
 
           <Link
-            href="/shop"
+            href="/#shop"
             className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white hover:bg-stone-50 border border-[#DDD3C4] text-[11px] font-bold text-[#2C2623] transition shadow-2xs"
           >
             <span>← Back to Shop</span>
@@ -460,7 +460,7 @@ function ReviewContent() {
             {/* ACTION BUTTONS */}
             <div className="space-y-2 pt-2">
               <Link
-                href="/shop"
+                href="/#shop"
                 className="w-full py-3.5 rounded-2xl bg-[#B06B5B] hover:bg-[#975647] text-white font-bold text-xs uppercase tracking-wider block transition shadow-md"
               >
                 🛍️ Continue Shopping with 15% Off

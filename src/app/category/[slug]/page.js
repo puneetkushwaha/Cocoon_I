@@ -31,7 +31,7 @@ export default async function CategoryPage({ params }) {
         <div className="text-xs font-serif text-stone-500 space-x-2">
           <Link href="/" className="hover:text-[#B06B5B] underline">Home</Link>
           <span>/</span>
-          <Link href="/shop" className="hover:text-[#B06B5B] underline">Shop</Link>
+          <Link href="/#shop" className="hover:text-[#B06B5B] underline">Shop</Link>
           <span>/</span>
           <span className="text-stone-800 font-bold">{catData.name}</span>
         </div>
@@ -52,7 +52,7 @@ export default async function CategoryPage({ params }) {
           </p>
 
           <div className="pt-2 flex flex-wrap gap-4 text-xs font-sans text-stone-500">
-            <span>✨ 100% Pure Organic Milk Cotton</span>
+            <span>✨ Pure Artisan Fibers & Yarns</span>
             <span>•</span>
             <span>📦 All-India Express Dispatch</span>
             <span>•</span>
@@ -66,7 +66,7 @@ export default async function CategoryPage({ params }) {
             <h2 className="text-2xl font-header font-bold text-[#2C2623]">
               Available Treasures ({categoryProducts.length})
             </h2>
-            <Link href="/shop" className="text-xs font-bold uppercase tracking-wider text-[#B06B5B] hover:text-stone-900 transition">
+            <Link href="/#shop" className="text-xs font-bold uppercase tracking-wider text-[#B06B5B] hover:text-stone-900 transition">
               View All Catalog &rarr;
             </Link>
           </div>

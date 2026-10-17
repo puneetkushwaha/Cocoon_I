@@ -107,7 +107,7 @@ export default function RootLayout({ children }) {
         "@type": "SearchAction",
         target: {
           "@type": "EntryPoint",
-          urlTemplate: "https://www.gococoon.store/shop?search={search_term_string}"
+          urlTemplate: "https://www.gococoon.store/#shop"
         },
         "query-input": "required name=search_term_string"
       },

@@ -79,7 +79,7 @@ export default async function CategoryLayout({ children, params }) {
             "@type": "ListItem",
             position: 2,
             name: "Shop All",
-            item: "https://www.gococoon.store/shop",
+            item: "https://www.gococoon.store/#shop",
           },
           {
             "@type": "ListItem",

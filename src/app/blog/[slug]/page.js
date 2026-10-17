@@ -135,7 +135,7 @@ export default async function BlogPostPage({ params }) {
           <Link href="/blog" className="text-stone-600 hover:text-[#B06B5B] transition">
             &larr; Back to all Guides
           </Link>
-          <Link href="/shop" className="text-[#B06B5B] hover:text-[#2C2623] transition">
+          <Link href="/#shop" className="text-[#B06B5B] hover:text-[#2C2623] transition">
             Explore All Collections &rarr;
           </Link>
         </div>
