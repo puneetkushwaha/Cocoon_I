@@ -3,10 +3,10 @@ import "./globals.css";
 
 export const metadata = {
   title: {
-    default: "GoCocoon | Handcrafted Crochet Bags, Tops & Accessories India",
+    default: "GoCocoon | Handcrafted Crochet Bags, Belts & Accessories India",
     template: "%s | GoCocoon Crochet Boutique",
   },
-  description: "Discover authentic handcrafted crochet bags, statement totes, hair accessories, waist wraps, bandanas & heirloom gifts at GoCocoon. 100% pure organic milk cotton, hand-crocheted knot-by-knot in India by Mehak Agarwal. All-India express delivery.",
+  description: "Discover authentic handcrafted crochet bags, statement totes, hair accessories, waist wraps, bandanas & heirloom gifts at GoCocoon. Artisanal slow-fashion hand-crocheted knot-by-knot in India by Mehak Agarwal. All-India express delivery.",
   keywords: [
     "GoCocoon",
     "GoCocoon store",
@@ -15,7 +15,7 @@ export const metadata = {
     "cocoon crochet boutique",
     "handmade crochet bags India",
     "crochet handbag online India",
-    "crochet tops online India",
+    "crochet waist belt India",
     "chunky crochet bag",
     "crochet bow knot handbag",
     "crochet bandanas India",

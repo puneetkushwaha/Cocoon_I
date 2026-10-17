@@ -53,7 +53,7 @@ export const PRODUCTS = [
     name: "Ruby Red Bow & Pearl Charm Keychain",
     category: "keychains",
     subcategory: "bow-keychains",
-    price: 1,
+    price: 199,
     originalPrice: 299,
     imgUrl: "/products/items/red-bow-pearl-keychain.jpg",
     hoverImgUrl: "/products/items/red-bow-pearl-keychain.jpg",

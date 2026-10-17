@@ -41,9 +41,9 @@ export default function Footer() {
 
             {/* Online Payment Trust Notice */}
             <div className="pt-1 flex items-center gap-2 text-[11px] text-[#8C827A] font-medium">
-              <span className="text-emerald-700 font-bold">100% Secure Online Payment</span>
+              <span className="text-emerald-700 font-bold">100% Secure Payments</span>
               <span>•</span>
-              <span>UPI, Cards & NetBanking</span>
+              <span>Razorpay UPI, Cards &amp; Verified COD</span>
             </div>
           </div>
 
@@ -126,8 +126,8 @@ export default function Footer() {
               </p>
               <div className="p-3 bg-[#FAF2EB] rounded-xl border border-[#EFE4D6] text-xs space-y-1 font-sans text-stone-700">
                 <p className="font-bold text-[#2C2623]">Handcrafted Atelier:</p>
-                <p>Artisanal Slow-Fashion Studio, India</p>
-                <p className="text-[11px] text-stone-500 pt-0.5">Slow-knitted made-to-order treasures. 100% Prepaid Online.</p>
+                <p>Agra, Uttar Pradesh - 282001, India</p>
+                <p className="text-[11px] text-stone-500 pt-0.5">Slow-knitted made-to-order treasures • Razorpay &amp; COD Available</p>
               </div>
             </div>
           </div>

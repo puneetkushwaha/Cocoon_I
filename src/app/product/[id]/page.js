@@ -679,7 +679,7 @@ export default function ProductDetailPage({ params }) {
   // Calculation for review rating breakdown
   const reviewStats = useMemo(() => {
     if (!reviews || reviews.length === 0) {
-      return { avg: 5.0, count: 0, breakdown: { 5: 100, 4: 0, 3: 0, 2: 0, 1: 0 } };
+      return { avg: "0.0", count: 0, breakdown: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } };
     }
     const count = reviews.length;
     const sum = reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0);
@@ -785,7 +785,7 @@ export default function ProductDetailPage({ params }) {
               <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-stone-200 text-[10px] font-bold text-stone-800 shadow-xs flex items-center gap-1.5">
                 <span>100% Handcrafted</span>
                 <span className="text-rose-400">•</span>
-                <span>Pure Organic Milk Cotton</span>
+                <span>{product.materials?.includes("Milk Cotton") ? "Pure Milk Cotton" : (product.materials || "Handcrafted Cotton Cord")}</span>
               </div>
             </div>
 
@@ -816,11 +816,17 @@ export default function ProductDetailPage({ params }) {
                   {product.subcategory || product.category}
                 </span>
                 <span className="text-stone-300">•</span>
-                <a href="#reviews" className="text-xs font-semibold text-amber-700 hover:underline flex items-center gap-1">
-                  <span>★</span>
-                  <span>{reviewStats.avg}</span>
-                  <span className="text-stone-400">({reviewStats.count} reviews)</span>
-                </a>
+                {Number(reviewStats.count) > 0 ? (
+                  <a href="#reviews" className="text-xs font-semibold text-amber-700 hover:underline flex items-center gap-1">
+                    <span>★</span>
+                    <span>{reviewStats.avg}</span>
+                    <span className="text-stone-400">({reviewStats.count} reviews)</span>
+                  </a>
+                ) : (
+                  <a href="#reviews" className="text-xs font-semibold text-[#B06B5B] hover:underline">
+                    New Atelier Drop • Be first to review
+                  </a>
+                )}
               </div>
 
               <h1 className="text-3xl sm:text-4xl font-header font-bold text-[#2C2623] leading-tight">
@@ -1103,32 +1109,34 @@ export default function ProductDetailPage({ params }) {
             </div>
 
             {/* Rating Breakdown Card */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DFC9] shadow-xs grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-              
-              <div className="md:col-span-4 text-center md:border-r border-[#EFE8DD] md:pr-6 space-y-2">
-                <span className="text-5xl font-header font-bold text-[#2C2623] block">{reviewStats.avg}</span>
-                <div className="text-amber-500 text-lg">★★★★★</div>
-                <p className="text-xs text-stone-500 font-serif">Based on {reviewStats.count} verified reviews</p>
-              </div>
+            {Number(reviewStats.count) > 0 && (
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DFC9] shadow-xs grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                
+                <div className="md:col-span-4 text-center md:border-r border-[#EFE8DD] md:pr-6 space-y-2">
+                  <span className="text-5xl font-header font-bold text-[#2C2623] block">{reviewStats.avg}</span>
+                  <div className="text-amber-500 text-lg">★★★★★</div>
+                  <p className="text-xs text-stone-500 font-serif">Based on {reviewStats.count} verified reviews</p>
+                </div>
 
-              <div className="md:col-span-8 space-y-2 text-xs">
-                {[5, 4, 3, 2, 1].map((stars) => (
-                  <div key={stars} className="flex items-center gap-3">
-                    <span className="w-12 text-stone-600 font-semibold">{stars} star</span>
-                    <div className="flex-1 h-3 rounded-full bg-stone-100 overflow-hidden border border-stone-200">
-                      <div
-                        className="h-full bg-amber-400 rounded-full transition-all duration-500"
-                        style={{ width: `${reviewStats.breakdown[stars]}%` }}
-                      ></div>
+                <div className="md:col-span-8 space-y-2 text-xs">
+                  {[5, 4, 3, 2, 1].map((stars) => (
+                    <div key={stars} className="flex items-center gap-3">
+                      <span className="w-12 text-stone-600 font-semibold">{stars} star</span>
+                      <div className="flex-1 h-3 rounded-full bg-stone-100 overflow-hidden border border-stone-200">
+                        <div
+                          className="h-full bg-amber-400 rounded-full transition-all duration-500"
+                          style={{ width: `${reviewStats.breakdown[stars]}%` }}
+                        ></div>
+                      </div>
+                      <span className="w-10 text-right text-stone-400 font-mono text-[11px]">
+                        {reviewStats.breakdown[stars]}%
+                      </span>
                     </div>
-                    <span className="w-10 text-right text-stone-400 font-mono text-[11px]">
-                      {reviewStats.breakdown[stars]}%
-                    </span>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
 
-            </div>
+              </div>
+            )}
 
             {/* Reviews List */}
             <div className="space-y-4">

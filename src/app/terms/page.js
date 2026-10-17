@@ -81,13 +81,13 @@ export default function TermsPage() {
           </h2>
           <div className="text-xs sm:text-sm text-stone-700 font-serif space-y-3 leading-relaxed">
             <p>
-              All prices are listed in Indian Rupees (₹ INR). We support Direct UPI to Mehak&apos;s verified studio ID (<code>8171902255@ibl</code>), Cards/NetBanking, and Cash on Delivery:
+              All prices are listed in Indian Rupees (₹ INR) inclusive of all applicable taxes. We accept online payments through our certified Razorpay gateway (UPI, Credit/Debit Cards, NetBanking) and Cash on Delivery:
             </p>
             <ul className="list-disc list-inside space-y-1.5 pl-2 text-stone-600">
-              <li><strong>UPI Orders:</strong> Verified by matching the 12-digit UTR reference provided upon checkout.</li>
-              <li><strong>COD Policy:</strong> Cash on Delivery requires mandatory 6-digit email OTP verification via Resend before dispatch to protect against fraudulent consignments.</li>
-              <li><strong>Free Shipping:</strong> Complimentary standard shipping applies to all basket totals of ₹999 and above.</li>
-              <li><strong>Non-Refundable Delivery Fees:</strong> Any courier shipping and transit charges incurred during dispatch are strictly non-refundable.</li>
+              <li><strong>Prepaid Orders:</strong> Processed instantly and securely via Razorpay with 256-bit SSL encryption. We never handle or store your banking credentials.</li>
+              <li><strong>COD Policy:</strong> Cash on Delivery orders require mandatory 6-digit email OTP verification before shipment dispatch to ensure authenticity.</li>
+              <li><strong>Free Shipping:</strong> Complimentary standard shipping applies to all basket orders of ₹999 and above across India.</li>
+              <li><strong>Transit & Dispatch Fees:</strong> Flat shipping fees of ₹99 apply to orders under ₹999. Courier dispatch fees incurred are non-refundable once an order is shipped.</li>
             </ul>
           </div>
         </section>
@@ -108,8 +108,34 @@ export default function TermsPage() {
             5. Governing Law & Jurisdiction
           </h2>
           <p className="text-xs sm:text-sm text-stone-600 font-serif leading-relaxed">
-            These terms are governed by the laws of India. Any legal disputes or claims arising out of the use of this website or orders fulfilled by COCOON shall be subject to the exclusive jurisdiction of the competent courts of India.
+            These terms are governed by the laws of India. Any legal disputes or claims arising out of the use of this website or orders fulfilled by COCOON shall be subject to the exclusive jurisdiction of the competent courts in Agra, Uttar Pradesh, India.
           </p>
+        </section>
+
+        {/* 6. Grievance Officer & Nodal Contact */}
+        <section className="space-y-4 bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DFC9] shadow-xs">
+          <h2 className="text-xl font-header font-bold text-[#2C2623]">
+            6. Consumer Grievance Redressal & Statutory Disclosures
+          </h2>
+          <p className="text-xs sm:text-sm text-stone-600 font-serif leading-relaxed">
+            In compliance with the <strong>Consumer Protection (E-Commerce) Rules, 2020</strong>, the details of the designated Grievance Officer and our registered atelier are:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-stone-700 font-serif pt-1">
+            <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#EDE5DA] space-y-1">
+              <span className="font-bold text-[#2C2623] block text-sm">Grievance Officer:</span>
+              <p><strong>Name:</strong> Mehak Agarwal</p>
+              <p><strong>Designation:</strong> Founder & Head Artisan</p>
+              <p><strong>Email:</strong> <a href="mailto:support@gococoon.store" className="text-[#B06B5B] underline">support@gococoon.store</a></p>
+              <p><strong>WhatsApp / Helpdesk:</strong> <a href="https://wa.me/918171902255" className="text-[#B06B5B] underline">+91 8171902255</a></p>
+            </div>
+            <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#EDE5DA] space-y-1">
+              <span className="font-bold text-[#2C2623] block text-sm">Registered Studio Atelier:</span>
+              <p><strong>Brand:</strong> COCOON (GoCocoon)</p>
+              <p><strong>Location:</strong> Agra, Uttar Pradesh - 282001, India</p>
+              <p><strong>Operating Hours:</strong> Mon - Sat, 10:00 AM - 7:00 PM IST</p>
+              <p><strong>Redressal Timeline:</strong> Acknowledged within 48 hours; resolved within 1 month.</p>
+            </div>
+          </div>
         </section>
 
         <div className="pt-4 text-center">

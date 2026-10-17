@@ -99,8 +99,9 @@ export default function PrivacyPolicyPage() {
             We never sell, rent, trade, or monetize your personal information to data brokers or advertising exchanges. Data is only shared with verified infrastructure partners who adhere to enterprise encryption:
           </p>
           <ul className="list-disc list-inside text-xs sm:text-sm space-y-2 text-stone-700 font-serif pl-2">
+            <li><strong>Payment Gateway:</strong> Razorpay Software Pvt. Ltd. (PCI-DSS Level 1 compliant gateway processing UPI, Debit/Credit Cards, and NetBanking). We never handle, store, or view your banking passwords or card security codes (CVV).</li>
             <li><strong>Logistics:</strong> Shiprocket (BigFoot Retail Solutions Pvt. Ltd.) & assignees (Delhivery, Xpressbees, Blue Dart) solely to transport the parcel to your doorstep.</li>
-            <li><strong>Database & Storage:</strong> Supabase (PostgreSQL with SSL / TLS 1.3 encryption at rest and in transit).</li>
+            <li><strong>Database & Storage:</strong> Supabase (PostgreSQL with TLS in transit and AES-256 encryption at rest).</li>
             <li><strong>Email Communications:</strong> Resend Inc. for transactional dispatch notices and 6-digit verification codes.</li>
           </ul>
         </section>
@@ -128,13 +129,13 @@ export default function PrivacyPolicyPage() {
             5. Grievance Officer & Business Details
           </h2>
           <p className="text-xs sm:text-sm text-stone-600 font-serif leading-relaxed">
-            For privacy inquiries, rights requests, or feedback, contact our designated Grievance Officer:
+            For privacy inquiries, rights requests, or feedback, contact our designated Grievance Officer under Rule 5(9) of the IT (Intermediary Guidelines and Digital Media Ethics Code) Rules and DPDP Act:
           </p>
           <div className="text-xs text-stone-800 space-y-1 font-mono pt-1">
             <p><strong>Attn:</strong> Mehak Agarwal (Founder & Data Controller)</p>
-            <p><strong>Brand:</strong> COCOON Artisanal Studio</p>
-            <p><strong>Location:</strong> India</p>
-            <p><strong>Email:</strong> <a href="mailto:cocoon.by.mehak@gmail.com" className="text-[#B06B5B] underline font-bold">cocoon.by.mehak@gmail.com</a></p>
+            <p><strong>Brand:</strong> COCOON (GoCocoon)</p>
+            <p><strong>Registered Studio:</strong> Agra, Uttar Pradesh - 282001, India</p>
+            <p><strong>Email:</strong> <a href="mailto:support@gococoon.store" className="text-[#B06B5B] underline font-bold">support@gococoon.store</a> (Alt: cocoon.by.mehak@gmail.com)</p>
             <p><strong>Studio WhatsApp:</strong> +91 8171902255</p>
           </div>
         </section>
