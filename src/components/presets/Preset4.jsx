@@ -9,6 +9,7 @@ import { captureLiveGpsAddress } from "@/lib/location";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import InstagramShowcase from "@/components/InstagramShowcase";
+import FaqSection from "@/components/FaqSection";
 import { generateOrderId } from "@/lib/orderUtils";
 
 export default function Preset4() {
@@ -1195,6 +1196,9 @@ export default function Preset4() {
 
         </div>
       </section>
+
+      {/* 7.5 ATELIER FREQUENTLY ASKED QUESTIONS */}
+      <FaqSection />
 
       {/* 8. MASTER STUDIO FOOTER */}
       <Footer />

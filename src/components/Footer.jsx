@@ -99,6 +99,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/#faq" className="hover:text-[#B06B5B] transition">
+                  Care &amp; Order FAQ
+                </Link>
+              </li>
+              <li>
                 <Link href="/blog" className="hover:text-[#B06B5B] transition text-[#B06B5B] font-semibold">
                   Artisan Journal &amp; Guides
                 </Link>
