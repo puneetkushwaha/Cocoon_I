@@ -1,5 +1,11 @@
 import { PRODUCTS } from "@/data/products";
 
+export async function generateStaticParams() {
+  return PRODUCTS.map((product) => ({
+    id: String(product.id),
+  }));
+}
+
 export async function generateMetadata({ params }) {
   const unwrappedParams = await params;
   const productId = Number(unwrappedParams.id);

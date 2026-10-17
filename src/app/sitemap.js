@@ -19,16 +19,10 @@ export default function sitemap() {
       priority: 0.85,
     },
     {
-      url: `${baseUrl}/wishlist`,
+      url: `${baseUrl}/shop`,
       lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/cart`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.5,
+      changeFrequency: "daily",
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/terms`,
