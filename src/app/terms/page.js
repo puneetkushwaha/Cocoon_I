@@ -47,7 +47,7 @@ export default function TermsPage() {
           </h2>
           <div className="text-xs sm:text-sm text-stone-700 font-serif space-y-3 leading-relaxed">
             <p>
-              Every COCOON creation is made knot-by-knot using 100% premium organic milk-cotton yarn. Because our pieces are human-crafted without factory automation:
+              Every COCOON creation is made knot-by-knot using premium hand-selected yarns and artisan fibers (including ultra-soft milk cotton, breathable cotton-linen blends, plush chenille, and durable polyester cord as individually specified on each product listing). Because our pieces are human-crafted without factory automation:
             </p>
             <ul className="list-disc list-inside space-y-1.5 pl-2 text-stone-600">
               <li><strong>Subtle Uniqueness:</strong> Minor variations in knot tension, stitch texture, or millimeter dimensions (±1–2 cm) are the authentic hallmarks of human hands, not defects.</li>
@@ -86,8 +86,8 @@ export default function TermsPage() {
             <ul className="list-disc list-inside space-y-1.5 pl-2 text-stone-600">
               <li><strong>Prepaid Orders:</strong> Processed instantly and securely via Razorpay with 256-bit SSL encryption. We never handle or store your banking credentials.</li>
               <li><strong>COD Policy:</strong> Cash on Delivery orders require mandatory 6-digit email OTP verification before shipment dispatch to ensure authenticity.</li>
-              <li><strong>Free Shipping:</strong> Complimentary standard shipping applies to all basket orders of ₹999 and above across India.</li>
-              <li><strong>Transit & Dispatch Fees:</strong> Flat shipping fees of ₹99 apply to orders under ₹999. Courier dispatch fees incurred are non-refundable once an order is shipped.</li>
+              <li><strong>Free Shipping:</strong> Complimentary standard shipping applies to all basket orders of ₹999 and above across India, as well as on all prepaid orders placed online via Razorpay.</li>
+              <li><strong>Standard Delivery Fees:</strong> For COD orders under ₹999, a nominal delivery fee applies. Courier dispatch fees incurred are non-refundable once an order is shipped.</li>
             </ul>
           </div>
         </section>

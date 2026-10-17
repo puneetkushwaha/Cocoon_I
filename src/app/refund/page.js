@@ -81,6 +81,9 @@ export default function RefundPolicyPage() {
               <p className="text-xs font-semibold">
                 We will immediately expedite a priority hand-crafted replacement at zero extra cost, or issue a 100% refund.
               </p>
+              <p className="text-[11px] text-stone-600 italic pt-1 border-t border-emerald-200/60">
+                <strong>Statutory Protections:</strong> In accordance with the Consumer Protection (E-Commerce) Rules, 2020, if an item received is defective, deficient, or materially diverges from listed specifications, you are entitled to full replacement or refund. We will never unreasonably deny genuine consumer grievances.
+              </p>
             </div>
           </div>
         </section>
@@ -120,12 +123,13 @@ export default function RefundPolicyPage() {
             4. How to Initiate Support or Refund
           </h2>
           <p className="text-xs sm:text-sm text-stone-600 font-serif leading-relaxed">
-            For any queries or assistance, message our studio team directly:
+            For any queries, exchanges, or assistance, message our studio team directly:
           </p>
           <div className="text-xs text-stone-800 space-y-1 font-mono pt-1">
-            <p><strong>Studio WhatsApp:</strong> +91 8171902255 (Fastest Response: 10 AM – 7 PM IST)</p>
-            <p><strong>Official Email:</strong> cocoon.by.mehak@gmail.com</p>
-            <p><strong>Studio Location:</strong> India</p>
+            <p><strong>Studio WhatsApp:</strong> <a href="https://wa.me/918171902255" className="text-[#B06B5B] underline">+91 8171902255</a> (10 AM – 7 PM IST)</p>
+            <p><strong>Official Email:</strong> <a href="mailto:support@gococoon.store" className="text-[#B06B5B] underline">support@gococoon.store</a> (Alt: cocoon.by.mehak@gmail.com)</p>
+            <p><strong>Registered Atelier:</strong> Agra, Uttar Pradesh - 282001, India</p>
+            <p><strong>Grievance Officer:</strong> Mehak Agarwal</p>
           </div>
         </section>
 

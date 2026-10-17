@@ -5,7 +5,7 @@ export const CATEGORY_SEO_DATA = {
     name: "Handbags & Totes",
     h1: "Handcrafted Crochet Bags, Totes & Backpacks in India",
     metaTitle: "Handcrafted Crochet Bags & Totes India | Buy Online | GoCocoon",
-    metaDescription: "Discover authentic artisanal crochet handbags, bow knot totes, and sunflower backpacks. 100% organic milk cotton, hand-crocheted in India by Mehak Agarwal.",
+    metaDescription: "Discover authentic artisanal crochet handbags, bow knot totes, and sunflower backpacks. Handcrafted with premium milk cotton and structured artisan cords in India by Mehak Agarwal.",
     keywords: [
       "handmade crochet bags India",
       "crochet handbag online India",
@@ -15,11 +15,11 @@ export const CATEGORY_SEO_DATA = {
       "chunky crochet bag"
     ],
     heroBadge: "Atelier Handbag Vault",
-    intro: "Handcrafted with dense, structured milk cotton cord, every GoCocoon crochet bag is designed to hold its architectural shape while remaining cloud-soft. From our signature Chocolate Bow Knot mini tote to heirloom sunflower backpacks, explore slow-crafted luxury made knot-by-knot.",
+    intro: "Handcrafted with dense, structured milk cotton and curated cord blends, every GoCocoon crochet bag is designed to hold its architectural shape while remaining cloud-soft. From our signature Chocolate Bow Knot mini tote to heirloom sunflower backpacks, explore slow-crafted luxury made knot-by-knot.",
     faqs: [
       {
         q: "Do GoCocoon crochet bags sag or lose their shape when carrying essentials?",
-        a: "No. Unlike cheap acrylic knit bags, GoCocoon uses high-tension, multi-ply organic milk cotton cord and reinforced base construction. Your phone, wallet, cosmetics, and keys are supported without stretching or drooping."
+        a: "No. GoCocoon uses high-tension, multi-ply milk cotton and reinforced cord construction. Your phone, wallet, cosmetics, and keys are supported without stretching or drooping."
       },
       {
         q: "Can I wash my handcrafted crochet handbag?",
@@ -36,7 +36,7 @@ export const CATEGORY_SEO_DATA = {
     name: "Belts & Waist Wraps",
     h1: "Artisanal Crochet Waist Belts & Boho Hip Wraps",
     metaTitle: "Crochet Waist Belts & Hip Scarves India | GoCocoon Boutique",
-    metaDescription: "Shop handcrafted bohemian crochet waist belts, lace tie belts & festival hip wraps. 100% organic milk cotton, handmade in India. Express dispatch.",
+    metaDescription: "Shop handcrafted bohemian crochet waist belts, lace tie belts & festival hip wraps. Soft natural cotton and curated fiber blends, handmade in India. Express dispatch.",
     keywords: [
       "crochet waist belt India",
       "crochet hip scarf wrap",
@@ -45,7 +45,7 @@ export const CATEGORY_SEO_DATA = {
       "festival crochet wrap"
     ],
     heroBadge: "Slow-Fashion Waist Accents",
-    intro: "Elevate rigid denim, billowy maxi dresses, and festive fusion wear with GoCocoon's artisanal crochet belts. Woven with delicate granny squares, braided ties, and graceful hip fringes using breathable organic milk cotton.",
+    intro: "Elevate rigid denim, billowy maxi dresses, and festive fusion wear with GoCocoon's artisanal crochet belts. Woven with delicate granny squares, braided ties, and graceful hip fringes using breathable cotton blends.",
     faqs: [
       {
         q: "What size are GoCocoon crochet waist belts?",
@@ -62,7 +62,7 @@ export const CATEGORY_SEO_DATA = {
     name: "Bandanas & Headscarves",
     h1: "Handmade Crochet Bandanas, Kerchiefs & Headbands",
     metaTitle: "Crochet Bandanas & Hair Scarves India | Buy Online | GoCocoon",
-    metaDescription: "Shop handcrafted floral crochet bandanas, triangle headscarves & scalloped mesh headbands. Soft, non-pulling organic milk cotton handmade in India.",
+    metaDescription: "Shop handcrafted floral crochet bandanas, triangle headscarves & scalloped mesh headbands. Soft, non-pulling milk cotton handmade in India.",
     keywords: [
       "crochet bandana India",
       "handmade crochet headscarf",
@@ -75,7 +75,7 @@ export const CATEGORY_SEO_DATA = {
     faqs: [
       {
         q: "Does the crochet bandana pull or snag hair?",
-        a: "Never. We use smooth, non-static organic milk cotton yarn with silky cuticles that glide gently over your hair without causing frizz or friction breakage."
+        a: "Never. We use smooth, non-static milk cotton yarn with silky cuticles that glide gently over your hair without causing frizz or friction breakage."
       },
       {
         q: "Will the bandana fit comfortably on all head sizes?",
@@ -110,7 +110,7 @@ export const CATEGORY_SEO_DATA = {
     name: "Hair Ties & Scrunchies",
     h1: "Crochet Scrunchies, Floral Hair Clips & Ponytail Ties",
     metaTitle: "Crochet Hair Accessories & Scrunchies India | GoCocoon",
-    metaDescription: "Discover handcrafted fluffy crochet scrunchies, bell flower ponytail ties & claw clips. Gentle, zero-damage organic milk cotton hairwear.",
+    metaDescription: "Discover handcrafted fluffy crochet scrunchies, bell flower ponytail ties & claw clips. Gentle, zero-damage hairwear made with plush chenille and milk cotton.",
     keywords: [
       "crochet scrunchies India",
       "crochet hair ties",
@@ -119,7 +119,7 @@ export const CATEGORY_SEO_DATA = {
       "floral crochet hair accessories"
     ],
     heroBadge: "Zero-Damage Hairwear",
-    intro: "Say goodbye to hair dents and breakage. Encased in ultra-soft organic milk cotton, GoCocoon scrunchies and hair clips offer firm, all-day hold while protecting hair health.",
+    intro: "Say goodbye to hair dents and breakage. Encased in ultra-soft milk cotton and plush chenille, GoCocoon scrunchies and hair clips offer firm, all-day hold while protecting hair health.",
     faqs: [
       {
         q: "Are GoCocoon scrunchies suitable for thick hair?",

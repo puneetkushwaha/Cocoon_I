@@ -524,7 +524,7 @@ export default function StandaloneShopPage() {
                 Handcrafted Slow Crochet Essentials & Drops
               </h1>
               <p className="text-xs text-stone-600 font-serif leading-relaxed">
-                Explore slow-knitted made-to-order treasures. Pay online via UPI or Cards to get Free Delivery across India!
+                Explore slow-knitted made-to-order treasures. Free delivery on orders above ₹999 and on all online prepaid payments!
               </p>
             </div>
           </div>

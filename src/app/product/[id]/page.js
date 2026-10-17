@@ -241,13 +241,20 @@ export default function ProductDetailPage({ params }) {
     autoInitPincode();
   }, [productId]);
 
-  // Helper to format expected date range
-  const getExpectedDateRange = (minDays, maxDays) => {
-    const today = new Date();
-    const minDate = new Date(today);
-    minDate.setDate(today.getDate() + minDays);
-    const maxDate = new Date(today);
-    maxDate.setDate(today.getDate() + maxDays);
+  // Helper to format expected date range using actual working days
+  const getExpectedDateRange = (minWorkDays, maxWorkDays) => {
+    const addWorkingDays = (days) => {
+      let cur = new Date();
+      let added = 0;
+      while (added < days) {
+        cur.setDate(cur.getDate() + 1);
+        if (cur.getDay() !== 0) added++; // Skip Sundays
+      }
+      return cur;
+    };
+
+    const minDate = addWorkingDays(minWorkDays);
+    const maxDate = addWorkingDays(maxWorkDays);
 
     const options = { month: "short", day: "numeric" };
     const minStr = minDate.toLocaleDateString("en-IN", options);
@@ -255,7 +262,7 @@ export default function ProductDetailPage({ params }) {
     return `${minStr} – ${maxStr}`;
   };
 
-  // Agra Origin Crafting (7 days) + Delivery Transit Calculation Logic
+  // Agra Origin Crafting (3–5 working days) + Delivery Transit Calculation Logic
   const calculateDeliveryEstimate = (pin) => {
     if (!pin) return null;
     const cleanPin = String(pin).trim();
@@ -264,9 +271,9 @@ export default function ProductDetailPage({ params }) {
     const isAgraOrUP = cleanPin.startsWith("282") || cleanPin.startsWith("20") || cleanPin.startsWith("22");
     const isDelhiNCR = cleanPin.startsWith("110") || cleanPin.startsWith("12") || cleanPin.startsWith("201");
 
-    const craftingDays = 7; // 7 days hand-knitting by Mehak
-    let courierDaysMin = 4;
-    let courierDaysMax = 6;
+    const craftingDays = 4; // 3 to 5 working days hand-knitting by Mehak
+    let courierDaysMin = 3;
+    let courierDaysMax = 5;
     let hub = "Dispatched via Express Courier";
 
     if (isAgraOrUP) {
@@ -285,8 +292,8 @@ export default function ProductDetailPage({ params }) {
 
     return {
       success: true,
-      totalDays: `${totalMin}–${totalMax} business days`,
-      craftingDays: "7 days",
+      totalDays: `${totalMin}–${totalMax} working days`,
+      craftingDays: "3–5 days",
       courierDays: `${courierDaysMin}–${courierDaysMax} days`,
       dateRange,
       hub,
@@ -1000,12 +1007,12 @@ export default function ProductDetailPage({ params }) {
                   <div className="flex items-center gap-3 text-[10px] text-emerald-900 font-semibold pt-1 border-t border-emerald-200/60">
                     <span>✓ Free Delivery Above ₹999</span>
                     <span>•</span>
-                    <span>✓ 100% Secure Prepaid Online (UPI & Cards • COD Not Available)</span>
+                    <span>✓ Secure Online Checkout (UPI & Cards) & Verified COD</span>
                   </div>
                 </div>
               ) : (
                 <p className="text-[11px] text-stone-500 font-serif">
-                  All heirloom pieces are made to order with organic milk cotton. Enter pincode to view estimated delivery date.
+                  All heirloom pieces are made to order with curated artisan fibers. Enter pincode to view estimated delivery date.
                 </p>
               )}
             </div>
@@ -1029,7 +1036,7 @@ export default function ProductDetailPage({ params }) {
                   <div className="pb-4 text-stone-600 font-serif leading-relaxed space-y-2">
                     <p>{product.desc}</p>
                     <div className="p-3 bg-white rounded-xl border border-[#EFE8DD] text-[11px] space-y-1">
-                      <div><strong>Material:</strong> {product.materials || "100% Organic Milk Cotton Cord"}</div>
+                      <div><strong>Material:</strong> {product.materials || "Handcrafted Cotton Cord"}</div>
                       <div><strong>Size / Dimensions:</strong> {product.sizes ? product.sizes[0] : "Artisan Handcrafted Silhouette"}</div>
                       <div><strong>Technique:</strong> Zero machine shortcuts. Hand-knitted knot-by-knot.</div>
                     </div>
@@ -1052,7 +1059,7 @@ export default function ProductDetailPage({ params }) {
                 {activeAccordion === "craft" && (
                   <div className="pb-4 text-stone-600 font-serif leading-relaxed space-y-2">
                     <p>
-                      Every single piece from Cocoon is hand-knit by Mehak using double-ply organic milk cotton. Unlike fast-fashion crochet produced on industrial machines, our pieces retain their shape, softness, and unique artisanal charm for years.
+                      Every piece from Cocoon is lovingly hand-crafted by Mehak using artisan fibers and high-grade cords specified for each design. Unlike mass-market knitwear, our slow-crafted pieces retain their shape, softness, and unique human warmth for years.
                     </p>
                   </div>
                 )}

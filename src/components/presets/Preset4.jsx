@@ -13,11 +13,11 @@ import { generateOrderId } from "@/lib/orderUtils";
 export default function Preset4() {
   const router = useRouter();
   const [isDetectingGps, setIsDetectingGps] = useState(false);
-  const [storeProducts, setStoreProducts] = useState([]);
-  const [storeCategories, setStoreCategories] = useState([]);
-  const [storeHeroCards, setStoreHeroCards] = useState([]);
-  const [storeTicker, setStoreTicker] = useState([]);
-  const [storeBestsellers, setStoreBestsellers] = useState([]);
+  const [storeProducts, setStoreProducts] = useState(() => STORE.getProducts());
+  const [storeCategories, setStoreCategories] = useState(() => STORE.getCategories());
+  const [storeHeroCards, setStoreHeroCards] = useState(() => STORE.getHeroCards());
+  const [storeTicker, setStoreTicker] = useState(() => STORE.getTicker());
+  const [storeBestsellers, setStoreBestsellers] = useState(() => STORE.getBestsellers());
 
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -474,7 +474,7 @@ export default function Preset4() {
               onClick={() => { setActiveCategory("all"); (document.getElementById("shop") || document.getElementById("p4-treasures"))?.scrollIntoView({ behavior: "smooth" }); }}
               className="text-xs font-bold uppercase tracking-widest text-[#2C2623] hover:text-[#B06B5B] transition flex items-center gap-1 cursor-pointer"
             >
-              <span>View All ({storeProducts.length})</span>
+              <span>View All ({storeProducts.length || STORE.products.length})</span>
               <span>&rarr;</span>
             </button>
           </div>
@@ -607,7 +607,7 @@ export default function Preset4() {
             <div>
               <span className="text-[11px] font-sans font-bold uppercase tracking-[0.3em] text-[#B06B5B]">Fresh Off The Needles</span>
               <h2 className="text-4xl sm:text-5xl font-light font-header text-[#2C2623] mt-1">What's New in the Shop</h2>
-              <p className="text-xs font-serif text-[#2C2623]/60 mt-1">Explore all {filteredProducts.length} handmade heirloom pieces created by Mehak</p>
+              <p className="text-xs font-serif text-[#2C2623]/60 mt-1">Explore all {filteredProducts.length || storeProducts.length || 30} handmade heirloom pieces created by Mehak</p>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 w-full sm:w-auto">
@@ -642,7 +642,7 @@ export default function Preset4() {
                   : "bg-white text-[#2C2623]/75 border border-[#EAE0D2] hover:bg-[#FAF0ED]"
               }`}
             >
-              All Treasures ({storeProducts.length})
+              All Treasures ({storeProducts.length || STORE.products.length})
             </button>
             {storeCategories.map((c) => (
               <button
