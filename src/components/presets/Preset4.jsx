@@ -905,13 +905,94 @@ export default function Preset4() {
 
       {/* 5.5 HEARTFELT NOTES • REAL CUSTOMER UNBOXING (Nimisha Agarwal Spotlight) */}
       <section id="gifting-experience" className="py-20 bg-[#FAF6F1] border-b border-[#EAE0D2] relative overflow-hidden text-left">
-        <div className="max-w-6xl mx-auto px-6 sm:px-10">
+        {/* Hanging Crochet Ribbon Ladi Garland across top */}
+        <div className="absolute -top-1 left-0 right-0 h-10 overflow-hidden pointer-events-none flex justify-center opacity-70">
+          <svg className="w-full max-w-7xl h-10" viewBox="0 0 1200 40" fill="none" preserveAspectRatio="none">
+            <path d="M 0,5 Q 100,28 200,8 Q 300,28 400,8 Q 500,28 600,8 Q 700,28 800,8 Q 900,28 1000,8 Q 1100,28 1200,5" stroke="#CBB4A7" strokeWidth="1.5" strokeDasharray="4 3" />
+            {[200, 400, 600, 800, 1000].map((x) => (
+              <g key={x} transform={`translate(${x}, 8)`}>
+                <circle cx="0" cy="0" r="2.5" fill="#B06B5B" />
+                <path d="M 0,0 C -6,-5 -10,-1 -7,3 C -4,5 -1,1 0,0 Z" fill="#B06B5B" opacity="0.85" />
+                <path d="M 0,0 C 6,-5 10,-1 7,3 C 4,5 1,1 0,0 Z" fill="#B06B5B" opacity="0.85" />
+                <path d="M -1,2 Q -3,8 -4,12" stroke="#B06B5B" strokeWidth="1.2" strokeLinecap="round" />
+                <path d="M 1,2 Q 3,8 4,12" stroke="#B06B5B" strokeWidth="1.2" strokeLinecap="round" />
+              </g>
+            ))}
+          </svg>
+        </div>
+
+        {/* Left Side Hanging Ribbon Ladi (Decorative Streamer) */}
+        <div className="hidden xl:block absolute top-8 left-8 pointer-events-none opacity-60">
+          <svg width="60" height="260" viewBox="0 0 60 260" fill="none">
+            <path d="M 30,0 Q 20,40 32,80 Q 42,120 28,160 Q 18,200 30,240" stroke="#CBB4A7" strokeWidth="1.5" strokeDasharray="3 3" />
+            <g transform="translate(32, 80)">
+              <circle cx="0" cy="0" r="2.5" fill="#B06B5B" />
+              <path d="M 0,0 C -7,-5 -12,-1 -9,4 C -6,6 -2,2 0,0 Z" fill="#B06B5B" opacity="0.85" />
+              <path d="M 0,0 C 7,-5 12,-1 9,4 C 6,6 2,2 0,0 Z" fill="#B06B5B" opacity="0.85" />
+              <path d="M -1,2 Q -4,10 -6,16" stroke="#B06B5B" strokeWidth="1.3" strokeLinecap="round" />
+              <path d="M 1,2 Q 4,10 6,16" stroke="#B06B5B" strokeWidth="1.3" strokeLinecap="round" />
+            </g>
+            <g transform="translate(28, 160)">
+              <circle cx="0" cy="0" r="2.5" fill="#C48073" />
+              <path d="M 0,0 C -7,-5 -12,-1 -9,4 C -6,6 -2,2 0,0 Z" fill="#C48073" opacity="0.85" />
+              <path d="M 0,0 C 7,-5 12,-1 9,4 C 6,6 2,2 0,0 Z" fill="#C48073" opacity="0.85" />
+              <path d="M -1,2 Q -4,10 -5,15" stroke="#C48073" strokeWidth="1.3" strokeLinecap="round" />
+              <path d="M 1,2 Q 4,10 5,15" stroke="#C48073" strokeWidth="1.3" strokeLinecap="round" />
+            </g>
+            <g transform="translate(30, 240)">
+              <circle cx="0" cy="0" r="2.5" fill="#B06B5B" />
+              <path d="M 0,0 C -6,-4 -10,-1 -8,3 C -5,5 -1,1 0,0 Z" fill="#B06B5B" opacity="0.8" />
+              <path d="M 0,0 C 6,-4 10,-1 8,3 C 5,5 1,1 0,0 Z" fill="#B06B5B" opacity="0.8" />
+              <circle cx="0" cy="10" r="3.5" fill="#FAF0EA" stroke="#B06B5B" strokeWidth="1.2" />
+            </g>
+          </svg>
+        </div>
+
+        {/* Right Side Hanging Ribbon Ladi (Decorative Streamer) */}
+        <div className="hidden xl:block absolute top-8 right-8 pointer-events-none opacity-60">
+          <svg width="60" height="260" viewBox="0 0 60 260" fill="none">
+            <path d="M 30,0 Q 40,40 28,80 Q 18,120 32,160 Q 42,200 30,240" stroke="#CBB4A7" strokeWidth="1.5" strokeDasharray="3 3" />
+            <g transform="translate(28, 80)">
+              <circle cx="0" cy="0" r="2.5" fill="#B06B5B" />
+              <path d="M 0,0 C -7,-5 -12,-1 -9,4 C -6,6 -2,2 0,0 Z" fill="#B06B5B" opacity="0.85" />
+              <path d="M 0,0 C 7,-5 12,-1 9,4 C 6,6 2,2 0,0 Z" fill="#B06B5B" opacity="0.85" />
+              <path d="M -1,2 Q -4,10 -6,16" stroke="#B06B5B" strokeWidth="1.3" strokeLinecap="round" />
+              <path d="M 1,2 Q 4,10 6,16" stroke="#B06B5B" strokeWidth="1.3" strokeLinecap="round" />
+            </g>
+            <g transform="translate(32, 160)">
+              <circle cx="0" cy="0" r="2.5" fill="#C48073" />
+              <path d="M 0,0 C -7,-5 -12,-1 -9,4 C -6,6 -2,2 0,0 Z" fill="#C48073" opacity="0.85" />
+              <path d="M 0,0 C 7,-5 12,-1 9,4 C 6,6 2,2 0,0 Z" fill="#C48073" opacity="0.85" />
+              <path d="M -1,2 Q -4,10 -5,15" stroke="#C48073" strokeWidth="1.3" strokeLinecap="round" />
+              <path d="M 1,2 Q 4,10 5,15" stroke="#C48073" strokeWidth="1.3" strokeLinecap="round" />
+            </g>
+            <g transform="translate(30, 240)">
+              <circle cx="0" cy="0" r="2.5" fill="#B06B5B" />
+              <path d="M 0,0 C -6,-4 -10,-1 -8,3 C -5,5 -1,1 0,0 Z" fill="#B06B5B" opacity="0.8" />
+              <path d="M 0,0 C 6,-4 10,-1 8,3 C 5,5 1,1 0,0 Z" fill="#B06B5B" opacity="0.8" />
+              <circle cx="0" cy="10" r="3.5" fill="#FAF0EA" stroke="#B06B5B" strokeWidth="1.2" />
+            </g>
+          </svg>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 relative z-10">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             
             {/* Real Customer Photo presented in full 16:9.5 uncropped landscape ratio */}
             <div className="lg:col-span-6">
-              <div className="bg-white p-3 sm:p-4 rounded-2xl border border-[#E8DFC9] shadow-sm">
+              <div className="relative bg-white p-3 sm:p-4 rounded-2xl border border-[#E8DFC9] shadow-sm">
+                {/* Handcrafted Ribbon Bow on Polaroid Card */}
+                <div className="absolute -top-3.5 -left-3.5 z-20 pointer-events-none drop-shadow-xs">
+                  <svg className="w-8 h-8 text-[#B06B5B]" viewBox="0 0 36 36" fill="currentColor">
+                    <ellipse cx="18" cy="14" rx="3.5" ry="3" />
+                    <path d="M 18,14 C 12,6 4,9 6,15 C 8,19 15,16 18,14 Z" opacity="0.9" />
+                    <path d="M 18,14 C 24,6 32,9 30,15 C 28,19 21,16 18,14 Z" opacity="0.9" />
+                    <path d="M 16,16 Q 12,24 9,28 Q 13,27 15,22 Q 17,17 16,16 Z" opacity="0.85" />
+                    <path d="M 20,16 Q 24,24 27,28 Q 23,27 21,22 Q 19,17 20,16 Z" opacity="0.85" />
+                  </svg>
+                </div>
+
                 <div className="aspect-[1024/608] w-full rounded-xl overflow-hidden bg-[#FAF6F0] border border-[#F2ECE1]">
                   <img
                     src="/reviews/nimisha-agarwal-rose-clips-bow.jpg"
