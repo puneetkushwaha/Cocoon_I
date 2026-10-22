@@ -836,7 +836,27 @@ export default function CartPage() {
       setPlacedOrderSummary(newOrder);
       triggerToast(`Order placed successfully! Total: ₹${finalAmount}`);
 
-      // 4. Background Database & Notification Syncs (Non-blocking)
+      // 4. Mark single-use and active applied coupons as used in store & database
+      if (appliedCoupons.length > 0) {
+        for (const c of appliedCoupons) {
+          if (c && c.code) {
+            try {
+              const updatedCoupons = STORE.markCouponUsed(c.code, newOrder.id);
+              STORE.syncToBackend("coupons", updatedCoupons).catch(() => {});
+              if (isSupabaseConfigured()) {
+                supabase
+                  .from("coupons")
+                  .update({ is_used: true, status: "redeemed" })
+                  .eq("coupon_code", c.code.toUpperCase())
+                  .then(() => {})
+                  .catch(() => {});
+              }
+            } catch (_) {}
+          }
+        }
+      }
+
+      // 5. Background Database & Notification Syncs (Non-blocking)
       saveOrderToSupabase(newOrder).catch((e) => console.warn("Supabase order sync warning:", e));
       try {
         STORE.dispatchEmailNotification("order_placed", { order: newOrder });
@@ -1864,14 +1884,14 @@ export default function CartPage() {
                         onClick={() => setShowAllCoupons(!showAllCoupons)}
                         className="text-[11px] font-bold text-[#B06B5B] hover:underline cursor-pointer"
                       >
-                        {showAllCoupons ? "Hide Offers ▲" : `View All (${availableCoupons.filter(c => c.isActive !== false).length}) ▼`}
+                        {showAllCoupons ? "Hide Offers ▲" : `View All (${availableCoupons.filter(c => c.isActive !== false && !c.isHidden).length}) ▼`}
                       </button>
                     </div>
 
                     {showAllCoupons && (
                       <div className="mt-2.5 space-y-2 max-h-60 overflow-y-auto pr-1">
                         {availableCoupons
-                          .filter((c) => c.isActive !== false)
+                          .filter((c) => c.isActive !== false && !c.isHidden)
                           .map((cpn) => {
                             const isApplied = appliedCoupons.some((a) => a.code?.toUpperCase() === cpn.code?.toUpperCase());
 

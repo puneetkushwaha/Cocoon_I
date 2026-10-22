@@ -79,7 +79,9 @@ export default function AdminPage() {
     bogoFreeQty: 1,
     minOrderValue: 0,
     maxDiscount: 0,
-    isActive: true
+    isActive: true,
+    isOneTime: false,
+    isHidden: false
   });
 
   // COD and Online Delivery Fee setting state
@@ -850,7 +852,9 @@ export default function AdminPage() {
       bogoFreeQty: 1,
       minOrderValue: 0,
       maxDiscount: 0,
-      isActive: true
+      isActive: true,
+      isOneTime: false,
+      isHidden: false
     });
     setIsCouponModalOpen(true);
   };
@@ -868,7 +872,9 @@ export default function AdminPage() {
       bogoFreeQty: cpn.bogoFreeQty || 1,
       minOrderValue: cpn.minOrderValue || 0,
       maxDiscount: cpn.maxDiscount || 0,
-      isActive: cpn.isActive !== false
+      isActive: cpn.isActive !== false,
+      isOneTime: !!cpn.isOneTime,
+      isHidden: !!cpn.isHidden
     });
     setIsCouponModalOpen(true);
   };
@@ -890,7 +896,9 @@ export default function AdminPage() {
       bogoBuyQty: Number(couponForm.bogoBuyQty) || 1,
       bogoFreeQty: Number(couponForm.bogoFreeQty) || 1,
       minOrderValue: Number(couponForm.minOrderValue) || 0,
-      maxDiscount: Number(couponForm.maxDiscount) || 0
+      maxDiscount: Number(couponForm.maxDiscount) || 0,
+      isOneTime: !!couponForm.isOneTime,
+      isHidden: !!couponForm.isHidden
     });
 
     setCoupons(updated);
@@ -2408,23 +2416,40 @@ export default function AdminPage() {
                     >
                       <div className="space-y-3">
                         {/* Top Row: Type Badge + Status */}
-                        <div className="flex items-center justify-between gap-2">
-                          {cpn.type === "bogo" ? (
-                            <span className="text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-800 px-2.5 py-1 rounded-full border border-rose-200 flex items-center gap-1">
-                              <span>🎁</span>
-                              <span>Buy {cpn.bogoBuyQty || 1} Get {cpn.bogoFreeQty || 1} FREE</span>
-                            </span>
-                          ) : cpn.type === "flat" ? (
-                            <span className="text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 px-2.5 py-1 rounded-full border border-amber-200 flex items-center gap-1">
-                              <span>💰</span>
-                              <span>Flat ₹{cpn.discountAmount} OFF</span>
-                            </span>
-                          ) : (
-                            <span className="text-[10px] font-black uppercase tracking-wider bg-blue-100 text-blue-900 px-2.5 py-1 rounded-full border border-blue-200 flex items-center gap-1">
-                              <span>🏷️</span>
-                              <span>{cpn.discountPercent}% OFF</span>
-                            </span>
-                          )}
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {cpn.type === "bogo" ? (
+                              <span className="text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-800 px-2.5 py-1 rounded-full border border-rose-200 flex items-center gap-1">
+                                <span>Buy {cpn.bogoBuyQty || 1} Get {cpn.bogoFreeQty || 1} FREE</span>
+                              </span>
+                            ) : cpn.type === "flat" ? (
+                              <span className="text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 px-2.5 py-1 rounded-full border border-amber-200 flex items-center gap-1">
+                                <span>Flat ₹{cpn.discountAmount} OFF</span>
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-black uppercase tracking-wider bg-blue-100 text-blue-900 px-2.5 py-1 rounded-full border border-blue-200 flex items-center gap-1">
+                                <span>{cpn.discountPercent}% OFF</span>
+                              </span>
+                            )}
+
+                            {cpn.isHidden && (
+                              <span className="text-[9px] font-bold uppercase tracking-wider bg-purple-100 text-purple-900 px-2 py-0.5 rounded-full border border-purple-200" title="Hidden from website. Only works if code is entered directly.">
+                                Private (Hidden)
+                              </span>
+                            )}
+
+                            {cpn.isOneTime && (
+                              <span className="text-[9px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-200" title="Single-use only">
+                                1-Time Use
+                              </span>
+                            )}
+
+                            {cpn.isUsed && (
+                              <span className="text-[9px] font-bold uppercase tracking-wider bg-rose-100 text-rose-900 px-2 py-0.5 rounded-full border border-rose-200" title="Already redeemed">
+                                Redeemed
+                              </span>
+                            )}
+                          </div>
 
                           <button
                             type="button"
@@ -2472,7 +2497,7 @@ export default function AdminPage() {
                           <div className="mt-2 space-y-1 text-[11px] text-stone-500 font-serif">
                             {cpn.type === "bogo" && (
                               <p className="text-[#B06B5B] font-sans font-bold">
-                                ✨ Lowest priced {cpn.bogoFreeQty || 1} item(s) free per {Number(cpn.bogoBuyQty || 1) + Number(cpn.bogoFreeQty || 1)} items
+                                • Customer pays for higher-priced item(s). Lowest-priced {cpn.bogoFreeQty || 1} item(s) are 100% free per {Number(cpn.bogoBuyQty || 1) + Number(cpn.bogoFreeQty || 1)} items.
                               </p>
                             )}
                             {cpn.minOrderValue > 0 ? (
@@ -2599,7 +2624,7 @@ export default function AdminPage() {
                         : "bg-stone-50 border-stone-200 hover:bg-stone-100 text-stone-700"
                     }`}
                   >
-                    <span className="text-lg">💰</span>
+                    <span className="font-mono font-bold text-sm text-[#B06B5B]">₹ FLAT</span>
                     <span className="font-bold text-xs">Flat ₹ Off</span>
                     <span className="text-[9px] text-stone-500">e.g. ₹100 Off</span>
                   </button>
@@ -2613,9 +2638,9 @@ export default function AdminPage() {
                         : "bg-stone-50 border-stone-200 hover:bg-stone-100 text-stone-700"
                     }`}
                   >
-                    <span className="text-lg">🎁</span>
+                    <span className="font-mono font-bold text-sm text-[#B06B5B]">BOGO</span>
                     <span className="font-bold text-xs">BOGO Free</span>
-                    <span className="text-[9px] text-stone-500">Buy X Get Y</span>
+                    <span className="text-[9px] text-stone-500">Buy X Get Y Free</span>
                   </button>
                 </div>
               </div>
@@ -2679,7 +2704,47 @@ export default function AdminPage() {
               )}
 
               {couponForm.type === "bogo" && (
-                <div className="p-3.5 bg-rose-50/70 rounded-2xl border border-rose-200 space-y-2.5">
+                <div className="p-3.5 bg-rose-50/70 rounded-2xl border border-rose-200 space-y-3">
+                  {/* Quick Preset Buttons */}
+                  <div>
+                    <label className="text-[11px] font-bold text-rose-950 block mb-1.5 uppercase tracking-wider">Quick Presets:</label>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setCouponForm({ ...couponForm, bogoBuyQty: 1, bogoFreeQty: 1 })}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer border ${
+                          couponForm.bogoBuyQty === 1 && couponForm.bogoFreeQty === 1
+                            ? "bg-[#B06B5B] text-white border-[#B06B5B] shadow-2xs"
+                            : "bg-white text-rose-900 border-rose-200 hover:bg-rose-100"
+                        }`}
+                      >
+                        Buy 1 Get 1 Free
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCouponForm({ ...couponForm, bogoBuyQty: 2, bogoFreeQty: 2 })}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer border ${
+                          couponForm.bogoBuyQty === 2 && couponForm.bogoFreeQty === 2
+                            ? "bg-[#B06B5B] text-white border-[#B06B5B] shadow-2xs"
+                            : "bg-white text-rose-900 border-rose-200 hover:bg-rose-100"
+                        }`}
+                      >
+                        Buy 2 Get 2 Free
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCouponForm({ ...couponForm, bogoBuyQty: 2, bogoFreeQty: 1 })}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer border ${
+                          couponForm.bogoBuyQty === 2 && couponForm.bogoFreeQty === 1
+                            ? "bg-[#B06B5B] text-white border-[#B06B5B] shadow-2xs"
+                            : "bg-white text-rose-900 border-rose-200 hover:bg-rose-100"
+                        }`}
+                      >
+                        Buy 2 Get 1 Free
+                      </button>
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="font-bold text-rose-950 block mb-1">Buy Quantity (X) *</label>
@@ -2707,8 +2772,8 @@ export default function AdminPage() {
                       </select>
                     </div>
                   </div>
-                  <div className="bg-white/80 p-2.5 rounded-xl border border-rose-200/80 text-[11px] text-rose-900 font-serif leading-relaxed">
-                    💡 <strong>How it works:</strong> Customer adds at least ({couponForm.bogoBuyQty || 1} + {couponForm.bogoFreeQty || 1}) items to their basket, and the system automatically makes the lowest priced {couponForm.bogoFreeQty || 1} item(s) 100% free!
+                  <div className="bg-white/90 p-2.5 rounded-xl border border-rose-200 text-[11px] text-rose-950 font-serif leading-relaxed">
+                    <strong>Rule:</strong> Customer must add at least ({Number(couponForm.bogoBuyQty || 1) + Number(couponForm.bogoFreeQty || 1)}) items to basket. System charges for the <strong>higher-priced item(s)</strong> and grants the lowest-priced {couponForm.bogoFreeQty || 1} item(s) 100% free!
                   </div>
                 </div>
               )}
@@ -2730,18 +2795,55 @@ export default function AdminPage() {
                 </div>
               )}
 
-              {/* 6. Active Toggle */}
-              <div className="pt-2 border-t border-stone-100 flex items-center justify-between">
-                <div>
-                  <span className="font-bold text-stone-800 block">Active Status</span>
-                  <span className="text-[11px] text-stone-500 font-serif">Allow customers to redeem this code immediately</span>
+              {/* 6. Advanced Settings: Hidden & Single-Use */}
+              <div className="space-y-3 pt-2 border-t border-stone-200">
+                {/* Private / Hidden Toggle */}
+                <div className="flex items-center justify-between p-3 bg-stone-50 rounded-xl border border-stone-200">
+                  <div>
+                    <span className="font-bold text-stone-900 text-xs block">Private / Secret Coupon (Hidden from Website)</span>
+                    <span className="text-[11px] text-stone-500 font-serif leading-tight">
+                      Will NOT show in "Available Offers" drawer on website. Only customers with the direct code (like OK100) can apply it.
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={couponForm.isHidden}
+                    onChange={(e) => setCouponForm({ ...couponForm, isHidden: e.target.checked })}
+                    className="accent-[#B06B5B] w-5 h-5 rounded cursor-pointer ml-3 shrink-0"
+                  />
                 </div>
-                <input
-                  type="checkbox"
-                  checked={couponForm.isActive}
-                  onChange={(e) => setCouponForm({ ...couponForm, isActive: e.target.checked })}
-                  className="accent-[#B06B5B] w-5 h-5 rounded cursor-pointer"
-                />
+
+                {/* Single-Use Only Toggle */}
+                <div className="flex items-center justify-between p-3 bg-stone-50 rounded-xl border border-stone-200">
+                  <div>
+                    <span className="font-bold text-stone-900 text-xs block">Single-Use Only (One-Time Avail)</span>
+                    <span className="text-[11px] text-stone-500 font-serif leading-tight">
+                      Expires permanently after 1 order is placed. Cannot be redeemed multiple times.
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={couponForm.isOneTime}
+                    onChange={(e) => setCouponForm({ ...couponForm, isOneTime: e.target.checked })}
+                    className="accent-[#B06B5B] w-5 h-5 rounded cursor-pointer ml-3 shrink-0"
+                  />
+                </div>
+
+                {/* Active Status */}
+                <div className="flex items-center justify-between p-3 bg-stone-50 rounded-xl border border-stone-200">
+                  <div>
+                    <span className="font-bold text-stone-900 text-xs block">Active Status</span>
+                    <span className="text-[11px] text-stone-500 font-serif leading-tight">
+                      Allow customers to redeem this code immediately
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={couponForm.isActive}
+                    onChange={(e) => setCouponForm({ ...couponForm, isActive: e.target.checked })}
+                    className="accent-[#B06B5B] w-5 h-5 rounded cursor-pointer ml-3 shrink-0"
+                  />
+                </div>
               </div>
 
               {/* Buttons */}

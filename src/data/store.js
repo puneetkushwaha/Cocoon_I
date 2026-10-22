@@ -583,6 +583,9 @@ export const STORE = {
       minOrderValue: Number(coupon.minOrderValue || 0),
       maxDiscount: Number(coupon.maxDiscount || 0),
       isActive: coupon.isActive !== false,
+      isOneTime: !!coupon.isOneTime,
+      isHidden: !!coupon.isHidden,
+      isUsed: !!coupon.isUsed,
       usedCount: Number(coupon.usedCount || 0),
       createdAt: coupon.createdAt || new Date().toISOString()
     };
@@ -607,7 +610,9 @@ export const STORE = {
   calculateCouponDiscount: (coupon, cart = [], subtotal = 0) => {
     if (!coupon) return { valid: false, error: "No coupon provided." };
     if (!coupon.isActive) return { valid: false, error: `Coupon ${coupon.code} is currently inactive.` };
-    if (coupon.isUsed) return { valid: false, error: "This single-use coupon has already been redeemed." };
+    if (coupon.isUsed || (coupon.isOneTime && (Number(coupon.usedCount) || 0) >= 1)) {
+      return { valid: false, error: `Single-use coupon ${coupon.code} has already been redeemed.` };
+    }
 
     const minOrder = Number(coupon.minOrderValue || 0);
     if (minOrder > 0 && subtotal < minOrder) {
@@ -680,7 +685,7 @@ export const STORE = {
         };
       }
 
-      // Sort prices ascending (lowest priced items are granted 100% free)
+      // Sort prices ascending: lowest priced item(s) are 100% free, customer pays for higher-priced item(s)
       unitPrices.sort((a, b) => a - b);
       const qualifyingSets = Math.floor(unitPrices.length / bundleSize);
       const freeItemCount = qualifyingSets * freeQty;
@@ -692,7 +697,7 @@ export const STORE = {
         discount,
         type: "bogo",
         freeItemCount,
-        message: `Buy ${buyQty} Get ${freeQty} Free applied! ${freeItemCount} free item(s) (-₹${discount})`
+        message: `Buy ${buyQty} Get ${freeQty} Free applied! You pay for the higher-priced item(s) (-₹${discount} for ${freeItemCount} free item).`
       };
     }
 
