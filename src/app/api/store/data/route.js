@@ -176,16 +176,22 @@ export async function POST(request) {
     serverStoreCache.cachedAt = Date.now();
     serverStoreCache.lastUpdated = new Date().toISOString();
 
-    // 2. Persist to Supabase if available
+    // 2. Persist to Supabase if available (with strict timeout guard)
     let dbSaved = false;
     if (isSupabaseConfigured()) {
       try {
-        const { error } = await supabase
+        const upsertPromise = supabase
           .from("store_data")
           .upsert(
             { key, data, updated_at: new Date().toISOString() },
             { onConflict: "key" }
           );
+
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Supabase upsert timeout")), 4000)
+        );
+
+        const { error } = await Promise.race([upsertPromise, timeoutPromise]);
 
         if (!error) {
           dbSaved = true;
@@ -193,20 +199,23 @@ export async function POST(request) {
           console.warn("Supabase store_data upsert notice:", error.message);
         }
 
-        // 3. If coupons, also synchronize each active coupon into Supabase 'coupons' table
+        // 3. If coupons, perform single non-blocking bulk sync in background (NEVER in a sequential loop)
         if (key === "coupons" && Array.isArray(data)) {
-          for (const c of data) {
-            if (c && c.code) {
-              await supabase.from("coupons").upsert(
-                {
-                  coupon_code: c.code.toUpperCase(),
-                  discount_percent: Number(c.discountPercent || c.discountAmount || 15),
-                  is_used: false,
-                  status: c.isActive !== false ? "active" : "inactive"
-                },
-                { onConflict: "coupon_code" }
-              ).catch(() => {});
-            }
+          const couponRows = data
+            .filter((c) => c && c.code)
+            .map((c) => ({
+              coupon_code: c.code.toUpperCase(),
+              discount_percent: Number(c.discountPercent || c.discountAmount || 15),
+              is_used: false,
+              status: c.isActive !== false ? "active" : "inactive"
+            }));
+
+          if (couponRows.length > 0) {
+            supabase
+              .from("coupons")
+              .upsert(couponRows, { onConflict: "coupon_code" })
+              .then(() => {})
+              .catch((err) => console.warn("Background coupons table sync notice:", err.message));
           }
         }
       } catch (err) {
