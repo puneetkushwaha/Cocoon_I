@@ -665,16 +665,27 @@ export default function AdminPage() {
     if (productData.id) {
       savedProd = productData;
       updated = products.map((p) => (p.id === productData.id ? productData : p));
-      triggerToast(`Product "${productData.name}" updated successfully!`);
     } else {
       const newId = Math.max(0, ...products.map((p) => p.id)) + 1;
       savedProd = { ...productData, id: newId };
       updated = [savedProd, ...products];
-      triggerToast(`New product "${savedProd.name}" created!`);
     }
     setProducts(updated);
     STORE.setProducts(updated);
     setEditingProduct(null);
+
+    // Sync to backend and database immediately
+    triggerToast(`Saving product "${savedProd.name}"... ⏳`);
+    try {
+      const res = await STORE.syncToBackend("products", updated);
+      if (res && res.success) {
+        triggerToast(`✓ Product "${savedProd.name}" saved & live in store!`);
+      } else {
+        triggerToast(`Product saved.`);
+      }
+    } catch (e) {
+      triggerToast(`Product saved.`);
+    }
 
     // If new product and broadcast checkbox enabled, or manually requested
     if ((isNew && broadcastLaunchChecked) || shouldBroadcast) {
@@ -682,12 +693,17 @@ export default function AdminPage() {
     }
   };
 
-  const deleteProduct = (id) => {
+  const deleteProduct = async (id) => {
     if (confirm("Are you sure you want to delete this product?")) {
       const updated = products.filter((p) => p.id !== id);
       setProducts(updated);
       STORE.setProducts(updated);
-      triggerToast("Product removed from shop.");
+      try {
+        await STORE.syncToBackend("products", updated);
+        triggerToast("Product removed from live shop & database.");
+      } catch (e) {
+        triggerToast("Product removed from shop.");
+      }
     }
   };
 
@@ -857,7 +873,7 @@ export default function AdminPage() {
     setIsCouponModalOpen(true);
   };
 
-  const handleSaveCoupon = (e) => {
+  const handleSaveCoupon = async (e) => {
     if (e) e.preventDefault();
     const cleanCode = (couponForm.code || "").trim().toUpperCase();
     if (!cleanCode) {
@@ -879,21 +895,42 @@ export default function AdminPage() {
 
     setCoupons(updated);
     setIsCouponModalOpen(false);
-    triggerToast(`✓ Coupon "${cleanCode}" saved and published!`);
-  };
+    triggerToast(`Publishing coupon "${cleanCode}" to live store... ⏳`);
 
-  const handleDeleteCoupon = (id, code) => {
-    if (confirm(`Are you sure you want to delete coupon ${code}?`)) {
-      const updated = STORE.deleteCoupon(id);
-      setCoupons(updated);
-      triggerToast(`Coupon ${code} removed.`);
+    try {
+      const res = await STORE.syncToBackend("coupons", updated);
+      if (res && res.success) {
+        triggerToast(`✓ Coupon "${cleanCode}" published & live in store!`);
+      } else {
+        triggerToast(`Coupon "${cleanCode}" saved.`);
+      }
+    } catch (e) {
+      triggerToast(`Coupon "${cleanCode}" saved.`);
     }
   };
 
-  const handleToggleCoupon = (id) => {
+  const handleDeleteCoupon = async (id, code) => {
+    if (confirm(`Are you sure you want to delete coupon ${code}?`)) {
+      const updated = STORE.deleteCoupon(id);
+      setCoupons(updated);
+      try {
+        await STORE.syncToBackend("coupons", updated);
+        triggerToast(`Coupon ${code} removed from live store & database.`);
+      } catch (e) {
+        triggerToast(`Coupon ${code} removed.`);
+      }
+    }
+  };
+
+  const handleToggleCoupon = async (id) => {
     const updated = STORE.toggleCoupon(id);
     setCoupons(updated);
-    triggerToast("Coupon active status updated.");
+    try {
+      await STORE.syncToBackend("coupons", updated);
+      triggerToast("Coupon active status updated in live store.");
+    } catch (e) {
+      triggerToast("Coupon active status updated.");
+    }
   };
 
   if (isCheckingAuth) {

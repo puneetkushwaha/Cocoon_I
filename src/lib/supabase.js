@@ -258,51 +258,86 @@ export async function saveCouponToSupabase(coupon) {
 }
 
 /**
- * Validate a 1-time coupon against Supabase DB and local STORE
+ * Validate any coupon against Supabase DB (store_data + coupons table) and local STORE
+ * Supports all coupon types: Percentage, Flat, BOGO, Min Order Value
  */
-export async function validateCouponFromSupabase(rawCode) {
+export async function validateCouponFromSupabase(rawCode, cart = [], subtotal = 0) {
   if (!rawCode || !rawCode.trim()) {
     return { valid: false, error: "Please enter a coupon code." };
   }
   const cleanCode = rawCode.trim().toUpperCase();
 
+  // 1. Check local store first (instant response if already in local cache)
   try {
-    // 1. Query Supabase 'coupons' table
-    const { data, error } = await supabase
-      .from("coupons")
-      .select("*")
-      .eq("coupon_code", cleanCode)
-      .single();
-
-    if (!error && data) {
-      if (data.is_used || data.status === "redeemed") {
-        return { valid: false, error: "This 15% OFF coupon has already been redeemed." };
-      }
-      return {
-        valid: true,
-        code: data.coupon_code,
-        discountPercent: data.discount_percent || 15,
-        orderId: data.order_id,
-        reviewId: data.review_id
-      };
+    const localResult = STORE.validateCoupon(cleanCode, cart, subtotal);
+    if (localResult && localResult.valid) {
+      return localResult;
     }
-  } catch (err) {
-    console.warn("Supabase coupon lookup notice (checking store fallback):", err);
+  } catch (e) {}
+
+  // 2. Query Supabase 'store_data' table (where all Admin coupons and promotions are stored)
+  if (isSupabaseConfigured()) {
+    try {
+      const { data: storeRow, error: storeErr } = await supabase
+        .from("store_data")
+        .select("data")
+        .eq("key", "coupons")
+        .single();
+
+      if (!storeErr && storeRow && Array.isArray(storeRow.data)) {
+        STORE.setCoupons(storeRow.data);
+        const match = storeRow.data.find((c) => c.code?.toUpperCase() === cleanCode);
+        if (match) {
+          return STORE.calculateCouponDiscount(match, cart, subtotal);
+        }
+      }
+    } catch (err) {
+      console.warn("Supabase store_data coupons lookup notice:", err);
+    }
+
+    // 3. Query Supabase 'coupons' table (where customer review rewards and single-use codes are stored)
+    try {
+      const { data, error } = await supabase
+        .from("coupons")
+        .select("*")
+        .eq("coupon_code", cleanCode)
+        .single();
+
+      if (!error && data) {
+        if (data.is_used || data.status === "redeemed" || data.status === "inactive") {
+          return { valid: false, error: `Coupon ${cleanCode} has already been redeemed or is inactive.` };
+        }
+        const percent = Number(data.discount_percent || 15);
+        const discountVal = Math.round(subtotal * (percent / 100));
+        return {
+          valid: true,
+          coupon: {
+            id: `REV-CPN-${data.id}`,
+            code: data.coupon_code,
+            type: "percentage",
+            discountPercent: percent,
+            orderId: data.order_id,
+            reviewId: data.review_id
+          },
+          discount: discountVal,
+          type: "percentage",
+          message: `Flat ${percent}% OFF applied!`
+        };
+      }
+    } catch (err) {
+      console.warn("Supabase coupons table lookup notice:", err);
+    }
   }
 
-  // 2. Check local store fallback
-  const localResult = STORE.validateCoupon(cleanCode);
-  if (localResult.valid) {
-    return {
-      valid: true,
-      code: cleanCode,
-      discountPercent: localResult.discountPercent || 15
-    };
+  // 4. Fallback checking hardcoded system codes (COCOON15, COCOONFIRST)
+  const localResult = STORE.validateCoupon(cleanCode, cart, subtotal);
+  if (localResult && localResult.valid) {
+    return localResult;
   }
 
   return {
     valid: false,
-    error: localResult.error || "Invalid coupon code. Only verified review coupons are accepted."
+    error: localResult?.error || "Invalid coupon code. Please verify the code and try again."
   };
 }
 

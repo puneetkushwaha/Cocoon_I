@@ -148,7 +148,15 @@ export default function Preset4() {
       } catch (e) {}
     };
     syncData();
-    STORE.fetchServerStoreData();
+    STORE.fetchServerStoreData().then((serverData) => {
+      if (serverData) {
+        if (Array.isArray(serverData.products)) setStoreProducts(serverData.products);
+        if (Array.isArray(serverData.categories)) setStoreCategories(serverData.categories);
+        if (Array.isArray(serverData.bestsellers)) setStoreBestsellers(serverData.bestsellers);
+        if (Array.isArray(serverData.heroCards)) setStoreHeroCards(serverData.heroCards);
+        if (Array.isArray(serverData.ticker)) setStoreTicker(serverData.ticker);
+      }
+    });
     window.addEventListener("cocoon_store_update", syncData);
     window.addEventListener("storage", syncData);
     return () => {

@@ -116,18 +116,35 @@ export default function ProductDetailPage({ params }) {
     }
   };
 
-  // Load product data & sync
+  // Load product data & sync live from store & server
   useEffect(() => {
-    const prods = STORE.getProducts();
-    setStoreProducts(prods);
+    const syncProductData = () => {
+      const prods = STORE.getProducts();
+      setStoreProducts(prods);
 
-    const found = prods.find((p) => Number(p.id) === productId) || PRODUCTS.find((p) => Number(p.id) === productId);
-    if (found) {
-      setProduct(found);
-      setSelectedImage(found.imgUrl);
-      setSelectedColor(found.colors ? found.colors[0] : "Standard");
-      STORE.addRecentlyViewed(found.id);
-    }
+      const found = prods.find((p) => Number(p.id) === productId) || PRODUCTS.find((p) => Number(p.id) === productId);
+      if (found) {
+        setProduct(found);
+        setSelectedImage((prev) => prev || found.imgUrl);
+        setSelectedColor((prev) => prev || (found.colors ? found.colors[0] : "Standard"));
+        STORE.addRecentlyViewed(found.id);
+      }
+    };
+
+    syncProductData();
+
+    // Fetch live product updates from server (captures admin price updates & edits)
+    STORE.fetchServerStoreData().then((serverData) => {
+      if (serverData && Array.isArray(serverData.products)) {
+        setStoreProducts(serverData.products);
+        const updated = serverData.products.find((p) => Number(p.id) === productId);
+        if (updated) {
+          setProduct(updated);
+        }
+      }
+    });
+
+    window.addEventListener("cocoon_store_update", syncProductData);
 
     // Load reviews for this product from store, then sync from Supabase DB
     const initialReviews = STORE.getReviews(productId);
@@ -151,6 +168,13 @@ export default function ProductDetailPage({ params }) {
       }
     };
     syncDbReviews();
+
+    return () => {
+      window.removeEventListener("cocoon_store_update", syncProductData);
+    };
+  }, [productId]);
+
+  useEffect(() => {
 
     // Load addresses & customer profile
     try {

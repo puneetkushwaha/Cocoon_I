@@ -15,8 +15,8 @@ const DEFAULT_SETTINGS = {
   codDeliveryFee: 80
 };
 
-// Concurrency-safe in-memory cache with 60-second TTL
-const CACHE_TTL_MS = 60 * 1000;
+// Concurrency-safe in-memory cache with 5-second TTL to guarantee real-time freshness
+const CACHE_TTL_MS = 5 * 1000;
 
 let serverStoreCache = {
   products: null,
@@ -100,9 +100,11 @@ export async function GET(request) {
     const bestsellers = serverStoreCache.bestsellers || INITIAL_BESTSELLERS;
     const settings = serverStoreCache.settings || DEFAULT_SETTINGS;
 
-    // Cache-Control headers for Edge CDN (Vercel / Cloudflare)
+    // Dynamic Store Data must never be cached by CDN or browser to guarantee real-time admin sync
     const cacheHeaders = {
-      "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0",
       "X-Cache-Status": isCacheFresh ? "HIT" : "MISS"
     };
 
@@ -189,6 +191,23 @@ export async function POST(request) {
           dbSaved = true;
         } else {
           console.warn("Supabase store_data upsert notice:", error.message);
+        }
+
+        // 3. If coupons, also synchronize each active coupon into Supabase 'coupons' table
+        if (key === "coupons" && Array.isArray(data)) {
+          for (const c of data) {
+            if (c && c.code) {
+              await supabase.from("coupons").upsert(
+                {
+                  coupon_code: c.code.toUpperCase(),
+                  discount_percent: Number(c.discountPercent || c.discountAmount || 15),
+                  is_used: false,
+                  status: c.isActive !== false ? "active" : "inactive"
+                },
+                { onConflict: "coupon_code" }
+              ).catch(() => {});
+            }
+          }
         }
       } catch (err) {
         console.warn("Supabase store_data save error:", err);

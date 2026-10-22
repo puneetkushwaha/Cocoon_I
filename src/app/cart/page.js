@@ -565,36 +565,23 @@ export default function CartPage() {
     }
     setCouponError("");
 
-    // 1. Validate with central coupon engine (Supports Flat, %, BOGO)
-    const result = STORE.validateCoupon(raw, cart, subtotal);
-    if (result && result.valid) {
-      setAppliedCoupon({
-        ...result.coupon,
-        discount: result.discount,
-        type: result.type,
-        message: result.message
-      });
-      triggerToast(`✓ ${result.message}`);
-      return;
-    }
-
-    // 2. Fallback: check 1-time review coupons from Supabase
     try {
-      const res = await validateCouponFromSupabase(raw);
-      if (res && res.valid) {
-        const discountVal = Math.round(subtotal * (Number(res.discountPercent || 15) / 100));
+      // Validate with central coupon engine + Supabase database check
+      const result = await validateCouponFromSupabase(raw, cart, subtotal);
+      if (result && result.valid) {
         setAppliedCoupon({
-          code: raw,
-          discountPercent: res.discountPercent || 15,
-          discount: discountVal,
-          type: "percentage"
+          ...result.coupon,
+          discount: result.discount,
+          type: result.type,
+          message: result.message
         });
-        triggerToast(`✓ Coupon ${raw} applied! Flat ${res.discountPercent || 15}% OFF`);
+        triggerToast(`✓ ${result.message}`);
+        return;
       } else {
-        setCouponError(result?.error || res?.error || "Invalid coupon code.");
+        setCouponError(result?.error || "Invalid coupon code.");
       }
     } catch (err) {
-      setCouponError(result?.error || "Invalid or ineligible coupon code.");
+      setCouponError(err.message || "Invalid or ineligible coupon code.");
     }
   };
 
