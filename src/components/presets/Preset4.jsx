@@ -547,34 +547,31 @@ export default function Preset4() {
                         ♥
                       </button>
 
-                      <img
-                        src={item.imgUrl}
-                        alt={`${item.title} - Handcrafted Crochet Bestseller GoCocoon`}
-                        onClick={() => openQuickView(product)}
-                        className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-700 cursor-pointer"
-                        loading="lazy"
-                      />
+                      <Link href={`/product/${product.id}`} prefetch={true} className="block w-full h-full">
+                        <img
+                          src={item.imgUrl}
+                          alt={`${item.title} - Handcrafted Crochet Bestseller GoCocoon`}
+                          className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-700 cursor-pointer"
+                          loading="lazy"
+                        />
 
-                      <div
-                        onClick={() => openQuickView(product)}
-                        className="absolute inset-0 bg-[#2C2623]/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
-                      >
-                        <span className="bg-white text-[#2C2623] text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-full shadow-md hover:bg-[#B06B5B] hover:text-white transition">
-                          Quick View
-                        </span>
-                      </div>
+                        <div className="absolute inset-0 bg-[#2C2623]/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                          <span className="bg-white text-[#2C2623] text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-full shadow-md hover:bg-[#B06B5B] hover:text-white transition">
+                            Quick View
+                          </span>
+                        </div>
+                      </Link>
                     </div>
 
                     <div className="space-y-1.5">
                       <span className="text-[10px] font-black uppercase text-[#B06B5B] tracking-widest block">
                         {item.lookNote || item.tag}
                       </span>
-                      <h4
-                        onClick={() => openQuickView(product)}
-                        className="text-lg font-bold font-header text-[#2C2623] group-hover:text-[#B06B5B] transition cursor-pointer"
-                      >
-                        {item.title}
-                      </h4>
+                      <Link href={`/product/${product.id}`} prefetch={true} className="block">
+                        <h4 className="text-lg font-bold font-header text-[#2C2623] group-hover:text-[#B06B5B] transition cursor-pointer">
+                          {item.title}
+                        </h4>
+                      </Link>
                       <p className="text-xs text-[#2C2623]/65 font-serif font-light leading-relaxed">
                         {item.desc}
                       </p>
@@ -692,26 +689,28 @@ export default function Preset4() {
                         </span>
                       )}
 
-                      <img
-                        src={product.imgUrl}
-                        alt={`${product.name} - Handcrafted Crochet by GoCocoon`}
-                        onClick={() => openQuickView(product)}
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 cursor-pointer"
-                        loading="lazy"
-                      />
+                      <Link href={`/product/${product.id}`} prefetch={true} className="block w-full h-full">
+                        <img
+                          src={product.imgUrl}
+                          alt={`${product.name} - Handcrafted Crochet by GoCocoon`}
+                          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                          loading="lazy"
+                        />
+                      </Link>
                     </div>
 
                     <div className="space-y-1">
                       <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase text-[#B06B5B] tracking-wider block">
                         {product.subcategory ? product.subcategory.replace('-', ' ') : product.category}
                       </span>
-                      <h3
-                        onClick={() => openQuickView(product)}
-                        className="font-header font-bold text-xs sm:text-base text-[#2C2623] line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] leading-snug group-hover:text-[#B06B5B] transition cursor-pointer"
-                        title={product.name}
-                      >
-                        {product.name}
-                      </h3>
+                      <Link href={`/product/${product.id}`} prefetch={true} className="block">
+                        <h3
+                          className="font-header font-bold text-xs sm:text-base text-[#2C2623] line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] leading-snug group-hover:text-[#B06B5B] transition cursor-pointer"
+                          title={product.name}
+                        >
+                          {product.name}
+                        </h3>
+                      </Link>
                       <p className="text-[10px] sm:text-[11px] font-sans text-[#2C2623]/60 truncate hidden sm:block">
                         {product.materials || "Handcrafted Milk Cotton"}
                       </p>

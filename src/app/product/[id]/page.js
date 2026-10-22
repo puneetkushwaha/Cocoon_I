@@ -16,23 +16,30 @@ export default function ProductDetailPage({ params }) {
   const productId = Number(unwrappedParams.id);
   const router = useRouter();
 
+  // Instant synchronous initialization from static catalog
+  const initialProduct = useMemo(() => {
+    return PRODUCTS.find((p) => Number(p.id) === productId) || null;
+  }, [productId]);
+
   // Find product from store or fallback
   const [storeProducts, setStoreProducts] = useState(PRODUCTS);
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState(initialProduct);
 
   // UI States
-  const [selectedColor, setSelectedColor] = useState("");
-  const [selectedImage, setSelectedImage] = useState("");
+  const [selectedColor, setSelectedColor] = useState(
+    () => (initialProduct?.colors ? initialProduct.colors[0] : "Standard")
+  );
+  const [selectedImage, setSelectedImage] = useState(() => (initialProduct?.imgUrl || ""));
   const [quantity, setQuantity] = useState(1);
   const [activeAccordion, setActiveAccordion] = useState("desc"); // "desc", "craft", "policy"
   const [toastMessage, setToastMessage] = useState(null);
 
   // Delivery Pincode Checker
-  const [pincode, setPincode] = useState("");
+  const [pincode, setPincode] = useState("282001");
   const [pincodeResult, setPincodeResult] = useState(null);
 
-  // Reviews States
-  const [reviews, setReviews] = useState([]);
+  // Reviews States (initialized synchronously with local store + initial seed)
+  const [reviews, setReviews] = useState(() => STORE.getReviews(productId));
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviewForm, setReviewForm] = useState({
     rating: 5,
@@ -196,46 +203,28 @@ export default function ProductDetailPage({ params }) {
       if (savedCart) setCart(JSON.parse(savedCart));
     } catch (e) {}
 
-    // Auto-detect pincode and show estimated delivery time immediately without manual click
-    const autoInitPincode = async () => {
-      let initialPin = "";
+    // Instant pincode & delivery estimate calculation (0ms lag)
+    const autoInitPincode = () => {
+      let pin = "282001";
       try {
         const saved = localStorage.getItem("cocoon_customer_user");
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed.pincode && String(parsed.pincode).length === 6) {
-            initialPin = String(parsed.pincode);
+            pin = String(parsed.pincode);
           }
         }
       } catch (e) {}
 
-      if (!initialPin) {
+      if (pin === "282001") {
         try {
           const savedPin = localStorage.getItem("cocoon_auto_pincode");
-          if (savedPin && savedPin.length === 6) initialPin = savedPin;
+          if (savedPin && savedPin.length === 6) pin = savedPin;
         } catch (e) {}
       }
 
-      if (initialPin) {
-        setPincode(initialPin);
-        setPincodeResult(calculateDeliveryEstimate(initialPin));
-      } else {
-        let detected = "282001";
-        try {
-          const res = await fetch("https://ipapi.co/json/");
-          if (res.ok) {
-            const data = await res.json();
-            if (data?.postal) {
-              const cleaned = data.postal.replace(/\D/g, "").slice(0, 6);
-              if (cleaned.length === 6) detected = cleaned;
-            }
-          }
-        } catch (e) {}
-
-        setPincode(detected);
-        setPincodeResult(calculateDeliveryEstimate(detected));
-        try { localStorage.setItem("cocoon_auto_pincode", detected); } catch (e) {}
-      }
+      setPincode(pin);
+      setPincodeResult(calculateDeliveryEstimate(pin));
     };
 
     autoInitPincode();
@@ -1269,6 +1258,7 @@ export default function ProductDetailPage({ params }) {
                 <Link
                   key={rel.id}
                   href={`/product/${rel.id}`}
+                  prefetch={true}
                   className="group bg-white rounded-3xl p-4 border border-[#E8DFC9] shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
                 >
                   <div className="space-y-3">

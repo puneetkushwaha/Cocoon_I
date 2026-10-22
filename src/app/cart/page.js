@@ -1303,7 +1303,7 @@ export default function CartPage() {
                       key={prod.id}
                       className="bg-white rounded-2xl p-3 border border-[#E8DFC9] shadow-2xs hover:shadow-md transition flex flex-col justify-between"
                     >
-                      <Link href={`/product/${prod.id}`} className="block group">
+                      <Link href={`/product/${prod.id}`} prefetch={true} className="block group">
                         <div className="aspect-square rounded-xl overflow-hidden bg-stone-100 mb-2.5">
                           <img
                             src={prod.imgUrl}
@@ -1380,6 +1380,7 @@ export default function CartPage() {
                       <div className="flex items-center gap-4 sm:gap-5 flex-1 min-w-0">
                         <Link
                           href={`/product/${item.id}`}
+                          prefetch={true}
                           className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-stone-100 shrink-0 border border-stone-200/80 shadow-2xs group cursor-pointer block"
                         >
                           <img
@@ -1395,6 +1396,7 @@ export default function CartPage() {
                           </span>
                           <Link
                             href={`/product/${item.id}`}
+                            prefetch={true}
                             className="font-header font-bold text-base sm:text-lg text-[#2C2623] hover:text-[#B06B5B] transition truncate block"
                           >
                             {item.name}

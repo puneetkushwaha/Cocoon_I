@@ -499,14 +499,25 @@ export const STORE = {
   setCustomizations: (data) => setStoredData(STORAGE_KEYS.CUSTOMIZATIONS, data),
 
   getReviews: (productId) => {
-    const all = getStoredData(STORAGE_KEYS.REVIEWS, INITIAL_REVIEWS);
+    const rawStored = getStoredData(STORAGE_KEYS.REVIEWS, []);
+    const reviewMap = new Map();
+    if (Array.isArray(rawStored)) {
+      rawStored.forEach((r) => {
+        if (r && r.id) reviewMap.set(r.id, r);
+      });
+    }
+    // INITIAL_REVIEWS take precedence for seed/verified customer reviews
+    INITIAL_REVIEWS.forEach((initR) => {
+      reviewMap.set(initR.id, initR);
+    });
+    const all = Array.from(reviewMap.values());
     if (!productId) return all;
     return all.filter((r) => Number(r.productId) === Number(productId));
   },
   setReviews: (data) => setStoredData(STORAGE_KEYS.REVIEWS, data),
   addReview: (review) => {
-    const all = getStoredData(STORAGE_KEYS.REVIEWS, INITIAL_REVIEWS);
-    const updated = [review, ...all];
+    const current = STORE.getReviews();
+    const updated = [review, ...current.filter((r) => r.id !== review.id)];
     setStoredData(STORAGE_KEYS.REVIEWS, updated);
     return updated;
   },
