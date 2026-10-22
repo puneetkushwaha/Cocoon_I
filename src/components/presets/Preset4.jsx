@@ -903,98 +903,68 @@ export default function Preset4() {
         </div>
       </section>
 
-      {/* 5.5 THE ART OF GIFTING • UNBOXING & HEARTFELT WORDS (Nimisha Agarwal Real Customer Spotlight) */}
-      <section id="gifting-experience" className="py-20 sm:py-24 bg-[#F8F4EE] border-b border-[#EAE0D2] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+      {/* 5.5 HEARTFELT NOTES • REAL CUSTOMER UNBOXING (Nimisha Agarwal Spotlight) */}
+      <section id="gifting-experience" className="py-20 bg-[#FAF6F1] border-b border-[#EAE0D2] relative overflow-hidden text-left">
+        <div className="max-w-5xl mx-auto px-6 sm:px-10">
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14 items-center">
             
-            {/* Real Customer Photo & Verified Badge */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative rounded-3xl overflow-hidden border-2 border-[#E5D7C3] shadow-xl bg-white p-3">
-                <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#FAF6F0]">
+            {/* Real Customer Photo presented like a natural Polaroid keepsake */}
+            <div className="md:col-span-5">
+              <div className="bg-white p-3.5 pb-4 rounded-2xl border border-[#E8DFC9] shadow-sm transform -rotate-1 hover:rotate-0 transition-transform duration-500">
+                <div className="aspect-square rounded-xl overflow-hidden bg-[#FAF6F0]">
                   <img
                     src="/reviews/nimisha-agarwal-rose-clips-bow.jpg"
-                    alt="Real GoCocoon Gift Unboxing by Nimisha Agarwal - Handcrafted Rose Hair Accessories"
-                    className="w-full h-full object-cover hover:scale-103 transition-transform duration-700"
+                    alt="Handcrafted Rose Hair Accessories unboxed by Nimisha Agarwal"
+                    className="w-full h-full object-cover"
                     loading="lazy"
                   />
-                  <div className="absolute top-3 left-3 bg-[#2C2623]/85 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
-                    Real Customer Unboxing
-                  </div>
-                  <div className="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md rounded-xl p-2.5 border border-[#EAE0D2] shadow-sm flex items-center justify-between text-xs">
-                    <div>
-                      <p className="font-bold text-[#2C2623]">Nimisha Agarwal</p>
-                      <p className="text-[10px] text-stone-500 font-sans">Verified Recipient • Surprise Gift</p>
-                    </div>
-                    <span className="text-[#B06B5B] font-bold text-xs">★★★★★</span>
-                  </div>
                 </div>
-              </div>
-
-              {/* Little floating tag */}
-              <div className="absolute -bottom-4 -right-2 sm:-right-4 bg-[#B06B5B] text-white px-4 py-2 rounded-2xl shadow-lg text-[11px] font-bold hidden sm:flex items-center gap-2 border-2 border-white">
-                <span>Ready-to-Gift Packaging</span>
+                <div className="pt-3 text-center">
+                  <p className="text-xs font-serif text-[#2C2623]/75 italic">
+                    Rose clips &amp; pearl bow unboxed by Nimisha
+                  </p>
+                  <span className="text-[10px] font-sans text-stone-400 uppercase tracking-wider block mt-0.5">
+                    Surprise Gift Recipient
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Gifting Narrative & Pillars */}
-            <div className="lg:col-span-7 space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FAF0EA] border border-[#F3D5CF] text-[10px] font-black uppercase tracking-[0.25em] text-[#B06B5B]">
-                <span>The Art of Meaningful Gifting</span>
-              </div>
+            {/* Editorial Quote & Minimal Note */}
+            <div className="md:col-span-7 space-y-5">
+              <span className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#B06B5B] block">
+                Heartfelt Moments
+              </span>
 
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light font-header text-[#2C2623] leading-tight tracking-tight">
-                The Most Thoughtful Gift <br className="hidden sm:block" />She Will Ever Unbox
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light font-header text-[#2C2623] leading-snug">
+                &ldquo;Your efforts are visible in each and every thing.&rdquo;
               </h2>
 
-              {/* Customer Verbatim Quote */}
-              <div className="p-5 rounded-2xl bg-white border border-[#E8DFC9] shadow-xs relative">
-                <span className="text-3xl text-[#B06B5B]/30 font-serif absolute top-2 right-4">“</span>
-                <p className="text-sm sm:text-base font-serif italic text-[#2C2623]/85 leading-relaxed">
-                  &ldquo;Thank you very much ...all these are really very beautiful and this gift was totally unexpected...I&apos;m really happy ...your efforts are visible in each and every thing ...thank you for the gift.&rdquo;
+              <blockquote className="text-sm sm:text-base font-serif italic text-[#2C2623]/80 leading-relaxed border-l-2 border-[#B06B5B]/40 pl-4 py-1">
+                &ldquo;Thank you very much ...all these are really very beautiful and this gift was totally unexpected...I&apos;m really happy ...your efforts are visible in each and every thing ...thank you for the gift.&rdquo;
+              </blockquote>
+
+              <div className="text-xs text-[#2C2623]/70 font-sans pt-1">
+                <span className="font-bold text-[#2C2623]">Nimisha Agarwal</span>
+                <span className="mx-2 text-stone-300">•</span>
+                <span className="text-stone-500 font-serif">Verified Customer Note</span>
+              </div>
+
+              <div className="pt-4 border-t border-[#EAE0D2] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <p className="text-xs font-serif text-[#2C2623]/65 leading-relaxed max-w-sm">
+                  Every piece is sent in our signature butter paper wrap with a complimentary handwritten, wax-sealed note.
                 </p>
-                <div className="mt-3 flex items-center justify-between text-xs pt-3 border-t border-[#F2ECE1]">
-                  <span className="font-bold text-[#2C2623]">Nimisha Agarwal</span>
-                  <span className="text-[11px] text-stone-500">Unboxed: Red Rose Clips &amp; Pearl Bow</span>
-                </div>
-              </div>
 
-              {/* 3 Packaging Guarantees */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
-                <div className="p-3.5 rounded-xl bg-white/80 border border-[#EAE0D2]">
-                  <span className="inline-block text-[10px] font-mono font-bold text-[#B06B5B] bg-[#FAF0EA] px-2 py-0.5 rounded border border-[#F3D5CF] mb-1.5">01</span>
-                  <h4 className="text-xs font-bold text-[#2C2623]">Vintage Gift Box</h4>
-                  <p className="text-[11px] text-stone-500 font-serif mt-0.5">Sturdy signature hard-board box wrapped in butter paper.</p>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-white/80 border border-[#EAE0D2]">
-                  <span className="inline-block text-[10px] font-mono font-bold text-[#B06B5B] bg-[#FAF0EA] px-2 py-0.5 rounded border border-[#F3D5CF] mb-1.5">02</span>
-                  <h4 className="text-xs font-bold text-[#2C2623]">Wax-Sealed Card</h4>
-                  <p className="text-[11px] text-stone-500 font-serif mt-0.5">Complimentary handwritten note with custom message.</p>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-white/80 border border-[#EAE0D2]">
-                  <span className="inline-block text-[10px] font-mono font-bold text-[#B06B5B] bg-[#FAF0EA] px-2 py-0.5 rounded border border-[#F3D5CF] mb-1.5">03</span>
-                  <h4 className="text-xs font-bold text-[#2C2623]">Zero Plastic</h4>
-                  <p className="text-[11px] text-stone-500 font-serif mt-0.5">100% biodegradable jute twines &amp; soft tissue wrap.</p>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="pt-2 flex flex-wrap items-center gap-3">
                 <button
                   onClick={() => {
                     const shop = document.getElementById("shop") || document.getElementById("p4-treasures");
                     shop?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="px-6 py-3 rounded-full bg-[#B06B5B] hover:bg-[#975647] text-white font-sans text-xs uppercase tracking-widest font-bold shadow-md hover:shadow-lg transition cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#B06B5B] hover:text-[#964B44] transition shrink-0 cursor-pointer"
                 >
-                  Choose a Gift for Someone Special &rarr;
+                  <span>Explore Gifts &rarr;</span>
                 </button>
-                <span className="text-xs text-stone-500 font-serif italic">
-                  Leave your gift message at checkout — we handwrite it with ink!
-                </span>
               </div>
 
             </div>
