@@ -82,11 +82,107 @@ export const INITIAL_BESTSELLERS = [
   }
 ];
 
-export const INITIAL_ORDERS = [];
+export const INITIAL_ORDERS = [
+  {
+    id: "COC-7842",
+    customerName: "Nimisha Agarwal",
+    customerPhone: "9634640893",
+    customerEmail: "nimisha.agarwal@gmail.com",
+    address: "Civil Lines, Agra, Uttar Pradesh",
+    items: [
+      {
+        id: 6,
+        name: "Pink Rose & Bell Flower Ponytail Tie",
+        price: 249,
+        quantity: 1,
+        color: "English Rose Pink",
+        image: "/products/items/rose-ponytail-tie-pink.jpg"
+      },
+      {
+        id: 22,
+        name: "White Blossom & Bell Bud Hair Tie",
+        price: 249,
+        quantity: 1,
+        color: "Ivory White",
+        image: "/products/items/rose-bell-hair-tie-white.jpg"
+      },
+      {
+        id: 4,
+        name: "Ruby Red Bow & Pearl Charm Keychain",
+        price: 0,
+        quantity: 1,
+        color: "Ruby Red",
+        image: "/products/items/red-bow-pearl-keychain.jpg",
+        isFreeGift: true
+      }
+    ],
+    totalAmount: 498,
+    status: "Delivered",
+    paymentMethod: "Cash on Delivery",
+    notes: "Complimentary surprise ruby red bow keychain gifted by Mehak.",
+    date: "2026-10-20T14:30:00.000Z"
+  }
+];
 
 export const INITIAL_CUSTOMIZATIONS = [];
 
 export const INITIAL_REVIEWS = [
+  {
+    id: "REV-201",
+    productId: 6,
+    productName: "Pink Rose & Bell Flower Ponytail Tie",
+    customerName: "Nimisha Agarwal",
+    customerPhone: "9634640893",
+    rating: 5,
+    title: "All these are really very beautiful!",
+    comment: "Thank you very much! All these are really very beautiful and this gift was totally unexpected... I'm really happy. Your efforts are visible in each and every stitch, finishing is so neat. Thank you so much for the gift! 😊",
+    date: "2026-10-21T19:34:00.000Z",
+    verified: true,
+    orderId: "COC-7842",
+    mediaUrl: "/reviews/nimisha-agarwal-rose-clips-bow.jpg"
+  },
+  {
+    id: "REV-202",
+    productId: 22,
+    productName: "White Blossom & Bell Bud Hair Tie",
+    customerName: "Nimisha Agarwal",
+    customerPhone: "9634640893",
+    rating: 5,
+    title: "Efforts are visible in each and every thing",
+    comment: "Ordered these handcrafted rose clips and they are so cute and delicate! Look even prettier in person and the elastic holds hair securely without pulling. The sweet surprise gift made my day. Thank you Mehak! 😊",
+    date: "2026-10-21T19:34:00.000Z",
+    verified: true,
+    orderId: "COC-7842",
+    mediaUrl: "/reviews/nimisha-agarwal-rose-clips-bow.jpg"
+  },
+  {
+    id: "REV-203",
+    productId: 4,
+    productName: "Ruby Red Bow & Pearl Charm Keychain",
+    customerName: "Nimisha Agarwal",
+    customerPhone: "9634640893",
+    rating: 5,
+    title: "Totally unexpected gift & gorgeous quality!",
+    comment: "Received this beautiful ruby red bow keychain as a surprise gift with my order. All these are really very beautiful, your efforts and dedication are visible in each and every creation. Loved it! ❤️",
+    date: "2026-10-21T19:34:00.000Z",
+    verified: true,
+    orderId: "COC-7842",
+    mediaUrl: "/reviews/nimisha-agarwal-rose-clips-bow.jpg"
+  },
+  {
+    id: "REV-204",
+    productId: 30,
+    productName: "Snow White Rose & Twin Buds Charm",
+    customerName: "Nimisha Agarwal",
+    customerPhone: "9634640893",
+    rating: 5,
+    title: "Stunning craftsmanship and detailing",
+    comment: "The blooming white rose with dangling twin buds is so finely hand-crocheted. Ultra-soft milk cotton and looks gorgeous. So happy with my purchase!",
+    date: "2026-10-21T19:34:00.000Z",
+    verified: true,
+    orderId: "COC-7842",
+    mediaUrl: "/reviews/nimisha-agarwal-rose-clips-bow.jpg"
+  },
   {
     id: "REV-101",
     productId: 1,
