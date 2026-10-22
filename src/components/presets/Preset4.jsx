@@ -905,14 +905,14 @@ export default function Preset4() {
 
       {/* 5.5 HEARTFELT NOTES • REAL CUSTOMER UNBOXING (Nimisha Agarwal Spotlight) */}
       <section id="gifting-experience" className="py-20 bg-[#FAF6F1] border-b border-[#EAE0D2] relative overflow-hidden text-left">
-        <div className="max-w-5xl mx-auto px-6 sm:px-10">
+        <div className="max-w-6xl mx-auto px-6 sm:px-10">
           
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             
-            {/* Real Customer Photo presented like a natural Polaroid keepsake */}
-            <div className="md:col-span-5">
-              <div className="bg-white p-3.5 pb-4 rounded-2xl border border-[#E8DFC9] shadow-sm transform -rotate-1 hover:rotate-0 transition-transform duration-500">
-                <div className="aspect-square rounded-xl overflow-hidden bg-[#FAF6F0]">
+            {/* Real Customer Photo presented in full 16:9.5 uncropped landscape ratio */}
+            <div className="lg:col-span-6">
+              <div className="bg-white p-3 sm:p-4 rounded-2xl border border-[#E8DFC9] shadow-sm">
+                <div className="aspect-[1024/608] w-full rounded-xl overflow-hidden bg-[#FAF6F0] border border-[#F2ECE1]">
                   <img
                     src="/reviews/nimisha-agarwal-rose-clips-bow.jpg"
                     alt="Handcrafted Rose Hair Accessories unboxed by Nimisha Agarwal"
@@ -932,7 +932,7 @@ export default function Preset4() {
             </div>
 
             {/* Editorial Quote & Minimal Note */}
-            <div className="md:col-span-7 space-y-5">
+            <div className="lg:col-span-6 space-y-5">
               <span className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-[#B06B5B] block">
                 Heartfelt Moments
               </span>
