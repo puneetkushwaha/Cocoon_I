@@ -9,7 +9,7 @@ import { saveOrderToSupabase, uploadMediaToSupabase, saveReviewToSupabase, fetch
 import { captureLiveGpsAddress } from "@/lib/location";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { generateOrderId } from "@/lib/orderUtils";
+import { generateOrderId, getCraftStats } from "@/lib/orderUtils";
 
 export default function ProductDetailPage({ params }) {
   const unwrappedParams = use(params);
@@ -744,6 +744,8 @@ export default function ProductDetailPage({ params }) {
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : null;
 
+  const craftStats = useMemo(() => getCraftStats(product), [product]);
+
   const productSchema = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -933,6 +935,37 @@ export default function ProductDetailPage({ params }) {
                 >
                   Apply &rarr;
                 </Link>
+              </div>
+
+              {/* Artisan Labor Meter (Price Justification) */}
+              <div className="mt-2.5 p-3 rounded-2xl bg-[#FAF7F2] border border-[#EAE1D3] flex items-center justify-between text-left">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xl">⏱️</span>
+                  <div>
+                    <p className="text-xs font-bold text-[#2C2623] flex items-center gap-1.5 flex-wrap">
+                      <span>{craftStats.hours} of Artisan Hand-Knitting</span>
+                      <span className="text-[9px] text-[#B06B5B] bg-[#FDF0ED] px-2 py-0.5 rounded-full border border-[#F5D5CE] font-bold">
+                        {craftStats.tag}
+                      </span>
+                    </p>
+                    <p className="text-[11px] text-stone-500 font-serif mt-0.5">
+                      {craftStats.knots} • 100% Organic Milk Cotton • Zero Machine Work
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Complimentary Gifting Unboxing Guarantee */}
+              <div className="mt-2.5 p-3 rounded-2xl bg-gradient-to-r from-[#FFFDF9] to-[#FAF5EE] border border-[#EAE0D2] flex items-center gap-3 text-left">
+                <span className="text-xl">🎁</span>
+                <div>
+                  <p className="text-xs font-bold text-[#2C2623]">
+                    Ready to Gift • Complimentary Aesthetic Box
+                  </p>
+                  <p className="text-[11px] text-stone-500 font-serif mt-0.5">
+                    Arrives wrapped in butter paper inside our signature reusable vintage gift box with a handwritten wax-sealed card.
+                  </p>
+                </div>
               </div>
             </div>
 

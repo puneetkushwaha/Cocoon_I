@@ -10,7 +10,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import InstagramShowcase from "@/components/InstagramShowcase";
 import FaqSection from "@/components/FaqSection";
-import { generateOrderId } from "@/lib/orderUtils";
+import { generateOrderId, getCraftStats } from "@/lib/orderUtils";
 
 export default function Preset4() {
   const router = useRouter();
@@ -320,6 +320,10 @@ export default function Preset4() {
     return list;
   }, [activeCategory, searchQuery, sortBy, storeProducts]);
 
+  const under199Products = useMemo(() => {
+    return (storeProducts || []).filter((p) => Number(p.price) <= 199).slice(0, 4);
+  }, [storeProducts]);
+
   const openQuickView = (product) => {
     if (product?.id) {
       router.push(`/product/${product.id}`);
@@ -373,8 +377,29 @@ export default function Preset4() {
                 </a>
               </div>
 
-              <div className="pt-6 border-t border-[#EFE8DD] flex items-center gap-4 text-xs font-sans text-[#2C2623]/70">
-                <p>Pure Milk Cotton • Baby Chenille • Hypoallergenic & Gentle on Hair</p>
+              {/* 3 Risk-Removal Trust Badges */}
+              <div className="pt-6 border-t border-[#EFE8DD] grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-left">
+                <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/80 border border-[#EAE1D3] shadow-2xs">
+                  <span className="text-base sm:text-lg">📦</span>
+                  <div>
+                    <p className="text-[11px] font-bold text-[#2C2623] leading-none">Free Express Transit</p>
+                    <p className="text-[9px] text-stone-500 font-serif mt-0.5">Free on Online Orders</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/80 border border-[#EAE1D3] shadow-2xs">
+                  <span className="text-base sm:text-lg">💵</span>
+                  <div>
+                    <p className="text-[11px] font-bold text-[#2C2623] leading-none">Cash on Delivery</p>
+                    <p className="text-[9px] text-stone-500 font-serif mt-0.5">Pay at Doorstep</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/80 border border-[#EAE1D3] shadow-2xs">
+                  <span className="text-base sm:text-lg">🌿</span>
+                  <div>
+                    <p className="text-[11px] font-bold text-[#2C2623] leading-none">100% Milk Cotton</p>
+                    <p className="text-[9px] text-stone-500 font-serif mt-0.5">Gentle, Zero Plastic</p>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -511,6 +536,107 @@ export default function Preset4() {
         </div>
       </section>
 
+      {/* 4.2 IMPULSE HOOK: UNDER ₹199 • YOUR FIRST CROCHET TREASURE */}
+      <section id="under-199" className="py-16 bg-gradient-to-b from-[#FDFBF7] to-[#FAF5EE] border-b border-[#EAE0D2] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-3 border-b border-[#EAE0D2] gap-4">
+            <div className="text-left">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF0EA] border border-[#F3D5CF] text-[10px] font-black uppercase tracking-[0.25em] text-[#B06B5B] mb-2">
+                <span>✨ Pocket-Friendly Delights</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light font-header text-[#2C2623] tracking-tight">
+                Under ₹199 • Your First Crochet Treasure
+              </h2>
+              <p className="text-xs sm:text-sm font-serif text-[#2C2623]/70 font-light mt-1">
+                Experience authentic hand-knitted milk cotton luxury without hesitating. Perfect for hair, bags & quick gifting.
+              </p>
+            </div>
+            <div className="inline-flex items-center gap-2 text-xs font-bold text-[#8B483B] bg-white px-3.5 py-1.5 rounded-full border border-[#ECCEC7] shadow-xs shrink-0 self-start sm:self-auto">
+              <span>🏷️ Extra 10% OFF with code</span>
+              <span className="font-mono font-black text-[#B06B5B] bg-[#FAF0EA] px-2 py-0.5 rounded">COCOON10</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-left">
+            {under199Products.map((p) => {
+              const isFav = wishlist.includes(p.id);
+              const craft = getCraftStats(p);
+              const effectivePrice = Math.round(p.price * 0.9);
+              return (
+                <div
+                  key={p.id}
+                  className="bg-white rounded-2xl p-3 sm:p-4 border border-[#EAE1D3] shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+                >
+                  <div>
+                    <div className="relative aspect-square rounded-xl overflow-hidden bg-[#FAF6F0] mb-3">
+                      <button
+                        onClick={() => toggleWishlist(p)}
+                        className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer backdrop-blur-xs shadow-xs ${
+                          isFav ? "bg-[#B06B5B] text-white" : "bg-white/90 text-stone-500 hover:text-[#B06B5B]"
+                        }`}
+                        title="Save to Wishlist"
+                      >
+                        ♥
+                      </button>
+
+                      <span className="absolute top-2 left-2 z-10 bg-[#2C2623]/85 backdrop-blur-xs text-white text-[8px] sm:text-[9px] font-sans font-bold px-2 py-0.5 rounded-full shadow-2xs">
+                        ⏱️ {craft.hours} Craft
+                      </span>
+
+                      <Link href={`/product/${p.id}`} prefetch={true} className="block w-full h-full">
+                        <img
+                          src={p.imgUrl}
+                          alt={`${p.name} - Handcrafted Crochet Under 199`}
+                          className="w-full h-full object-cover transform group-hover:scale-106 transition-transform duration-500 cursor-pointer"
+                          loading="lazy"
+                        />
+                      </Link>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="text-[9px] font-sans font-bold uppercase text-[#B06B5B] tracking-wider block">
+                        {p.subcategory ? p.subcategory.replace('-', ' ') : p.category}
+                      </span>
+                      <Link href={`/product/${p.id}`} prefetch={true} className="block">
+                        <h3 className="font-header font-bold text-xs sm:text-sm text-[#2C2623] line-clamp-2 min-h-[2rem] leading-snug group-hover:text-[#B06B5B] transition cursor-pointer">
+                          {p.name}
+                        </h3>
+                      </Link>
+                      <div className="text-[10px] text-stone-500 font-sans flex items-center gap-1">
+                        <span>{craft.knots}</span>
+                        <span>•</span>
+                        <span>100% Milk Cotton</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-[#FAF6F0] flex flex-col gap-2 mt-3">
+                    <div className="flex items-baseline justify-between gap-1 flex-wrap">
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="font-sans font-extrabold text-sm sm:text-base text-[#2C2623]">Rs. {p.price}</span>
+                        {p.originalPrice > p.price && (
+                          <span className="text-[10px] sm:text-xs font-sans text-stone-400 line-through">Rs. {p.originalPrice}</span>
+                        )}
+                      </div>
+                      <span className="text-[9px] font-sans font-bold text-[#2D5A37] bg-[#EBF5ED] px-1.5 py-0.5 rounded border border-[#CDE5D2]">
+                        ₹{effectivePrice} with code
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => addToCart(p)}
+                      className="w-full py-2 px-3 rounded-xl bg-[#FAF5EE] hover:bg-[#B06B5B] text-[#2C2623] hover:text-white border border-[#E0D5C1] hover:border-[#B06B5B] font-sans text-[11px] font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs active:scale-95"
+                    >
+                      <span>+ Add to Cart</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* 4.5 EDITORIAL LOOKBOOK ATELIER - TOP 3 BESTSELLERS (Admin Configurable) */}
       <section id="p4-lookbook" className="py-20 bg-[#F5EFEB] border-b border-[#E8DFC9] relative overflow-hidden text-center">
         <div className="absolute top-0 left-1/3 w-96 h-96 bg-[#F8E5E1]/50 rounded-full blur-3xl pointer-events-none" />
@@ -533,6 +659,7 @@ export default function Preset4() {
             {storeBestsellers.map((item, idx) => {
               const product = storeProducts.find((p) => p.id === item.id) || { id: item.id, name: item.title, price: item.price, imgUrl: item.imgUrl };
               const isFav = wishlist.includes(item.id);
+              const craft = getCraftStats(product);
 
               return (
                 <div
@@ -544,6 +671,12 @@ export default function Preset4() {
                       <span className="absolute top-3 left-3 z-10 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[9px] font-black uppercase tracking-wider text-[#B06B5B] shadow-xs">
                         {item.rank || `N° 0${idx + 1} • Bestseller`}
                       </span>
+
+                      <div className="absolute bottom-3 left-3 z-10 px-2.5 py-1 rounded-full bg-[#2C2623]/85 backdrop-blur-md text-[9px] font-bold text-white shadow-xs flex items-center gap-1.5">
+                        <span>⏱️ {craft.hours} Hand-knitted</span>
+                        <span>•</span>
+                        <span>{craft.knots}</span>
+                      </div>
 
                       <button
                         onClick={() => toggleWishlist(product)}
@@ -679,6 +812,7 @@ export default function Preset4() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6 text-left">
             {filteredProducts.map((product) => {
               const isFav = wishlist.includes(product.id);
+              const craft = getCraftStats(product);
 
               return (
                 <div
@@ -713,9 +847,14 @@ export default function Preset4() {
                     </div>
 
                     <div className="space-y-1">
-                      <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase text-[#B06B5B] tracking-wider block">
-                        {product.subcategory ? product.subcategory.replace('-', ' ') : product.category}
-                      </span>
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-[9px] sm:text-[10px] font-sans font-bold uppercase text-[#B06B5B] tracking-wider block truncate">
+                          {product.subcategory ? product.subcategory.replace('-', ' ') : product.category}
+                        </span>
+                        <span className="text-[8px] sm:text-[9px] font-bold text-[#7A3F34] bg-[#FAF4EE] px-1.5 py-0.5 rounded border border-[#EDE2D5] shrink-0">
+                          ⏱️ {craft.hours}
+                        </span>
+                      </div>
                       <Link href={`/product/${product.id}`} prefetch={true} className="block">
                         <h3
                           className="font-header font-bold text-xs sm:text-base text-[#2C2623] line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] leading-snug group-hover:text-[#B06B5B] transition cursor-pointer"
@@ -725,7 +864,7 @@ export default function Preset4() {
                         </h3>
                       </Link>
                       <p className="text-[10px] sm:text-[11px] font-sans text-[#2C2623]/60 truncate hidden sm:block">
-                        {product.materials || "Handcrafted Milk Cotton"}
+                        {craft.knots} • {product.materials || "Handcrafted Milk Cotton"}
                       </p>
                     </div>
                   </div>
@@ -753,6 +892,107 @@ export default function Preset4() {
                 </div>
               );
             })}
+          </div>
+
+        </div>
+      </section>
+
+      {/* 5.5 THE ART OF GIFTING • UNBOXING & HEARTFELT WORDS (Nimisha Agarwal Real Customer Spotlight) */}
+      <section id="gifting-experience" className="py-20 sm:py-24 bg-[#F8F4EE] border-b border-[#EAE0D2] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+            
+            {/* Real Customer Photo & Verified Badge */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative rounded-3xl overflow-hidden border-2 border-[#E5D7C3] shadow-xl bg-white p-3">
+                <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#FAF6F0]">
+                  <img
+                    src="/reviews/nimisha-agarwal-rose-clips-bow.jpg"
+                    alt="Real GoCocoon Gift Unboxing by Nimisha Agarwal - Handcrafted Rose Hair Accessories"
+                    className="w-full h-full object-cover hover:scale-103 transition-transform duration-700"
+                    loading="lazy"
+                  />
+                  <div className="absolute top-3 left-3 bg-[#2C2623]/85 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
+                    📸 Real Customer Unboxing
+                  </div>
+                  <div className="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md rounded-xl p-2.5 border border-[#EAE0D2] shadow-sm flex items-center justify-between text-xs">
+                    <div>
+                      <p className="font-bold text-[#2C2623]">Nimisha Agarwal</p>
+                      <p className="text-[10px] text-stone-500 font-sans">Verified Recipient • Surprise Gift</p>
+                    </div>
+                    <span className="text-[#B06B5B] font-bold text-xs">★★★★★</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Little floating tag */}
+              <div className="absolute -bottom-4 -right-2 sm:-right-4 bg-[#B06B5B] text-white px-4 py-2 rounded-2xl shadow-lg text-[11px] font-bold hidden sm:flex items-center gap-2 border-2 border-white">
+                <span>🎁 Ready-to-Gift Packaging</span>
+              </div>
+            </div>
+
+            {/* Gifting Narrative & Pillars */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FAF0EA] border border-[#F3D5CF] text-[10px] font-black uppercase tracking-[0.25em] text-[#B06B5B]">
+                <span>🎁 The Art of Meaningful Gifting</span>
+              </div>
+
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light font-header text-[#2C2623] leading-tight tracking-tight">
+                The Most Thoughtful Gift <br className="hidden sm:block" />She Will Ever Unbox
+              </h2>
+
+              {/* Customer Verbatim Quote */}
+              <div className="p-5 rounded-2xl bg-white border border-[#E8DFC9] shadow-xs relative">
+                <span className="text-3xl text-[#B06B5B]/30 font-serif absolute top-2 right-4">“</span>
+                <p className="text-sm sm:text-base font-serif italic text-[#2C2623]/85 leading-relaxed">
+                  &ldquo;Thank you very much ...all these are really very beautiful and this gift was totally unexpected...I&apos;m really happy ...your efforts are visible in each and every thing ...thank you for the gift 😊&rdquo;
+                </p>
+                <div className="mt-3 flex items-center justify-between text-xs pt-3 border-t border-[#F2ECE1]">
+                  <span className="font-bold text-[#2C2623]">Nimisha Agarwal</span>
+                  <span className="text-[11px] text-stone-500">Unboxed: Red Rose Clips &amp; Pearl Bow</span>
+                </div>
+              </div>
+
+              {/* 3 Packaging Guarantees */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
+                <div className="p-3.5 rounded-xl bg-white/80 border border-[#EAE0D2]">
+                  <div className="text-lg mb-1">📦</div>
+                  <h4 className="text-xs font-bold text-[#2C2623]">Vintage Gift Box</h4>
+                  <p className="text-[11px] text-stone-500 font-serif mt-0.5">Sturdy signature hard-board box wrapped in butter paper.</p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-white/80 border border-[#EAE0D2]">
+                  <div className="text-lg mb-1">💌</div>
+                  <h4 className="text-xs font-bold text-[#2C2623]">Wax-Sealed Card</h4>
+                  <p className="text-[11px] text-stone-500 font-serif mt-0.5">Complimentary handwritten note with custom message.</p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-white/80 border border-[#EAE0D2]">
+                  <div className="text-lg mb-1">🌿</div>
+                  <h4 className="text-xs font-bold text-[#2C2623]">Zero Plastic</h4>
+                  <p className="text-[11px] text-stone-500 font-serif mt-0.5">100% biodegradable jute twines &amp; soft tissue wrap.</p>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="pt-2 flex flex-wrap items-center gap-3">
+                <button
+                  onClick={() => {
+                    const shop = document.getElementById("shop") || document.getElementById("p4-treasures");
+                    shop?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="px-6 py-3 rounded-full bg-[#B06B5B] hover:bg-[#975647] text-white font-sans text-xs uppercase tracking-widest font-bold shadow-md hover:shadow-lg transition cursor-pointer"
+                >
+                  Choose a Gift for Someone Special &rarr;
+                </button>
+                <span className="text-xs text-stone-500 font-serif italic">
+                  Leave your gift message at checkout — we handwrite it with ink!
+                </span>
+              </div>
+
+            </div>
+
           </div>
 
         </div>
