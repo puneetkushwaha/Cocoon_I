@@ -436,7 +436,6 @@ export const STORE = {
         if (json.settings && typeof json.settings === "object") {
           localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(json.settings));
         }
-        window.dispatchEvent(new Event("cocoon_store_update"));
         return json;
       }
     } catch (e) {

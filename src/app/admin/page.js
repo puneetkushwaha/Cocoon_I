@@ -210,7 +210,19 @@ export default function AdminPage() {
         if (serverData.source !== "initial_seed") {
           if (serverData.products) setProducts(serverData.products);
           if (serverData.categories) setCategories(serverData.categories);
-          if (serverData.coupons) setCoupons(serverData.coupons);
+          if (Array.isArray(serverData.coupons)) {
+            const localCoupons = STORE.getCoupons();
+            const map = new Map();
+            localCoupons.forEach((c) => { if (c && c.code) map.set(c.code.toUpperCase(), c); });
+            serverData.coupons.forEach((c) => {
+              if (c && c.code && !map.has(c.code.toUpperCase())) {
+                map.set(c.code.toUpperCase(), c);
+              }
+            });
+            const merged = Array.from(map.values());
+            setCoupons(merged);
+            STORE.setCoupons(merged);
+          }
           if (serverData.heroCards) setHeroCards(serverData.heroCards);
           if (serverData.ticker) setTickerList(serverData.ticker);
           if (serverData.bestsellers) setBestsellers(serverData.bestsellers);
@@ -317,7 +329,19 @@ export default function AdminPage() {
 
   useEffect(() => {
     loadData();
-    const handleUpdate = () => loadData();
+    const handleUpdate = () => {
+      setProducts(STORE.getProducts());
+      setCategories(STORE.getCategories());
+      setBestsellers(STORE.getBestsellers());
+      setHeroCards(STORE.getHeroCards());
+      setTickerList(STORE.getTicker());
+      setReviews(STORE.getReviews());
+      setOffers(STORE.getOffers());
+      setCoupons(STORE.getCoupons());
+      setSubscribers(STORE.getSubscribers());
+      setIsCodEnabled(STORE.isCodEnabled());
+      setIsOnlineFreeDelivery(STORE.isOnlineFreeDeliveryEnabled());
+    };
     window.addEventListener("cocoon_store_update", handleUpdate);
     return () => window.removeEventListener("cocoon_store_update", handleUpdate);
   }, []);
@@ -938,12 +962,12 @@ export default function AdminPage() {
 
     setCoupons(updated);
     setIsCouponModalOpen(false);
-    triggerToast(`Publishing coupon "${cleanCode}" to live store... ⏳`);
+    triggerToast(`Publishing coupon "${cleanCode}" to live store...`);
 
     try {
       const res = await STORE.syncToBackend("coupons", updated);
       if (res && res.success) {
-        triggerToast(`✓ Coupon "${cleanCode}" published & live in store!`);
+        triggerToast(`Coupon "${cleanCode}" published & live in store!`);
       } else {
         triggerToast(`Coupon "${cleanCode}" saved.`);
       }
@@ -1064,12 +1088,12 @@ export default function AdminPage() {
           {[
             { id: "dashboard", label: "Dashboard & Analytics", icon: "" },
             { id: "orders", label: `Orders (${orders.length})`, icon: "" },
-            { id: "coupons", label: `Coupons & BOGO (${coupons.length})`, icon: "🏷️" },
-            { id: "reviews", label: `Reviews (${reviews.length})`, icon: "⭐" },
+            { id: "coupons", label: `Coupons & BOGO (${coupons.length})`, icon: "" },
+            { id: "reviews", label: `Reviews (${reviews.length})`, icon: "" },
             { id: "customizations", label: `Custom Slips (${customizations.length})`, icon: "" },
             { id: "products", label: `Products (${products.length})`, icon: "" },
             { id: "categories", label: `Categories (${categories.length})`, icon: "" },
-            { id: "bestsellers", label: "Top 3 Bestsellers", icon: "⭐" },
+            { id: "bestsellers", label: "Top 3 Bestsellers", icon: "" },
             { id: "hero", label: "Hero Collage (3 Images)", icon: "" },
             { id: "ticker", label: "Top Ticker Bar", icon: "" },
             { id: "offers", label: `Offers & Broadcasts (${offers.length})`, icon: "" }
@@ -2645,7 +2669,7 @@ export default function AdminPage() {
                         : "bg-stone-50 border-stone-200 hover:bg-stone-100 text-stone-700"
                     }`}
                   >
-                    <span className="text-lg">🏷️</span>
+                    <span className="font-mono font-bold text-sm text-[#B06B5B]">% OFF</span>
                     <span className="font-bold text-xs">% Off</span>
                     <span className="text-[9px] text-stone-500">e.g. 15% / 20%</span>
                   </button>

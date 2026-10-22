@@ -520,21 +520,15 @@ export default function CartPage() {
     return cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
   }, [cart]);
 
-  // Dynamic coupon discount calculation for up to 2 stacked coupons (Percentage, Flat, BOGO)
+  // Dynamic coupon discount calculation for 1 active coupon (Percentage, Flat, BOGO)
   const couponDiscount = useMemo(() => {
     if (!appliedCoupons || appliedCoupons.length === 0) return 0;
-    let totalDiscount = 0;
-    let remainingSubtotal = subtotal;
-
-    for (const cpn of appliedCoupons) {
-      const calc = STORE.calculateCouponDiscount(cpn, cart, remainingSubtotal);
-      if (calc && calc.valid) {
-        const d = Number(calc.discount || 0);
-        totalDiscount += d;
-        remainingSubtotal = Math.max(0, remainingSubtotal - d);
-      }
+    const cpn = appliedCoupons[0];
+    const calc = STORE.calculateCouponDiscount(cpn, cart, subtotal);
+    if (calc && calc.valid) {
+      return Math.min(Number(calc.discount || 0), subtotal);
     }
-    return Math.min(totalDiscount, subtotal);
+    return 0;
   }, [appliedCoupons, cart, subtotal]);
 
   const [isOnlineFreeDelivery, setIsOnlineFreeDelivery] = useState(true);
@@ -593,7 +587,7 @@ export default function CartPage() {
 
   const grandTotal = Math.max(0, subtotal - couponDiscount + shippingCost);
 
-  // Multi-Coupon Handlers (Max 2 coupons simultaneously)
+  // Single-Coupon Handler (1 coupon at a time - applying another replaces the previous)
   const handleApplyCoupon = async (e, directCode = null) => {
     if (e && typeof e.preventDefault === "function") e.preventDefault();
     const raw = (directCode || couponInput || "").trim().toUpperCase();
@@ -603,23 +597,15 @@ export default function CartPage() {
     }
     setCouponError("");
 
-    // Guard against duplicate application
+    // Guard against duplicate application of the same coupon
     if (appliedCoupons.some((c) => c.code?.toUpperCase() === raw)) {
       setCouponError(`Coupon "${raw}" is already applied.`);
       return;
     }
 
-    // Guard: Max 2 coupons at a time!
-    if (appliedCoupons.length >= 2) {
-      setCouponError("Maximum 2 coupons can be active at a time. Remove one coupon to apply this.");
-      triggerToast("Maximum 2 coupons allowed. Remove one to add another.");
-      return;
-    }
-
     try {
       // Validate with central coupon engine + Supabase database check
-      const remainingSubtotal = Math.max(0, subtotal - couponDiscount);
-      const result = await validateCouponFromSupabase(raw, cart, remainingSubtotal);
+      const result = await validateCouponFromSupabase(raw, cart, subtotal);
       if (result && result.valid) {
         const newCouponObj = {
           ...result.coupon,
@@ -627,9 +613,10 @@ export default function CartPage() {
           type: result.type,
           message: result.message
         };
-        setAppliedCoupons((prev) => [...prev, newCouponObj]);
+        // Replace currently active coupon with the newly applied one
+        setAppliedCoupons([newCouponObj]);
         setCouponInput("");
-        triggerToast(`✓ ${result.message}`);
+        triggerToast(`Coupon ${raw} applied: ${result.message}`);
         return;
       } else {
         setCouponError(result?.error || "Invalid coupon code.");
@@ -1842,42 +1829,29 @@ export default function CartPage() {
                     </div>
                   )}
 
-                  {/* Input field (disabled if 2 coupons already stacked) */}
-                  {appliedCoupons.length < 2 ? (
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={couponInput}
-                        onChange={(e) => {
-                          setCouponInput(e.target.value.toUpperCase().replace(/\s+/g, ""));
-                          setCouponError("");
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleApplyCoupon(e);
-                        }}
-                        placeholder="Enter coupon code (e.g. COCOON10)"
-                        className="flex-1 bg-white border border-[#DDD3C4] rounded-xl px-3 py-2 text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-[#B06B5B]"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleApplyCoupon}
-                        className="px-4 py-2 bg-[#2C2623] hover:bg-black text-white text-xs font-bold rounded-xl transition cursor-pointer shadow-2xs active:scale-95"
-                      >
-                        Apply
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="p-2 bg-emerald-100/60 rounded-xl border border-emerald-200 text-[11px] text-emerald-900 font-sans flex items-center justify-between">
-                      <span>✓ 2 Coupons applied (Maximum stack limit reached).</span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveCoupon(null)}
-                        className="text-emerald-950 font-bold underline hover:text-rose-700 cursor-pointer ml-2"
-                      >
-                        Clear All
-                      </button>
-                    </div>
-                  )}
+                  {/* Input field */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponInput}
+                      onChange={(e) => {
+                        setCouponInput(e.target.value.toUpperCase().replace(/\s+/g, ""));
+                        setCouponError("");
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleApplyCoupon(e);
+                      }}
+                      placeholder={appliedCoupons.length > 0 ? "Enter code to change coupon" : "Enter coupon code (e.g. COCOON10)"}
+                      className="flex-1 bg-white border border-[#DDD3C4] rounded-xl px-3 py-2 text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-[#B06B5B]"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      className="px-4 py-2 bg-[#2C2623] hover:bg-black text-white text-xs font-bold rounded-xl transition cursor-pointer shadow-2xs active:scale-95"
+                    >
+                      {appliedCoupons.length > 0 ? "Replace" : "Apply"}
+                    </button>
+                  </div>
 
                   {couponError && (
                     <p className="text-[11px] text-rose-600 font-medium">{couponError}</p>
@@ -1942,18 +1916,13 @@ export default function CartPage() {
                                       className="px-2.5 py-1 rounded-lg bg-emerald-700 text-white text-[10px] font-bold tracking-wider uppercase transition cursor-pointer hover:bg-rose-600"
                                       title="Click to remove"
                                     >
-                                      Applied ✓
+                                      Applied (Remove)
                                     </button>
                                   ) : (
                                     <button
                                       type="button"
                                       onClick={() => handleApplyCoupon(null, cpn.code)}
-                                      disabled={appliedCoupons.length >= 2}
-                                      className={`px-3 py-1 rounded-lg text-[10px] font-bold tracking-wider uppercase transition cursor-pointer ${
-                                        appliedCoupons.length >= 2
-                                          ? "bg-stone-200 text-stone-400 cursor-not-allowed"
-                                          : "bg-[#B06B5B] hover:bg-[#964B44] text-white shadow-2xs active:scale-95"
-                                      }`}
+                                      className="px-3 py-1 rounded-lg text-[10px] font-bold tracking-wider uppercase transition cursor-pointer bg-[#B06B5B] hover:bg-[#964B44] text-white shadow-2xs active:scale-95"
                                     >
                                       Apply
                                     </button>
@@ -1977,7 +1946,7 @@ export default function CartPage() {
                   {couponDiscount > 0 && (
                     <div className="flex justify-between text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200">
                       <span>
-                        Coupon Discount ({appliedCoupons.map((c) => c.code).join(" + ")}):
+                        Coupon Discount ({appliedCoupons[0]?.code}):
                       </span>
                       <span>-₹{couponDiscount}</span>
                     </div>
@@ -1993,7 +1962,7 @@ export default function CartPage() {
                     {shippingCost === 0 ? (
                       <div className="flex items-center gap-1.5 text-emerald-700 font-bold">
                         <span className="line-through text-stone-400 text-xs">₹80</span>
-                        <span>FREE {isOnlinePayment && isOnlineFreeDelivery ? "(Online Payment Benefit) ✓" : "✓"}</span>
+                        <span>FREE {isOnlinePayment && isOnlineFreeDelivery ? "(Online Payment Benefit)" : ""}</span>
                       </div>
                     ) : (
                       <div className="text-right">
