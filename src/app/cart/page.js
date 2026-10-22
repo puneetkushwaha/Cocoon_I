@@ -547,6 +547,24 @@ export default function CartPage() {
       } catch (e) {}
     };
     syncStoreInfo();
+
+    // Fetch live coupons & settings from server & database
+    fetch("/api/store/data")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          if (Array.isArray(data.coupons)) {
+            STORE.setCoupons(data.coupons);
+            setAvailableCoupons(data.coupons);
+          }
+          if (data.settings) {
+            STORE.setSettings(data.settings);
+            setIsOnlineFreeDelivery(STORE.isOnlineFreeDeliveryEnabled());
+          }
+        }
+      })
+      .catch(() => {});
+
     window.addEventListener("cocoon_store_update", syncStoreInfo);
     return () => window.removeEventListener("cocoon_store_update", syncStoreInfo);
   }, []);

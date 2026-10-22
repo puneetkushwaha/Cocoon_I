@@ -295,6 +295,21 @@ export async function validateCouponFromSupabase(rawCode, cart = [], subtotal = 
       console.warn("Supabase store_data coupons lookup notice:", err);
     }
 
+    // 2.5 Server API cache lookup (Guarantees zero-lag sync across devices)
+    try {
+      const res = await fetch("/api/store/data?type=coupons");
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.coupons)) {
+          STORE.setCoupons(json.coupons);
+          const match = json.coupons.find((c) => c.code?.toUpperCase() === cleanCode);
+          if (match) {
+            return STORE.calculateCouponDiscount(match, cart, subtotal);
+          }
+        }
+      }
+    } catch (_) {}
+
     // 3. Query Supabase 'coupons' table (where customer review rewards and single-use codes are stored)
     try {
       const { data, error } = await supabase
