@@ -346,14 +346,6 @@ export default function Preset4() {
             
             {/* Left Content */}
             <div className="lg:col-span-6 space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF0EA] border border-[#F3D5CF] text-[#B06B5B] text-xs font-bold uppercase tracking-[0.2em]">
-                <svg className="w-3.5 h-3.5 text-[#B06B5B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="3"/>
-                  <path d="M12 2a4 4 0 0 1 4 4c0 2-4 6-4 6s-4-4-4-6a4 4 0 0 1 4-4zM22 12a4 4 0 0 1-4 4c-2 0-6-4-6-4s4-4 6-4a4 4 0 0 1 4 4zM12 22a4 4 0 0 1-4-4c0-2 4-6 4-6s4 4 4 6a4 4 0 0 1-4 4zM2 12a4 4 0 0 1 4-4c2 0 6 4 6 4s-4 4-6 4a4 4 0 0 1-4-4z"/>
-                </svg>
-                <span>GoCocoon • Handcrafted Crochet India</span>
-              </div>
-
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light font-header text-[#2C2623] leading-[1.06] tracking-tight">
                 Handcrafted Crochet where <span className="italic font-normal text-[#B06B5B] underline decoration-[#F3D5CF] decoration-wavy">art</span> meets needle and thread.
               </h1>
