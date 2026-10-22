@@ -542,6 +542,11 @@ export default function CartPage() {
   useEffect(() => {
     const syncStoreInfo = () => {
       try {
+        const codOn = STORE.isCodEnabled();
+        setIsCodAllowed(codOn);
+        if (!codOn && paymentMethod === "cod") {
+          setPaymentMethod("upi");
+        }
         setIsOnlineFreeDelivery(STORE.isOnlineFreeDeliveryEnabled());
         setAvailableCoupons(STORE.getCoupons());
       } catch (e) {}
@@ -549,7 +554,7 @@ export default function CartPage() {
     syncStoreInfo();
 
     // Fetch live coupons & settings from server & database
-    fetch("/api/store/data")
+    fetch(`/api/store/data?_t=${Date.now()}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -559,6 +564,11 @@ export default function CartPage() {
           }
           if (data.settings) {
             STORE.setSettings(data.settings);
+            const codOn = STORE.isCodEnabled();
+            setIsCodAllowed(codOn);
+            if (!codOn) {
+              setPaymentMethod("upi");
+            }
             setIsOnlineFreeDelivery(STORE.isOnlineFreeDeliveryEnabled());
           }
         }

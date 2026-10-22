@@ -20,6 +20,7 @@ export default function Preset4() {
   const [storeHeroCards, setStoreHeroCards] = useState(() => STORE.getHeroCards());
   const [storeTicker, setStoreTicker] = useState(() => STORE.getTicker());
   const [storeBestsellers, setStoreBestsellers] = useState(() => STORE.getBestsellers());
+  const [storeSettings, setStoreSettings] = useState(() => STORE.getSettings());
 
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -138,6 +139,7 @@ export default function Preset4() {
       setStoreHeroCards(STORE.getHeroCards());
       setStoreTicker(STORE.getTicker());
       setStoreBestsellers(STORE.getBestsellers());
+      setStoreSettings(STORE.getSettings());
       try {
         const savedCart = sessionStorage.getItem("cocoon_temp_cart") || localStorage.getItem("cocoon_temp_cart");
         if (savedCart) setCart(JSON.parse(savedCart));
@@ -155,6 +157,7 @@ export default function Preset4() {
         if (Array.isArray(serverData.bestsellers)) setStoreBestsellers(serverData.bestsellers);
         if (Array.isArray(serverData.heroCards)) setStoreHeroCards(serverData.heroCards);
         if (Array.isArray(serverData.ticker)) setStoreTicker(serverData.ticker);
+        if (serverData.settings) setStoreSettings(serverData.settings);
       }
     });
     window.addEventListener("cocoon_store_update", syncData);
@@ -376,8 +379,12 @@ export default function Preset4() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25" />
                   </svg>
                   <div>
-                    <p className="text-[11px] font-bold text-[#2C2623] leading-none">Free Express Transit</p>
-                    <p className="text-[9px] text-stone-500 font-serif mt-0.5">Free on Online Orders</p>
+                    <p className="text-[11px] font-bold text-[#2C2623] leading-none">
+                      {storeSettings?.freeDeliveryOnOnline !== false ? "Free Express Transit" : "Express Transit"}
+                    </p>
+                    <p className="text-[9px] text-stone-500 font-serif mt-0.5">
+                      {storeSettings?.freeDeliveryOnOnline !== false ? "Free on Online Orders" : "Free on Orders ₹999+"}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/80 border border-[#EAE1D3] shadow-2xs">
@@ -385,8 +392,12 @@ export default function Preset4() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6H2.25m0 0H3m0 0v1.5m0-1.5h18m-18 0a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 4.5v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 16.5V6z" />
                   </svg>
                   <div>
-                    <p className="text-[11px] font-bold text-[#2C2623] leading-none">Cash on Delivery</p>
-                    <p className="text-[9px] text-stone-500 font-serif mt-0.5">Pay at Doorstep</p>
+                    <p className="text-[11px] font-bold text-[#2C2623] leading-none">
+                      {storeSettings?.codEnabled !== false ? "Cash on Delivery" : "Prepaid Express"}
+                    </p>
+                    <p className="text-[9px] text-stone-500 font-serif mt-0.5">
+                      {storeSettings?.codEnabled !== false ? "Pay at Doorstep" : "Instant UPI & Cards"}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/80 border border-[#EAE1D3] shadow-2xs">

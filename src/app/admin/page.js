@@ -214,8 +214,13 @@ export default function AdminPage() {
           if (serverData.heroCards) setHeroCards(serverData.heroCards);
           if (serverData.ticker) setTickerList(serverData.ticker);
           if (serverData.bestsellers) setBestsellers(serverData.bestsellers);
-          if (serverData.settings?.freeDeliveryOnOnline !== undefined) {
-            setIsOnlineFreeDelivery(Boolean(serverData.settings.freeDeliveryOnOnline));
+          if (serverData.settings) {
+            if (serverData.settings.codEnabled !== undefined) {
+              setIsCodEnabled(Boolean(serverData.settings.codEnabled));
+            }
+            if (serverData.settings.freeDeliveryOnOnline !== undefined) {
+              setIsOnlineFreeDelivery(Boolean(serverData.settings.freeDeliveryOnOnline));
+            }
           }
         }
       }
@@ -251,24 +256,54 @@ export default function AdminPage() {
     }
   };
 
-  const handleToggleCod = () => {
-    const newState = STORE.toggleCod();
+  const handleToggleCod = async () => {
+    const s = STORE.getSettings();
+    const newState = !isCodEnabled;
+    const updatedSettings = { ...s, codEnabled: newState };
+    STORE.setSettings(updatedSettings);
     setIsCodEnabled(newState);
     triggerToast(
       newState
-        ? "Cash on Delivery (COD) turned ON. Buyers can now choose COD at checkout!"
-        : "Cash on Delivery (COD) turned OFF. Store is now Prepaid Online Only."
+        ? "Saving... Turning Cash on Delivery (COD) ON..."
+        : "Saving... Turning Cash on Delivery (COD) OFF..."
     );
+    try {
+      const res = await STORE.syncToBackend("settings", updatedSettings);
+      if (res && res.success) {
+        triggerToast(
+          newState
+            ? "Cash on Delivery (COD) is now LIVE & ACTIVE on website!"
+            : "COD turned OFF. Website checkout is now Prepaid Online Only!"
+        );
+      }
+    } catch (e) {
+      console.warn("COD toggle sync error:", e);
+    }
   };
 
-  const handleToggleOnlineFreeDelivery = () => {
-    const newState = STORE.toggleOnlineFreeDelivery();
+  const handleToggleOnlineFreeDelivery = async () => {
+    const s = STORE.getSettings();
+    const newState = !isOnlineFreeDelivery;
+    const updatedSettings = { ...s, freeDeliveryOnOnline: newState };
+    STORE.setSettings(updatedSettings);
     setIsOnlineFreeDelivery(newState);
     triggerToast(
       newState
-        ? "✓ Free Delivery enabled for Online Payments! Buyers get Rs. 0 delivery fee when paying online."
-        : "Free Delivery on Online Payment turned OFF. Standard delivery fee restored."
+        ? "Saving... Enabling Rs. 0 Free Delivery on Online Payments..."
+        : "Saving... Charging standard delivery fee on Online Payments..."
     );
+    try {
+      const res = await STORE.syncToBackend("settings", updatedSettings);
+      if (res && res.success) {
+        triggerToast(
+          newState
+            ? "Free Delivery on Online Payment is now LIVE on website!"
+            : "Standard delivery fee enabled on Online Payments!"
+        );
+      }
+    } catch (e) {
+      console.warn("Online free delivery sync error:", e);
+    }
   };
 
   const deleteReview = (id) => {
