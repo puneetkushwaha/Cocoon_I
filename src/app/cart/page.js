@@ -249,7 +249,7 @@ export default function CartPage() {
           setIsSubmittingOrder(false);
           setPaymentVerificationState(null);
           setPlacedOrderSummary(confirmedOrder);
-          triggerToast(`Order confirmed for ${cName}! 🎉`);
+          triggerToast(`Order confirmed for ${cName}!`);
           saveOrderToSupabase(confirmedOrder).catch((e) => console.warn("Supabase order sync warning:", e));
 
           // Clean URL without refresh
@@ -395,7 +395,7 @@ export default function CartPage() {
                 const existingOrders = STORE.getOrders();
                 STORE.setOrders([recoveredOrder, ...existingOrders]);
                 setPlacedOrderSummary(recoveredOrder);
-                triggerToast(`Order confirmed for ${recoveredOrder.customerName}! 🎉`);
+                triggerToast(`Order confirmed for ${recoveredOrder.customerName}!`);
               }
             }
           }
@@ -657,7 +657,7 @@ export default function CartPage() {
         setOtpToken(data.otpToken);
         setIsOtpModalOpen(true);
         setResendCooldown(60);
-        triggerToast(`6-digit code dispatched to ${cleanEmail} via Resend ✉️`);
+        triggerToast(`6-digit code dispatched to ${cleanEmail} via Resend`);
       } else {
         triggerToast(data.error || "Failed to dispatch verification email. Please verify your email.");
       }
@@ -883,7 +883,7 @@ export default function CartPage() {
           STORE.setOrders([newOrder, ...existingOrders]);
           activeOrderShownRef.current = newOrder.id;
           setPlacedOrderSummary(newOrder);
-          triggerToast(`Payment verified! Order confirmed 🎉`);
+          triggerToast(`Payment verified! Order confirmed`);
 
           saveOrderToSupabase(newOrder).catch(console.warn);
           try {
@@ -919,7 +919,7 @@ export default function CartPage() {
             activeOrderShownRef.current = paidOrder.id;
             setPlacedOrderSummary(paidOrder);
             setPendingOrderToken(null);
-            triggerToast(`Order confirmed for ${paidOrder.customerName}! 🎉`);
+            triggerToast(`Order confirmed for ${paidOrder.customerName}!`);
             return;
           }
         }
@@ -1090,7 +1090,7 @@ export default function CartPage() {
           } catch (e) {}
           setPaymentVerificationState({
             status: "verifying",
-            message: "Payment verified! Generating your official order confirmation... 🌸"
+            message: "Payment verified! Generating your official order confirmation..."
           });
           await executeOrderFinalization(
             "Online Payment (Razorpay)",
@@ -1107,8 +1107,8 @@ export default function CartPage() {
           key: orderData.keyId,
           amount: orderData.amount,
           currency: orderData.currency || "INR",
-          name: "COCOON 🧶",
-          description: "Stitched with love, packed with care 🌸✨",
+          name: "COCOON",
+          description: "Handcrafted Heirloom Crochet Studio",
           image: "https://www.gococoon.store/icon.svg",
           order_id: razorpayOrderId,
           callback_url: `${typeof window !== "undefined" ? window.location.origin : "https://www.gococoon.store"}/api/payment/callback`,
@@ -1371,7 +1371,7 @@ export default function CartPage() {
                     disabled={isVerifyingManual}
                     className="w-full sm:w-auto px-5 py-2.5 bg-[#B06B5B] hover:bg-[#964B44] text-white text-xs font-bold rounded-full uppercase tracking-wider transition shadow cursor-pointer text-center"
                   >
-                    {isVerifyingManual ? "Checking... ⏳" : "Verify Payment Now ✓"}
+                    {isVerifyingManual ? "Checking..." : "Verify Payment Now ✓"}
                   </button>
                 </div>
               )}
@@ -1746,7 +1746,7 @@ export default function CartPage() {
                 <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#E8DFC9] space-y-3">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-bold text-[#2C2623] flex items-center gap-1.5">
-                      <span>🏷️ Coupons & Studio Offers</span>
+                      <span>Coupons & Studio Offers</span>
                     </span>
                     <span className="text-[10px] font-bold text-stone-500 bg-white px-2 py-0.5 rounded-full border border-stone-200">
                       {appliedCoupons.length > 0 ? `${appliedCoupons.length}/2 Applied` : "Max 2 Stackable"}
@@ -1839,7 +1839,7 @@ export default function CartPage() {
                   <div className="pt-2 border-t border-[#EAE1D3]/70">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1">
-                        <span>✨ Available Offers</span>
+                        <span>Available Offers</span>
                       </span>
                       <button
                         type="button"
@@ -2020,7 +2020,9 @@ export default function CartPage() {
                     {paymentMethod === "upi" && (
                       <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E8DFC9] space-y-2 animate-fadeIn text-left">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs">🔒</span>
+                          <svg className="w-3.5 h-3.5 text-stone-700 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                          </svg>
                           <span className="text-xs font-bold text-stone-800 font-serif">100% Secured by Razorpay</span>
                           <span className="text-[9px] font-semibold bg-[#EFE8DD] text-stone-600 px-1.5 py-0.5 rounded ml-auto">Encrypted 256-Bit</span>
                         </div>
@@ -2102,7 +2104,7 @@ export default function CartPage() {
                       {isSubmittingOrder
                         ? "Opening Payment Window..."
                         : (paymentMethod === "upi"
-                            ? `🔒 Pay ₹${grandTotal} via UPI / Card & Confirm Order →`
+                            ? `Pay ₹${grandTotal} via UPI / Card & Confirm Order →`
                             : `Confirm COD Order (₹${grandTotal}) →`)}
                     </span>
                   </button>
@@ -2324,7 +2326,7 @@ export default function CartPage() {
               {placedOrderSummary.awbCode && (
                 <div className="flex justify-between items-center text-[11px] text-blue-900 bg-blue-50/80 p-2.5 rounded-xl border border-blue-200">
                   <div className="space-y-0.5 text-left">
-                    <span className="font-bold block text-blue-950">🚚 Courier: {placedOrderSummary.courierName || "Express Dispatch"}</span>
+                    <span className="font-bold block text-blue-950">Courier: {placedOrderSummary.courierName || "Express Dispatch"}</span>
                     <span className="font-mono text-[10px] text-blue-900">AWB No: <strong>{placedOrderSummary.awbCode}</strong></span>
                   </div>
                   <span className="text-[10px] bg-blue-600 text-white px-2.5 py-1 rounded-full font-bold">
@@ -2382,8 +2384,10 @@ export default function CartPage() {
       {isOtpModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-fadeIn">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center space-y-5 shadow-2xl border border-[#EFE8DD]">
-            <div className="w-14 h-14 mx-auto rounded-full bg-amber-50 text-[#B06B5B] flex items-center justify-center border border-amber-200 text-2xl">
-              ✉️
+            <div className="w-14 h-14 mx-auto rounded-full bg-amber-50 text-[#B06B5B] flex items-center justify-center border border-amber-200">
+              <svg className="w-6 h-6 text-[#B06B5B]" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+              </svg>
             </div>
 
             <div className="space-y-1">

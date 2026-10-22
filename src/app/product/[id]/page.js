@@ -940,7 +940,9 @@ export default function ProductDetailPage({ params }) {
               {/* Artisan Labor Meter (Price Justification) */}
               <div className="mt-2.5 p-3 rounded-2xl bg-[#FAF7F2] border border-[#EAE1D3] flex items-center justify-between text-left">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-xl">⏱️</span>
+                  <svg className="w-5 h-5 text-[#B06B5B] shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                   <div>
                     <p className="text-xs font-bold text-[#2C2623] flex items-center gap-1.5 flex-wrap">
                       <span>{craftStats.hours} of Artisan Hand-Knitting</span>
@@ -957,7 +959,9 @@ export default function ProductDetailPage({ params }) {
 
               {/* Complimentary Gifting Unboxing Guarantee */}
               <div className="mt-2.5 p-3 rounded-2xl bg-gradient-to-r from-[#FFFDF9] to-[#FAF5EE] border border-[#EAE0D2] flex items-center gap-3 text-left">
-                <span className="text-xl">🎁</span>
+                <svg className="w-5 h-5 text-[#B06B5B] shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 11.25v8.25a1.5 1.5 0 01-1.5 1.5H4.5a1.5 1.5 0 01-1.5-1.5v-8.25M3 11.25h18M12 11.25v9.75m-4.5-9.75V7.5a2.25 2.25 0 014.5 0v3.75m0 0h-4.5m4.5-3.75a2.25 2.25 0 014.5 0v3.75h-4.5" />
+                </svg>
                 <div>
                   <p className="text-xs font-bold text-[#2C2623]">
                     Ready to Gift • Complimentary Aesthetic Box
@@ -1678,7 +1682,9 @@ export default function ProductDetailPage({ params }) {
               {paymentMethod === "upi" && (
                 <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#E8DFC9] space-y-1.5 text-left animate-fadeIn">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-stone-800">
-                    <span>🔒</span>
+                    <svg className="w-3.5 h-3.5 text-stone-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
                     <span>Secured by Razorpay</span>
                   </div>
                   <p className="text-[11px] text-stone-600 font-serif leading-relaxed">
@@ -1693,7 +1699,7 @@ export default function ProductDetailPage({ params }) {
               >
                 <span>
                   {paymentMethod === "upi"
-                    ? `🔒 Pay ₹${product.price * quantity} via UPI / Card →`
+                    ? `Pay ₹${product.price * quantity} via UPI / Card →`
                     : `Confirm Cash on Delivery (₹${product.price * quantity}) →`}
                 </span>
               </button>

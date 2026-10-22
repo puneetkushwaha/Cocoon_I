@@ -380,21 +380,27 @@ export default function Preset4() {
               {/* 3 Risk-Removal Trust Badges */}
               <div className="pt-6 border-t border-[#EFE8DD] grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-left">
                 <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/80 border border-[#EAE1D3] shadow-2xs">
-                  <span className="text-base sm:text-lg">📦</span>
+                  <svg className="w-4 h-4 text-[#B06B5B] shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25" />
+                  </svg>
                   <div>
                     <p className="text-[11px] font-bold text-[#2C2623] leading-none">Free Express Transit</p>
                     <p className="text-[9px] text-stone-500 font-serif mt-0.5">Free on Online Orders</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/80 border border-[#EAE1D3] shadow-2xs">
-                  <span className="text-base sm:text-lg">💵</span>
+                  <svg className="w-4 h-4 text-[#B06B5B] shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6H2.25m0 0H3m0 0v1.5m0-1.5h18m-18 0a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 4.5v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 16.5V6z" />
+                  </svg>
                   <div>
                     <p className="text-[11px] font-bold text-[#2C2623] leading-none">Cash on Delivery</p>
                     <p className="text-[9px] text-stone-500 font-serif mt-0.5">Pay at Doorstep</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/80 border border-[#EAE1D3] shadow-2xs">
-                  <span className="text-base sm:text-lg">🌿</span>
+                  <svg className="w-4 h-4 text-[#B06B5B] shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18m0-18c-3 3-5 7-5 11 0 3 2 5 5 7m0-18c3 3 5 7 5 11 0 3-2 5-5 7" />
+                  </svg>
                   <div>
                     <p className="text-[11px] font-bold text-[#2C2623] leading-none">100% Milk Cotton</p>
                     <p className="text-[9px] text-stone-500 font-serif mt-0.5">Gentle, Zero Plastic</p>
@@ -542,7 +548,7 @@ export default function Preset4() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-3 border-b border-[#EAE0D2] gap-4">
             <div className="text-left">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF0EA] border border-[#F3D5CF] text-[10px] font-black uppercase tracking-[0.25em] text-[#B06B5B] mb-2">
-                <span>✨ Pocket-Friendly Delights</span>
+                <span>Pocket-Friendly Delights</span>
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light font-header text-[#2C2623] tracking-tight">
                 Under ₹199 • Your First Crochet Treasure
@@ -552,7 +558,7 @@ export default function Preset4() {
               </p>
             </div>
             <div className="inline-flex items-center gap-2 text-xs font-bold text-[#8B483B] bg-white px-3.5 py-1.5 rounded-full border border-[#ECCEC7] shadow-xs shrink-0 self-start sm:self-auto">
-              <span>🏷️ Extra 10% OFF with code</span>
+              <span>Extra 10% OFF with code</span>
               <span className="font-mono font-black text-[#B06B5B] bg-[#FAF0EA] px-2 py-0.5 rounded">COCOON10</span>
             </div>
           </div>
@@ -580,7 +586,7 @@ export default function Preset4() {
                       </button>
 
                       <span className="absolute top-2 left-2 z-10 bg-[#2C2623]/85 backdrop-blur-xs text-white text-[8px] sm:text-[9px] font-sans font-bold px-2 py-0.5 rounded-full shadow-2xs">
-                        ⏱️ {craft.hours} Craft
+                        {craft.hours} Craft
                       </span>
 
                       <Link href={`/product/${p.id}`} prefetch={true} className="block w-full h-full">
@@ -673,7 +679,7 @@ export default function Preset4() {
                       </span>
 
                       <div className="absolute bottom-3 left-3 z-10 px-2.5 py-1 rounded-full bg-[#2C2623]/85 backdrop-blur-md text-[9px] font-bold text-white shadow-xs flex items-center gap-1.5">
-                        <span>⏱️ {craft.hours} Hand-knitted</span>
+                        <span>{craft.hours} Hand-knitted</span>
                         <span>•</span>
                         <span>{craft.knots}</span>
                       </div>
@@ -852,7 +858,7 @@ export default function Preset4() {
                           {product.subcategory ? product.subcategory.replace('-', ' ') : product.category}
                         </span>
                         <span className="text-[8px] sm:text-[9px] font-bold text-[#7A3F34] bg-[#FAF4EE] px-1.5 py-0.5 rounded border border-[#EDE2D5] shrink-0">
-                          ⏱️ {craft.hours}
+                          {craft.hours}
                         </span>
                       </div>
                       <Link href={`/product/${product.id}`} prefetch={true} className="block">
@@ -914,7 +920,7 @@ export default function Preset4() {
                     loading="lazy"
                   />
                   <div className="absolute top-3 left-3 bg-[#2C2623]/85 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
-                    📸 Real Customer Unboxing
+                    Real Customer Unboxing
                   </div>
                   <div className="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md rounded-xl p-2.5 border border-[#EAE0D2] shadow-sm flex items-center justify-between text-xs">
                     <div>
@@ -928,14 +934,14 @@ export default function Preset4() {
 
               {/* Little floating tag */}
               <div className="absolute -bottom-4 -right-2 sm:-right-4 bg-[#B06B5B] text-white px-4 py-2 rounded-2xl shadow-lg text-[11px] font-bold hidden sm:flex items-center gap-2 border-2 border-white">
-                <span>🎁 Ready-to-Gift Packaging</span>
+                <span>Ready-to-Gift Packaging</span>
               </div>
             </div>
 
             {/* Gifting Narrative & Pillars */}
             <div className="lg:col-span-7 space-y-6 text-left">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FAF0EA] border border-[#F3D5CF] text-[10px] font-black uppercase tracking-[0.25em] text-[#B06B5B]">
-                <span>🎁 The Art of Meaningful Gifting</span>
+                <span>The Art of Meaningful Gifting</span>
               </div>
 
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light font-header text-[#2C2623] leading-tight tracking-tight">
@@ -946,7 +952,7 @@ export default function Preset4() {
               <div className="p-5 rounded-2xl bg-white border border-[#E8DFC9] shadow-xs relative">
                 <span className="text-3xl text-[#B06B5B]/30 font-serif absolute top-2 right-4">“</span>
                 <p className="text-sm sm:text-base font-serif italic text-[#2C2623]/85 leading-relaxed">
-                  &ldquo;Thank you very much ...all these are really very beautiful and this gift was totally unexpected...I&apos;m really happy ...your efforts are visible in each and every thing ...thank you for the gift 😊&rdquo;
+                  &ldquo;Thank you very much ...all these are really very beautiful and this gift was totally unexpected...I&apos;m really happy ...your efforts are visible in each and every thing ...thank you for the gift.&rdquo;
                 </p>
                 <div className="mt-3 flex items-center justify-between text-xs pt-3 border-t border-[#F2ECE1]">
                   <span className="font-bold text-[#2C2623]">Nimisha Agarwal</span>
@@ -957,19 +963,19 @@ export default function Preset4() {
               {/* 3 Packaging Guarantees */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
                 <div className="p-3.5 rounded-xl bg-white/80 border border-[#EAE0D2]">
-                  <div className="text-lg mb-1">📦</div>
+                  <span className="inline-block text-[10px] font-mono font-bold text-[#B06B5B] bg-[#FAF0EA] px-2 py-0.5 rounded border border-[#F3D5CF] mb-1.5">01</span>
                   <h4 className="text-xs font-bold text-[#2C2623]">Vintage Gift Box</h4>
                   <p className="text-[11px] text-stone-500 font-serif mt-0.5">Sturdy signature hard-board box wrapped in butter paper.</p>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-white/80 border border-[#EAE0D2]">
-                  <div className="text-lg mb-1">💌</div>
+                  <span className="inline-block text-[10px] font-mono font-bold text-[#B06B5B] bg-[#FAF0EA] px-2 py-0.5 rounded border border-[#F3D5CF] mb-1.5">02</span>
                   <h4 className="text-xs font-bold text-[#2C2623]">Wax-Sealed Card</h4>
                   <p className="text-[11px] text-stone-500 font-serif mt-0.5">Complimentary handwritten note with custom message.</p>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-white/80 border border-[#EAE0D2]">
-                  <div className="text-lg mb-1">🌿</div>
+                  <span className="inline-block text-[10px] font-mono font-bold text-[#B06B5B] bg-[#FAF0EA] px-2 py-0.5 rounded border border-[#F3D5CF] mb-1.5">03</span>
                   <h4 className="text-xs font-bold text-[#2C2623]">Zero Plastic</h4>
                   <p className="text-[11px] text-stone-500 font-serif mt-0.5">100% biodegradable jute twines &amp; soft tissue wrap.</p>
                 </div>
