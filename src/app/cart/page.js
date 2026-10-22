@@ -1784,7 +1784,7 @@ export default function CartPage() {
                       <span>Coupons & Studio Offers</span>
                     </span>
                     <span className="text-[10px] font-bold text-stone-500 bg-white px-2 py-0.5 rounded-full border border-stone-200">
-                      {appliedCoupons.length > 0 ? `${appliedCoupons.length}/2 Applied` : "Max 2 Stackable"}
+                      {appliedCoupons.length > 0 ? "1 Coupon Applied" : "1 Coupon per order"}
                     </span>
                   </div>
 
@@ -1957,8 +1957,21 @@ export default function CartPage() {
                     <span className="text-emerald-700 font-bold">Complimentary Dustbag (₹0)</span>
                   </div>
 
-                  <div className="flex justify-between text-stone-600">
-                    <span>Express Courier Transit:</span>
+                  <div className="flex justify-between items-start text-stone-600">
+                    <span className="flex items-center gap-1.5 pt-0.5">
+                      <span>Express Courier Transit:</span>
+                      <span
+                        className="relative group cursor-pointer inline-flex items-center justify-center"
+                        title="Delivery fee is non-refundable if you return this order."
+                      >
+                        <span className="w-3.5 h-3.5 rounded-full border border-stone-400 text-stone-500 text-[10px] flex items-center justify-center font-bold leading-none hover:bg-stone-200 hover:text-stone-800 transition">
+                          ?
+                        </span>
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:block w-48 p-2 bg-[#2C2623] text-[#FFFDF9] text-[10px] rounded-lg shadow-xl font-sans z-50 text-center leading-tight pointer-events-none border border-stone-700">
+                          Delivery fee is non-refundable if you return this order.
+                        </span>
+                      </span>
+                    </span>
                     {shippingCost === 0 ? (
                       <div className="flex items-center gap-1.5 text-emerald-700 font-bold">
                         <span className="line-through text-stone-400 text-xs">₹80</span>
@@ -1967,8 +1980,11 @@ export default function CartPage() {
                     ) : (
                       <div className="text-right">
                         <span className="font-sans font-bold text-stone-900">₹{shippingCost}</span>
+                        <span className="block text-[9px] text-stone-400 font-serif">
+                          (Non-refundable on return)
+                        </span>
                         {isOnlineFreeDelivery && (
-                          <span className="block text-[10px] text-emerald-600 font-bold">
+                          <span className="block text-[10px] text-emerald-600 font-bold mt-0.5">
                             (Select Online Payment to get ₹0 Free Delivery!)
                           </span>
                         )}
