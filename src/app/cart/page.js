@@ -20,10 +20,12 @@ export default function CartPage() {
   const [customerUser, setCustomerUser] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
 
-  // Coupon / Promo States
+  // Coupon / Promo States (supports up to 2 stacked coupons)
   const [couponInput, setCouponInput] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [appliedCoupons, setAppliedCoupons] = useState([]);
+  const [availableCoupons, setAvailableCoupons] = useState(() => STORE.getCoupons());
   const [couponError, setCouponError] = useState("");
+  const [showAllCoupons, setShowAllCoupons] = useState(false);
 
   // Cash on Delivery Email OTP Verification States
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
@@ -518,27 +520,35 @@ export default function CartPage() {
     return cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
   }, [cart]);
 
-  // Dynamic coupon discount calculation (Percentage, Flat, BOGO)
+  // Dynamic coupon discount calculation for up to 2 stacked coupons (Percentage, Flat, BOGO)
   const couponDiscount = useMemo(() => {
-    if (!appliedCoupon) return 0;
-    const calc = STORE.calculateCouponDiscount(appliedCoupon, cart, subtotal);
-    if (calc && calc.valid) {
-      return Number(calc.discount || 0);
+    if (!appliedCoupons || appliedCoupons.length === 0) return 0;
+    let totalDiscount = 0;
+    let remainingSubtotal = subtotal;
+
+    for (const cpn of appliedCoupons) {
+      const calc = STORE.calculateCouponDiscount(cpn, cart, remainingSubtotal);
+      if (calc && calc.valid) {
+        const d = Number(calc.discount || 0);
+        totalDiscount += d;
+        remainingSubtotal = Math.max(0, remainingSubtotal - d);
+      }
     }
-    return 0;
-  }, [appliedCoupon, cart, subtotal]);
+    return Math.min(totalDiscount, subtotal);
+  }, [appliedCoupons, cart, subtotal]);
 
   const [isOnlineFreeDelivery, setIsOnlineFreeDelivery] = useState(true);
 
   useEffect(() => {
-    const syncSettings = () => {
+    const syncStoreInfo = () => {
       try {
         setIsOnlineFreeDelivery(STORE.isOnlineFreeDeliveryEnabled());
+        setAvailableCoupons(STORE.getCoupons());
       } catch (e) {}
     };
-    syncSettings();
-    window.addEventListener("cocoon_store_update", syncSettings);
-    return () => window.removeEventListener("cocoon_store_update", syncSettings);
+    syncStoreInfo();
+    window.addEventListener("cocoon_store_update", syncStoreInfo);
+    return () => window.removeEventListener("cocoon_store_update", syncStoreInfo);
   }, []);
 
   const isOnlinePayment = paymentMethod === "upi" || paymentMethod === "online" || paymentMethod === "razorpay";
@@ -555,26 +565,42 @@ export default function CartPage() {
 
   const grandTotal = Math.max(0, subtotal - couponDiscount + shippingCost);
 
-  // Coupon Handlers
-  const handleApplyCoupon = async (e) => {
-    if (e) e.preventDefault();
-    const raw = couponInput.trim().toUpperCase();
+  // Multi-Coupon Handlers (Max 2 coupons simultaneously)
+  const handleApplyCoupon = async (e, directCode = null) => {
+    if (e && typeof e.preventDefault === "function") e.preventDefault();
+    const raw = (directCode || couponInput || "").trim().toUpperCase();
     if (!raw) {
       setCouponError("Please enter a coupon code");
       return;
     }
     setCouponError("");
 
+    // Guard against duplicate application
+    if (appliedCoupons.some((c) => c.code?.toUpperCase() === raw)) {
+      setCouponError(`Coupon "${raw}" is already applied.`);
+      return;
+    }
+
+    // Guard: Max 2 coupons at a time!
+    if (appliedCoupons.length >= 2) {
+      setCouponError("Maximum 2 coupons can be active at a time. Remove one coupon to apply this.");
+      triggerToast("Maximum 2 coupons allowed. Remove one to add another.");
+      return;
+    }
+
     try {
       // Validate with central coupon engine + Supabase database check
-      const result = await validateCouponFromSupabase(raw, cart, subtotal);
+      const remainingSubtotal = Math.max(0, subtotal - couponDiscount);
+      const result = await validateCouponFromSupabase(raw, cart, remainingSubtotal);
       if (result && result.valid) {
-        setAppliedCoupon({
+        const newCouponObj = {
           ...result.coupon,
           discount: result.discount,
           type: result.type,
           message: result.message
-        });
+        };
+        setAppliedCoupons((prev) => [...prev, newCouponObj]);
+        setCouponInput("");
         triggerToast(`✓ ${result.message}`);
         return;
       } else {
@@ -585,11 +611,15 @@ export default function CartPage() {
     }
   };
 
-  const handleRemoveCoupon = () => {
-    setAppliedCoupon(null);
-    setCouponInput("");
+  const handleRemoveCoupon = (codeToRemove = null) => {
+    if (!codeToRemove) {
+      setAppliedCoupons([]);
+      triggerToast("All coupons removed.");
+    } else {
+      setAppliedCoupons((prev) => prev.filter((c) => c.code?.toUpperCase() !== codeToRemove.toUpperCase()));
+      triggerToast(`Coupon ${codeToRemove} removed.`);
+    }
     setCouponError("");
-    triggerToast("Coupon removed.");
   };
 
   // Cooldown timer for OTP Resend
@@ -761,7 +791,7 @@ export default function CartPage() {
           : "Pending (Pay on Delivery - Email Verified)",
         status: "Processing",
         notes: (customerForm.notes ? customerForm.notes.trim() + " • " : "") +
-          (appliedCoupon ? `Coupon: ${appliedCoupon.code} (-₹${couponDiscount}) • ` : "") +
+          (appliedCoupons.length > 0 ? `Coupons: ${appliedCoupons.map((c) => c.code).join(", ")} (-₹${couponDiscount}) • ` : "") +
           (isOnlineOrder
             ? `Paid Online via Razorpay [Payment ID: ${paymentId || "Online"}]`
             : `Cash on Delivery (Email OTP Verified)`),
@@ -1022,7 +1052,7 @@ export default function CartPage() {
           customerForm: { ...customerForm },
           cart: [...cart],
           grandTotal,
-          appliedCoupon,
+          appliedCoupons,
           couponDiscount,
           createdAt: Date.now()
         };
@@ -1712,57 +1742,91 @@ export default function CartPage() {
                   </h3>
                 </div>
 
-                {/* Coupon / Promo Code Input Box */}
-                <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E8DFC9] space-y-2">
+                {/* Coupon / Promo Code Input Box (Supports Up to 2 Stacked Coupons) */}
+                <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#E8DFC9] space-y-3">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-bold text-[#2C2623] flex items-center gap-1.5">
-                      <span>🏷️ Have a Coupon Code?</span>
+                      <span>🏷️ Coupons & Studio Offers</span>
                     </span>
-                    {appliedCoupon && (
-                      <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
-                        {appliedCoupon.code} Applied
-                      </span>
-                    )}
+                    <span className="text-[10px] font-bold text-stone-500 bg-white px-2 py-0.5 rounded-full border border-stone-200">
+                      {appliedCoupons.length > 0 ? `${appliedCoupons.length}/2 Applied` : "Max 2 Stackable"}
+                    </span>
                   </div>
 
-                  {appliedCoupon ? (
-                    <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl text-xs text-emerald-900">
-                      <div>
-                        <strong>{appliedCoupon.code}</strong>{" "}
-                        <span className="text-[11px] font-sans text-emerald-700">
-                          {appliedCoupon.type === "bogo"
-                            ? `(BOGO: -₹${couponDiscount})`
-                            : appliedCoupon.type === "flat"
-                            ? `(Flat ₹${appliedCoupon.discountAmount || couponDiscount} OFF)`
-                            : `(Flat ${appliedCoupon.discountPercent}% OFF)`}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleRemoveCoupon}
-                        className="text-[11px] font-bold text-rose-600 hover:underline cursor-pointer"
-                      >
-                        Remove
-                      </button>
+                  {/* Applied Coupons List */}
+                  {appliedCoupons.length > 0 && (
+                    <div className="space-y-1.5">
+                      {appliedCoupons.map((cpn) => {
+                        const individualCalc = STORE.calculateCouponDiscount(cpn, cart, subtotal);
+                        const discAmount = individualCalc?.valid ? individualCalc.discount : cpn.discount || 0;
+
+                        return (
+                          <div
+                            key={cpn.code}
+                            className="flex items-center justify-between bg-emerald-50/90 border border-emerald-200 px-3 py-2 rounded-xl text-xs text-emerald-950"
+                          >
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-mono font-bold bg-white px-2 py-0.5 rounded-md border border-emerald-300 text-emerald-800 shadow-2xs">
+                                {cpn.code}
+                              </span>
+                              <span className="text-[11px] font-sans text-emerald-700">
+                                {cpn.type === "bogo"
+                                  ? `(BOGO Free Item)`
+                                  : cpn.type === "flat"
+                                  ? `(Flat ₹${cpn.discountAmount || discAmount} OFF)`
+                                  : `(${cpn.discountPercent || 10}% OFF)`}
+                              </span>
+                              <span className="font-bold text-emerald-800">
+                                -₹{discAmount}
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveCoupon(cpn.code)}
+                              className="text-[11px] font-bold text-rose-600 hover:text-rose-800 underline cursor-pointer ml-2"
+                              title="Remove coupon"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
-                  ) : (
+                  )}
+
+                  {/* Input field (disabled if 2 coupons already stacked) */}
+                  {appliedCoupons.length < 2 ? (
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={couponInput}
                         onChange={(e) => {
-                          setCouponInput(e.target.value.toUpperCase());
+                          setCouponInput(e.target.value.toUpperCase().replace(/\s+/g, ""));
                           setCouponError("");
                         }}
-                        placeholder="e.g. BOGO, FLAT100, COCOON10"
-                        className="flex-1 bg-white border border-[#DDD3C4] rounded-xl px-3 py-1.5 text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-[#B06B5B]"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleApplyCoupon(e);
+                        }}
+                        placeholder="Enter coupon code (e.g. COCOON10)"
+                        className="flex-1 bg-white border border-[#DDD3C4] rounded-xl px-3 py-2 text-xs uppercase font-mono tracking-wider focus:outline-none focus:border-[#B06B5B]"
                       />
                       <button
                         type="button"
                         onClick={handleApplyCoupon}
-                        className="px-3.5 py-1.5 bg-[#2C2623] hover:bg-black text-white text-xs font-bold rounded-xl transition cursor-pointer"
+                        className="px-4 py-2 bg-[#2C2623] hover:bg-black text-white text-xs font-bold rounded-xl transition cursor-pointer shadow-2xs active:scale-95"
                       >
                         Apply
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="p-2 bg-emerald-100/60 rounded-xl border border-emerald-200 text-[11px] text-emerald-900 font-sans flex items-center justify-between">
+                      <span>✓ 2 Coupons applied (Maximum stack limit reached).</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCoupon(null)}
+                        className="text-emerald-950 font-bold underline hover:text-rose-700 cursor-pointer ml-2"
+                      >
+                        Clear All
                       </button>
                     </div>
                   )}
@@ -1770,6 +1834,89 @@ export default function CartPage() {
                   {couponError && (
                     <p className="text-[11px] text-rose-600 font-medium">{couponError}</p>
                   )}
+
+                  {/* Available Active Studio Coupons Section */}
+                  <div className="pt-2 border-t border-[#EAE1D3]/70">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1">
+                        <span>✨ Available Offers</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setShowAllCoupons(!showAllCoupons)}
+                        className="text-[11px] font-bold text-[#B06B5B] hover:underline cursor-pointer"
+                      >
+                        {showAllCoupons ? "Hide Offers ▲" : `View All (${availableCoupons.filter(c => c.isActive !== false).length}) ▼`}
+                      </button>
+                    </div>
+
+                    {showAllCoupons && (
+                      <div className="mt-2.5 space-y-2 max-h-60 overflow-y-auto pr-1">
+                        {availableCoupons
+                          .filter((c) => c.isActive !== false)
+                          .map((cpn) => {
+                            const isApplied = appliedCoupons.some((a) => a.code?.toUpperCase() === cpn.code?.toUpperCase());
+
+                            return (
+                              <div
+                                key={cpn.id || cpn.code}
+                                className={`p-2.5 rounded-xl border transition-all flex items-center justify-between gap-3 text-left ${
+                                  isApplied
+                                    ? "bg-emerald-50/80 border-emerald-300"
+                                    : "bg-white border-[#E8DFC9] hover:border-[#B06B5B]"
+                                }`}
+                              >
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="font-mono font-bold text-xs uppercase px-2 py-0.5 rounded-md bg-[#FAF4ED] text-[#2C2623] border border-[#DDD3C4]">
+                                      {cpn.code}
+                                    </span>
+                                    <span className="text-[10px] font-bold uppercase text-[#B06B5B]">
+                                      {cpn.code === "COCOON10"
+                                        ? "10% OFF • Up to ₹50 (₹80 on 2+ items)"
+                                        : cpn.type === "bogo"
+                                        ? "Buy 1 Get 1 Free"
+                                        : cpn.type === "flat"
+                                        ? `Flat ₹${cpn.discountAmount} OFF`
+                                        : `${cpn.discountPercent}% OFF`}
+                                    </span>
+                                  </div>
+                                  <p className="text-[10px] text-stone-500 mt-0.5 truncate">
+                                    {cpn.title || (cpn.minOrderValue > 0 ? `Min order ₹${cpn.minOrderValue}` : "No minimum order required")}
+                                  </p>
+                                </div>
+
+                                <div>
+                                  {isApplied ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemoveCoupon(cpn.code)}
+                                      className="px-2.5 py-1 rounded-lg bg-emerald-700 text-white text-[10px] font-bold tracking-wider uppercase transition cursor-pointer hover:bg-rose-600"
+                                      title="Click to remove"
+                                    >
+                                      Applied ✓
+                                    </button>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleApplyCoupon(null, cpn.code)}
+                                      disabled={appliedCoupons.length >= 2}
+                                      className={`px-3 py-1 rounded-lg text-[10px] font-bold tracking-wider uppercase transition cursor-pointer ${
+                                        appliedCoupons.length >= 2
+                                          ? "bg-stone-200 text-stone-400 cursor-not-allowed"
+                                          : "bg-[#B06B5B] hover:bg-[#964B44] text-white shadow-2xs active:scale-95"
+                                      }`}
+                                    >
+                                      Apply
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Pricing Breakdown */}
@@ -1781,7 +1928,9 @@ export default function CartPage() {
 
                   {couponDiscount > 0 && (
                     <div className="flex justify-between text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200">
-                      <span>Coupon Discount ({appliedCoupon?.code}):</span>
+                      <span>
+                        Coupon Discount ({appliedCoupons.map((c) => c.code).join(" + ")}):
+                      </span>
                       <span>-₹{couponDiscount}</span>
                     </div>
                   )}

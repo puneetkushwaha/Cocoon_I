@@ -588,10 +588,15 @@ export default function Preset4() {
 
                   <div className="flex items-center justify-between pt-4 mt-4 border-t border-[#F2ECE1]">
                     <div>
-                      <span className="font-sans font-bold text-lg text-[#2C2623]">Rs. {item.price}</span>
-                      {item.originalPrice > item.price && (
-                        <span className="text-xs font-sans text-stone-400 line-through ml-2">Rs. {item.originalPrice}</span>
-                      )}
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-sans font-bold text-lg text-[#2C2623]">Rs. {item.price}</span>
+                        {item.originalPrice > item.price && (
+                          <span className="text-xs font-sans text-stone-400 line-through">Rs. {item.originalPrice}</span>
+                        )}
+                      </div>
+                      <span className="text-[9px] font-bold text-[#8B483B] bg-[#FDF0ED] px-2 py-0.5 rounded-full border border-[#F5D5CE] inline-block mt-1">
+                        10% OFF with COCOON10
+                      </span>
                     </div>
 
                     <button
@@ -726,11 +731,16 @@ export default function Preset4() {
                   </div>
 
                   <div className="pt-2.5 border-t border-[#FAF6F0] flex flex-col gap-2 mt-2.5">
-                    <div className="flex items-baseline gap-1.5 flex-wrap">
-                      <span className="font-sans font-extrabold text-sm sm:text-base text-[#2C2623]">Rs. {product.price}</span>
-                      {product.originalPrice > product.price && (
-                        <span className="text-[10px] sm:text-xs font-sans text-stone-400 line-through">Rs. {product.originalPrice}</span>
-                      )}
+                    <div className="flex items-baseline justify-between gap-1.5 flex-wrap">
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="font-sans font-extrabold text-sm sm:text-base text-[#2C2623]">Rs. {product.price}</span>
+                        {product.originalPrice > product.price && (
+                          <span className="text-[10px] sm:text-xs font-sans text-stone-400 line-through">Rs. {product.originalPrice}</span>
+                        )}
+                      </div>
+                      <span className="text-[8px] sm:text-[9px] font-sans font-bold text-[#8B483B] bg-[#FDF0ED] px-1.5 py-0.5 rounded border border-[#F5D5CE]">
+                        10% OFF
+                      </span>
                     </div>
 
                     <button

@@ -911,6 +911,29 @@ export default function ProductDetailPage({ params }) {
               <p className="text-[11px] text-stone-500 font-serif">
                 Incl. of all taxes • Handcrafted upon order
               </p>
+
+              {/* Special Studio 10% Off Offer Box (Max ₹50 on 1 item, ₹80 on bulk orders) */}
+              <div className="mt-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#FAF5EE] via-[#FDF3F0] to-[#FAF5EE] border border-[#F3D5CF] flex items-center justify-between gap-3 text-left">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-md bg-[#B06B5B] text-white tracking-wider">
+                      COCOON10
+                    </span>
+                    <span className="text-xs font-bold text-[#2C2623]">
+                      10% OFF with Code at Checkout
+                    </span>
+                  </div>
+                  <p className="text-[11px] font-serif text-[#7A3F34] leading-relaxed">
+                    Effective Price: <strong className="font-sans font-bold text-emerald-800 text-xs">₹{Math.max(0, product.price - Math.min(Math.round(product.price * 0.1), 50))}</strong> • Save up to ₹50 on this item (Save up to ₹80 on 2+ items)
+                  </p>
+                </div>
+                <Link
+                  href="/cart"
+                  className="shrink-0 px-3 py-1.5 rounded-xl bg-white text-[#B06B5B] hover:bg-[#B06B5B] hover:text-white border border-[#F3D5CF] text-[10px] font-bold uppercase tracking-wider transition shadow-2xs"
+                >
+                  Apply &rarr;
+                </Link>
+              </div>
             </div>
 
             {/* Color Palette Selector */}

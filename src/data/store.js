@@ -237,11 +237,12 @@ export const INITIAL_COUPONS = [
   {
     id: "CPN-101",
     code: "COCOON10",
-    title: "Welcome Special",
+    title: "10% Off Studio Special (Max ₹50 on 1 item, ₹80 on 2+ items)",
     type: "percentage",
     discountPercent: 10,
+    tieredMaxDiscount: { singleItem: 50, multiItem: 80 },
     minOrderValue: 0,
-    maxDiscount: 0,
+    maxDiscount: 80,
     isActive: true,
     usedCount: 0,
     createdAt: "2026-10-01T00:00:00.000Z"
@@ -630,9 +631,20 @@ export const STORE = {
 
     // 2. PERCENTAGE % OFF
     if (coupon.type === "percentage" || coupon.discountPercent) {
-      const pct = Number(coupon.discountPercent || 15);
+      const pct = Number(coupon.discountPercent || 10);
       let discount = Math.round(subtotal * (pct / 100));
-      const maxDiscount = Number(coupon.maxDiscount || 0);
+
+      // Dynamic Tiered Cap: e.g. for COCOON10 (1 item = max ₹50, 2+ items = max ₹80)
+      let maxDiscount = Number(coupon.maxDiscount || 0);
+      const totalItemsCount = cart.reduce((acc, it) => acc + (Number(it.quantity) || 1), 0);
+      if (coupon.tieredMaxDiscount) {
+        maxDiscount = totalItemsCount >= 2
+          ? Number(coupon.tieredMaxDiscount.multiItem || 80)
+          : Number(coupon.tieredMaxDiscount.singleItem || 50);
+      } else if (coupon.code === "COCOON10" || coupon.code === "WELCOME10") {
+        maxDiscount = totalItemsCount >= 2 ? 80 : 50;
+      }
+
       if (maxDiscount > 0 && discount > maxDiscount) {
         discount = maxDiscount;
       }
@@ -641,7 +653,7 @@ export const STORE = {
         coupon,
         discount,
         type: "percentage",
-        message: `${pct}% OFF applied! (-₹${discount})`
+        message: `${pct}% OFF applied! (-₹${discount}${maxDiscount > 0 ? ` capped at ₹${maxDiscount}` : ""})`
       };
     }
 
