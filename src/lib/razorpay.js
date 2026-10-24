@@ -201,10 +201,10 @@ export const initiateRazorpayPayment = async ({
       }
     }, 3500);
 
-    // Stop polling after 4 minutes
+    // Stop polling after 30 seconds
     setTimeout(() => {
       if (pollTimer) clearInterval(pollTimer);
-    }, 240000);
+    }, 30000);
 
     const rzpInstance = new window.Razorpay(options);
     rzpInstance.on("payment.failed", function (response) {

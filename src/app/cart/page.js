@@ -279,20 +279,22 @@ export default function CartPage() {
         if (rawPending) {
           const pending = JSON.parse(rawPending);
           if (pending && pending.razorpayOrderId) {
-            // Only check if created in the last 45 minutes
-            if (Date.now() - (pending.createdAt || 0) < 45 * 60 * 1000) {
+            // Only check if created in the last 2 minutes (prevents endless spinning on reloads)
+            if (Date.now() - (pending.createdAt || 0) < 2 * 60 * 1000) {
               setPaymentVerificationState({
                 status: "verifying",
-                message: "Confirming payment with bank (Google Pay / UPI)... ⏳",
+                message: "Checking payment status with bank...",
                 orderId: pending.razorpayOrderId
               });
 
-              // Fast active continuous check loop (750ms interval)
-              for (let att = 1; att <= 15; att++) {
+              let isPaid = false;
+              // Check 3 times over 3 seconds max
+              for (let att = 1; att <= 3; att++) {
                 if (isFinalizingOrderRef.current || (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed")) return;
                 const res = await fetch(`/api/payment/check-order?orderId=${encodeURIComponent(pending.razorpayOrderId)}`);
                 const checkData = await res.json();
                 if (checkData && checkData.paid) {
+                  isPaid = true;
                   localStorage.removeItem("cocoon_pending_payment");
                   sessionStorage.removeItem("cocoon_pending_payment");
                   sessionStorage.removeItem("cocoon_temp_cart");
@@ -309,20 +311,24 @@ export default function CartPage() {
                   );
                   return;
                 }
-                await new Promise((r) => setTimeout(r, 750));
+                await new Promise((r) => setTimeout(r, 1000));
               }
 
-              // After attempts, if still pending and not finalized
+              // After 3 seconds, if not paid, clear pending storage and show failed/incomplete
+              localStorage.removeItem("cocoon_pending_payment");
+              sessionStorage.removeItem("cocoon_pending_payment");
               if (!isFinalizingOrderRef.current && !activeOrderShownRef.current) {
                 setPaymentVerificationState({
-                  status: "waiting",
-                  message: "Payment verification pending bank response.",
+                  status: "failed",
+                  message: "No payment was detected. If money was not deducted from your account, you can try again or choose another payment method.",
                   orderId: pending.razorpayOrderId
                 });
               }
             } else {
+              // Expired session (> 2 minutes): clear immediately so user is never trapped
               localStorage.removeItem("cocoon_pending_payment");
               sessionStorage.removeItem("cocoon_pending_payment");
+              setPaymentVerificationState(null);
             }
           }
         }
@@ -1196,28 +1202,41 @@ export default function CartPage() {
             ondismiss: async function () {
               // Critical for mobile Google Pay / UPI intent app-switch:
               // When user returns to browser after paying in Google Pay, modal closes.
-              // Bank capture can take 1-4 seconds, so KEEP POLLING and show verification screen!
               if (isOrderFinalized || isFinalizingOrderRef.current || (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed")) return;
-              setPaymentVerificationState({
-                status: "verifying",
-                message: "Confirming payment with your UPI app (Google Pay / PhonePe)... ⏳ Please keep this page open.",
-                orderId: razorpayOrderId
-              });
 
-              // Burst loop: 30 attempts over 22 seconds (750ms interval for ultra-fast detection)
-              for (let attempt = 1; attempt <= 30; attempt++) {
+              // Fixed 10-second verification window with live countdown
+              let wasPaid = false;
+              for (let attempt = 1; attempt <= 10; attempt++) {
                 if (isOrderFinalized || isFinalizingOrderRef.current || (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed")) return;
-                const paid = await checkAndFinalize();
-                if (paid) return;
-                await new Promise((r) => setTimeout(r, 750));
-              }
-
-              if (!isOrderFinalized && !isFinalizingOrderRef.current && !activeOrderShownRef.current) {
+                
+                const remainingSecs = 11 - attempt;
                 setPaymentVerificationState({
-                  status: "waiting",
-                  message: "Payment confirmation is taking longer than usual.",
+                  status: "verifying",
+                  message: `Checking with bank... (${remainingSecs}s remaining)`,
                   orderId: razorpayOrderId
                 });
+
+                const paid = await checkAndFinalize();
+                if (paid) {
+                  wasPaid = true;
+                  return;
+                }
+                await new Promise((r) => setTimeout(r, 1000));
+              }
+
+              // If after 10 seconds payment was not detected, show Failed/Incomplete immediately:
+              if (!wasPaid && !isOrderFinalized && !isFinalizingOrderRef.current && !activeOrderShownRef.current) {
+                try {
+                  localStorage.removeItem("cocoon_pending_payment");
+                  sessionStorage.removeItem("cocoon_pending_payment");
+                } catch (e) {}
+
+                setPaymentVerificationState({
+                  status: "failed",
+                  message: "No payment was detected. If money was not deducted from your account, you can try again or choose another payment method.",
+                  orderId: razorpayOrderId
+                });
+                setIsSubmittingOrder(false);
               }
             }
           }
@@ -1235,11 +1254,11 @@ export default function CartPage() {
         });
         rzp.open();
 
-        // 3. Background Poller (Checks every 1.0s for 60s - catches app switches seamlessly)
+        // 3. Background Poller (Checks every 1.0s for 15s max)
         let pollCount = 0;
         pollInterval = setInterval(async () => {
           pollCount += 1;
-          if (pollCount > 60 || isOrderFinalized || isFinalizingOrderRef.current || (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed")) {
+          if (pollCount > 15 || isOrderFinalized || isFinalizingOrderRef.current || (activeOrderShownRef.current && activeOrderShownRef.current !== "dismissed")) {
             clearInterval(pollInterval);
             return;
           }
@@ -2181,7 +2200,26 @@ export default function CartPage() {
       {/* ================= 2.5 ONLINE PAYMENT VERIFICATION OVERLAY (ACTIVE UPI/BANK POLLER) ================= */}
       {paymentVerificationState && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fadeIn">
-          <div className="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-5 shadow-2xl border border-[#EFE8DD]">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-5 shadow-2xl border border-[#EFE8DD] relative">
+            {/* Top Close Button (Always allows user to dismiss and return) */}
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  localStorage.removeItem("cocoon_pending_payment");
+                  sessionStorage.removeItem("cocoon_pending_payment");
+                } catch (e) {}
+                setPaymentVerificationState(null);
+                setIsSubmittingOrder(false);
+              }}
+              className="absolute top-4 right-4 text-stone-400 hover:text-stone-700 transition cursor-pointer p-1"
+              title="Close"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
             {paymentVerificationState.status === "verifying" && (
               <>
                 <div className="w-16 h-16 mx-auto rounded-full bg-[#FAF0ED] text-[#B06B5B] flex items-center justify-center relative">
@@ -2198,12 +2236,28 @@ export default function CartPage() {
                     Verifying Payment with Bank
                   </h3>
                   <p className="text-xs text-stone-500 font-serif leading-relaxed">
-                    {paymentVerificationState.message || "Confirming transaction with Google Pay / UPI. Please keep this screen open."}
+                    {paymentVerificationState.message || "Confirming transaction with Google Pay / UPI. Please wait a moment."}
                   </p>
                 </div>
                 <div className="p-3 bg-[#FAF7F2] rounded-xl text-[11px] text-stone-600 border border-[#EAE1D3] flex items-center justify-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                   <span>Direct Bank Verification in Progress...</span>
+                </div>
+                <div className="pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      try {
+                        localStorage.removeItem("cocoon_pending_payment");
+                        sessionStorage.removeItem("cocoon_pending_payment");
+                      } catch (e) {}
+                      setPaymentVerificationState(null);
+                      setIsSubmittingOrder(false);
+                    }}
+                    className="text-xs text-stone-400 hover:text-stone-700 underline cursor-pointer transition font-serif"
+                  >
+                    Cancel Verification & Return to Cart
+                  </button>
                 </div>
               </>
             )}
@@ -2217,13 +2271,13 @@ export default function CartPage() {
                 </div>
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-sans font-bold tracking-[0.2em] text-rose-600 uppercase block">
-                    Transaction Declined
+                    Payment Status
                   </span>
                   <h3 className="text-xl font-header font-bold text-[#2C2623]">
-                    Payment Unsuccessful
+                    Payment Incomplete
                   </h3>
                   <p className="text-xs text-stone-500 font-serif leading-relaxed">
-                    {paymentVerificationState.message || "Your bank or UPI app could not complete this payment. No money was charged."}
+                    {paymentVerificationState.message || "No payment was detected from your bank or UPI app. If no money was charged, you can try again."}
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 pt-1">
@@ -2232,10 +2286,43 @@ export default function CartPage() {
                     onClick={() => {
                       setPaymentVerificationState(null);
                       setIsSubmittingOrder(false);
+                      handlePlaceOrder();
                     }}
                     className="w-full py-3 rounded-xl bg-[#B06B5B] hover:bg-[#975647] text-white text-xs font-bold uppercase tracking-wider transition cursor-pointer shadow-md"
                   >
-                    Try Again
+                    Try Online Payment Again
+                  </button>
+                  {isCodAllowed && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPaymentMethod("cod");
+                        setPaymentVerificationState(null);
+                        setIsSubmittingOrder(false);
+                        triggerToast("Switched to Cash on Delivery");
+                      }}
+                      className="w-full py-2.5 rounded-xl bg-stone-800 hover:bg-black text-white text-xs font-bold uppercase tracking-wider transition cursor-pointer"
+                    >
+                      Pay via Cash on Delivery (COD)
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPaymentVerificationState(null);
+                      setIsSubmittingOrder(false);
+                    }}
+                    className="w-full py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition cursor-pointer"
+                  >
+                    Return to Cart
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleManualVerifyPending}
+                    disabled={isVerifyingManual}
+                    className="text-[11px] text-[#B06B5B] hover:underline cursor-pointer pt-1 font-serif"
+                  >
+                    {isVerifyingManual ? "Checking Bank..." : "Money debited from bank? Tap here to verify"}
                   </button>
                 </div>
               </>
@@ -2250,33 +2337,58 @@ export default function CartPage() {
                 </div>
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-sans font-bold tracking-[0.2em] text-amber-700 uppercase block">
-                    Status Pending
+                    Payment Incomplete
                   </span>
                   <h3 className="text-xl font-header font-bold text-[#2C2623]">
-                    Checking Bank Confirmation
+                    No Payment Received
                   </h3>
                   <p className="text-xs text-stone-500 font-serif leading-relaxed">
-                    If money was debited from your bank account, tap below to verify and confirm your order immediately:
+                    We did not receive confirmation from your bank or UPI app. If money was not deducted, you can try again.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 pt-1">
                   <button
                     type="button"
-                    onClick={handleManualVerifyPending}
-                    disabled={isVerifyingManual}
-                    className="w-full py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold uppercase tracking-wider transition cursor-pointer shadow-md flex items-center justify-center gap-2"
+                    onClick={() => {
+                      setPaymentVerificationState(null);
+                      setIsSubmittingOrder(false);
+                      handlePlaceOrder();
+                    }}
+                    className="w-full py-3 rounded-xl bg-[#B06B5B] hover:bg-[#975647] text-white text-xs font-bold uppercase tracking-wider transition cursor-pointer shadow-md"
                   >
-                    <span>{isVerifyingManual ? "Checking Bank..." : "Verify Payment Now ✓"}</span>
+                    Try Online Payment Again
                   </button>
+                  {isCodAllowed && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPaymentMethod("cod");
+                        setPaymentVerificationState(null);
+                        setIsSubmittingOrder(false);
+                        triggerToast("Switched to Cash on Delivery");
+                      }}
+                      className="w-full py-2.5 rounded-xl bg-stone-800 hover:bg-black text-white text-xs font-bold uppercase tracking-wider transition cursor-pointer"
+                    >
+                      Pay via Cash on Delivery (COD)
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => {
                       setPaymentVerificationState(null);
                       setIsSubmittingOrder(false);
                     }}
-                    className="w-full py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition cursor-pointer"
+                    className="w-full py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition cursor-pointer"
                   >
-                    Close & Check Later
+                    Return to Cart
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleManualVerifyPending}
+                    disabled={isVerifyingManual}
+                    className="text-[11px] text-[#B06B5B] hover:underline cursor-pointer pt-1 font-serif"
+                  >
+                    {isVerifyingManual ? "Checking Bank..." : "Money debited from bank? Tap here to verify"}
                   </button>
                 </div>
               </>
