@@ -792,7 +792,7 @@ export default function ProductDetailPage({ params }) {
       <Header cartCountOverride={cart.reduce((sum, i) => sum + (Number(i.quantity) || 1), 0)} />
 
       {/* 3. BREADCRUMBS & TOP BAR */}
-      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 py-4 flex items-center justify-between text-xs text-stone-500 font-serif border-b border-[#EFE8DD]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between text-xs text-stone-500 font-serif border-b border-[#EFE8DD]">
         <div className="flex items-center gap-2 flex-wrap">
           <Link href="/" className="hover:text-stone-900 hover:underline">Home</Link>
           <span>/</span>
@@ -823,7 +823,7 @@ export default function ProductDetailPage({ params }) {
       </div>
 
       {/* 4. MAIN PRODUCT DETAIL SHOWCASE (MATCHING USER SCREENSHOTS) */}
-      <main className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 py-8 lg:py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           
           {/* ================= LEFT COLUMN: IMAGES & GALLERY ================= */}

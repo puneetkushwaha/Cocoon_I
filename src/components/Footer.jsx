@@ -16,7 +16,7 @@ export default function Footer() {
         </span>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-16 border-b border-[#EAE0D2]">
           
           {/* Column 1: Brand & Heritage */}
