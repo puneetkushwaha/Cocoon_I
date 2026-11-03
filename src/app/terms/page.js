@@ -130,7 +130,7 @@ export default function TermsPage() {
             </div>
             <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#EDE5DA] space-y-1">
               <span className="font-bold text-[#2C2623] block text-sm">Registered Studio Atelier:</span>
-              <p><strong>Brand:</strong> COCOON (GoCocoon)</p>
+              <p><strong>Brand:</strong> COCOON (Cocoon)</p>
               <p><strong>Location:</strong> Agra, Uttar Pradesh - 282001, India</p>
               <p><strong>Operating Hours:</strong> Mon - Sat, 10:00 AM - 7:00 PM IST</p>
               <p><strong>Redressal Timeline:</strong> Acknowledged within 48 hours; resolved within 1 month.</p>

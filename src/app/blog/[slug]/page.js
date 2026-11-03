@@ -17,7 +17,7 @@ export async function generateMetadata({ params }) {
 
   if (!post) {
     return {
-      title: "Artisan Crochet Guide | GoCocoon",
+      title: "Artisan Crochet Guide | Cocoon",
       description: "Handcrafted crochet guides and styling insights by Mehak Agarwal.",
     };
   }
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
     : `https://www.gococoon.store${post.image}`;
 
   return {
-    title: `${post.title} | GoCocoon Artisan Journal`,
+    title: `${post.title} | Cocoon Artisan Journal`,
     description: post.subtitle,
     keywords: [
       ...post.tags,
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }) {
       title: post.title,
       description: post.subtitle,
       url: postUrl,
-      siteName: "GoCocoon",
+      siteName: "Cocoon",
       type: "article",
       publishedTime: post.date,
       authors: [post.author],
@@ -98,7 +98,7 @@ export default async function BlogPostPage({ params }) {
     },
     publisher: {
       "@type": "Organization",
-      name: "GoCocoon",
+      name: "Cocoon",
       logo: {
         "@type": "ImageObject",
         url: "https://www.gococoon.store/icon.svg"
@@ -183,7 +183,7 @@ export default async function BlogPostPage({ params }) {
           <div className="space-y-1.5 text-center sm:text-left">
             <h4 className="font-header font-bold text-lg text-[#2C2623]">About Mehak Agarwal</h4>
             <p className="text-xs sm:text-sm text-stone-600 font-serif leading-relaxed">
-              Mehak is the heart and hands behind GoCocoon. Dedicated to reviving slow artisanal needlework in India, she slow-knits made-to-order treasures using 100% pure organic milk cotton cord.
+              Mehak is the heart and hands behind Cocoon. Dedicated to reviving slow artisanal needlework in India, she slow-knits made-to-order treasures using 100% pure organic milk cotton cord.
             </p>
           </div>
         </div>

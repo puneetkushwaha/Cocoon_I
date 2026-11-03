@@ -1,4 +1,4 @@
-// Curated Editorial & Styling Guides for GoCocoon
+// Curated Editorial & Styling Guides for Cocoon
 export const BLOG_POSTS = [
 
   {
@@ -8,21 +8,21 @@ export const BLOG_POSTS = [
     date: "2026-11-03",
     readTime: "6 min read",
     author: "Mehak Agarwal",
-    authorRole: "Founder & Lead Artisan at GoCocoon",
+    authorRole: "Founder & Lead Artisan at Cocoon",
     image: "/products/items/chocolate-bow-handbag.jpg",
     tags: ["Crochet Bags", "Organic Cotton", "Granny Squares", "Milk Cotton"],
     excerpt: "Everything you need to know about crochet bags, purses, granny square totes, and why pure organic milk cotton thread is the gold standard for slow-fashion needlework in India.",
     metaDescription: "Discover handcrafted crochet bags, totes, purses & granny squares made with organic milk cotton yarn, cotton cord & crochet thread in India.",
     content: `
       <h2>Why Organic Milk Cotton Yarn is the Best Cotton Yarn for Crochet</h2>
-      <p>Whether you are looking for an everyday <strong>crochet tote bag</strong>, a structured <strong>crochet handbag</strong> with thick <strong>cotton cord</strong>, or a bohemian <strong>crochet crossbody bag</strong>, handmade <strong>needle and thread</strong> artistry has taken the fashion world by storm. At GoCocoon, every single <strong>crochet purse</strong> and <strong>granny square pouch</strong> is crafted slowly with love and intention.</p>
+      <p>Whether you are looking for an everyday <strong>crochet tote bag</strong>, a structured <strong>crochet handbag</strong> with thick <strong>cotton cord</strong>, or a bohemian <strong>crochet crossbody bag</strong>, handmade <strong>needle and thread</strong> artistry has taken the fashion world by storm. At Cocoon, every single <strong>crochet purse</strong> and <strong>granny square pouch</strong> is crafted slowly with love and intention.</p>
       <p>Not all <strong>crochet thread</strong> is created equal. While mass-produced commercial brands rely on scratchy acrylics or synthetic nylon, authentic artisanal crochet relies on <strong>organic milk cotton yarn</strong>, <strong>mercerized cotton yarn</strong>, and multi-ply <strong>cotton yarn for crochet</strong>. <strong>Milk cotton</strong> combines the hypoallergenic breathability of <strong>organic cotton</strong> with an ultra-soft cloud-like texture that prevents skin friction and maintains stitch tension.</p>
 
       <h2>The Enduring Charm of the Granny Square & Crochet Accessories</h2>
       <p>From classic 70s vintage nostalgia to modern Paris Fashion Week runways, <strong>granny square crochet</strong> and <strong>granny crochet</strong> bags remain iconic. A <strong>crochet shoulder bag</strong> or <strong>pink crochet bag</strong> crafted with high-tension cotton cord will hold its shape effortlessly without sagging. Pair your <strong>crochet hand bag</strong> with a matching <strong>crochet headband</strong>, <strong>crochet belt</strong>, or <strong>crochet scarf</strong> to complete your effortless slow-fashion cottagecore look.</p>
 
       <h2>Caring for Your Handcrafted Crochet Bags & Sleeves</h2>
-      <p>Because our pieces are hand-knitted with genuine <strong>cotton yarn</strong> and reinforced <strong>crochet hooks</strong>, they are naturally durable and washable. Simply spot-clean or hand-wash in cold water with gentle detergent, reshape flat, and allow to air dry. Visit our GoCocoon <strong>crochet shop</strong> to explore our latest drop of bespoke <strong>crochet sleeves</strong>, <strong>crochet pouch</strong>, and <strong>crochet sling bag</strong>!</p>
+      <p>Because our pieces are hand-knitted with genuine <strong>cotton yarn</strong> and reinforced <strong>crochet hooks</strong>, they are naturally durable and washable. Simply spot-clean or hand-wash in cold water with gentle detergent, reshape flat, and allow to air dry. Visit our Cocoon <strong>crochet shop</strong> to explore our latest drop of bespoke <strong>crochet sleeves</strong>, <strong>crochet pouch</strong>, and <strong>crochet sling bag</strong>!</p>
     `
   },
 
@@ -33,14 +33,14 @@ export const BLOG_POSTS = [
     date: "2026-10-10",
     readTime: "5 min read",
     author: "Mehak Agarwal",
-    authorRole: "Founder & Lead Artisan at GoCocoon",
+    authorRole: "Founder & Lead Artisan at Cocoon",
     image: "/products/items/chocolate-bow-handbag.jpg",
     tags: ["Care Guide", "Milk Cotton", "Slow Fashion"],
     excerpt: "Handmade crochet requires gentle affection. Learn how to wash, reshape, and store your milk cotton handbags, bandanas, and scrunchies to keep them fluffy and pristine.",
     metaDescription: "Master the step-by-step method to wash and care for handmade milk cotton crochet bags, bandanas, and accessories without stretching or fading.",
     content: `
       <h2>Why Handmade Milk Cotton Crochet Requires Special Love</h2>
-      <p>Unlike mass-produced synthetic knitwear from high-street factory brands, every <strong>GoCocoon</strong> creation is crafted knot-by-knot using 100% pure organic milk cotton cord. Milk cotton is renowned across the artisanal craft world for its cloud-soft touch, breathable tension, and delicate natural sheen.</p>
+      <p>Unlike mass-produced synthetic knitwear from high-street factory brands, every <strong>Cocoon</strong> creation is crafted knot-by-knot using 100% pure organic milk cotton cord. Milk cotton is renowned across the artisanal craft world for its cloud-soft touch, breathable tension, and delicate natural sheen.</p>
       <p>Because there are no harsh industrial chemical stabilizers or plastic coatings on our yarns, following the correct wash and care ritual ensures your pieces maintain their sculptured structure, vibrant dye tones, and stitch tension for years to come.</p>
 
       <h2>The 5-Step Golden Wash Ritual</h2>
@@ -72,7 +72,7 @@ export const BLOG_POSTS = [
       <p><strong>Crucial Rule:</strong> Always dry flat on a horizontal drying rack or clean towel in a shaded, well-ventilated room. Never hang a wet crochet bag by its straps from a peg or hanger, as gravity will pull the wet fibers and permanently distort the dimensions.</p>
 
       <h2>Daily Storage & Pilling Prevention</h2>
-      <p>Store your crochet pieces in breathable cotton dust bags (every GoCocoon order includes our complimentary reusable slow-cloth packaging). Avoid storing near abrasive metal zippers, velcro, or sharp jewelry that could snag the loops.</p>
+      <p>Store your crochet pieces in breathable cotton dust bags (every Cocoon order includes our complimentary reusable slow-cloth packaging). Avoid storing near abrasive metal zippers, velcro, or sharp jewelry that could snag the loops.</p>
       <p>If small friction fuzz appears after months of love, do not yank it with your fingers! Simply snip it cleanly using small embroidery shears or a battery-operated fabric debobbler.</p>
     `,
     relatedCategory: "bags"
@@ -84,16 +84,16 @@ export const BLOG_POSTS = [
     date: "2026-10-08",
     readTime: "6 min read",
     author: "Mehak Agarwal",
-    authorRole: "Founder & Lead Artisan at GoCocoon",
+    authorRole: "Founder & Lead Artisan at Cocoon",
     image: "/products/items/pink-crochet-waist-scarf.jpg",
     tags: ["Style Guide", "Cottagecore", "Outfit Ideas"],
     excerpt: "Discover 7 effortless styling ideas to incorporate crochet hair bandanas, floral waist belts, and boho hip wraps into modern western and ethnic wardrobes.",
     metaDescription: "Learn 7 chic ways to style handcrafted crochet bandanas, headscarves, and bohemian waist wrap belts with denim, dresses, and ethnic wear.",
     content: `
       <h2>The Renaissance of Artisanal Texture in Modern Wardrobes</h2>
-      <p>Slow fashion in 2026 is defined by tactile warmth. In an era saturated with flat, identical factory polyester, handcrafted crochet introduces depth, dimensional shadows, and unmatched artisanal individuality. At <strong>GoCocoon</strong>, we design our pieces to seamlessly bridge romantic cottagecore nostalgia with contemporary everyday streetwear.</p>
+      <p>Slow fashion in 2026 is defined by tactile warmth. In an era saturated with flat, identical factory polyester, handcrafted crochet introduces depth, dimensional shadows, and unmatched artisanal individuality. At <strong>Cocoon</strong>, we design our pieces to seamlessly bridge romantic cottagecore nostalgia with contemporary everyday streetwear.</p>
 
-      <h2>3 Ways to Style the GoCocoon Crochet Bandana</h2>
+      <h2>3 Ways to Style the Cocoon Crochet Bandana</h2>
       <h3>1. The Classic Cottagecore Meadow Wrap</h3>
       <p>Tie our floral open-mesh or burgundy triangle bandana under your hair at the nape of the neck, letting soft front tendrils frame your face. Pair with a flowy white linen sundress, neutral woven sandals, and our <em>Chocolate Bow Knot Handbag</em> for a sun-kissed European countryside aesthetic.</p>
 
@@ -125,15 +125,15 @@ export const BLOG_POSTS = [
     date: "2026-10-05",
     readTime: "4 min read",
     author: "Mehak Agarwal",
-    authorRole: "Founder & Lead Artisan at GoCocoon",
+    authorRole: "Founder & Lead Artisan at Cocoon",
     image: "/products/items/sunflower-baguette-shoulder-bag.jpg",
     tags: ["Craftsmanship", "Sustainability", "Materials"],
-    excerpt: "Understand why GoCocoon prioritizes soft milk cotton and curated artisan yarns over mass-market synthetic acrylics. Discover the difference in breathability and hand-feel.",
+    excerpt: "Understand why Cocoon prioritizes soft milk cotton and curated artisan yarns over mass-market synthetic acrylics. Discover the difference in breathability and hand-feel.",
     metaDescription: "Explore why milk cotton and curated natural blends are ideal for premium handcrafted crochet. Gentle on skin, breathable, durable, and butter-soft.",
     content: `
       <h2>The Mass Market Yarn Dilemma</h2>
       <p>Take a look at the tags on most mass-market knitwear: a large proportion relies on synthetic acrylic yarns. While cheap to produce, synthetic acrylics tend to trap heat, build up static electricity, and pill rapidly under frequent friction compared to high-grade natural fiber yarns.</p>
-      <p>At <strong>GoCocoon</strong>, Mehak Agarwal established our core studio philosophy: <strong>Prioritizing skin-friendly, artisanal yarn blends</strong>. We champion multi-ply milk cotton cords and natural cotton blends for our wearables and heirloom bags, selecting specialized resilient cords or chenille only where specific textures and structural longevity demand it.</p>
+      <p>At <strong>Cocoon</strong>, Mehak Agarwal established our core studio philosophy: <strong>Prioritizing skin-friendly, artisanal yarn blends</strong>. We champion multi-ply milk cotton cords and natural cotton blends for our wearables and heirloom bags, selecting specialized resilient cords or chenille only where specific textures and structural longevity demand it.</p>
 
       <h2>What Exactly is Milk Cotton?</h2>
       <p>Milk cotton is a hybrid textile fiber combining combed cotton with milk casein protein fibers. This unique blend yields unmatched benefits that crafters and slow-fashion connoisseurs adore:</p>
@@ -141,12 +141,12 @@ export const BLOG_POSTS = [
         <li><strong>Hypoallergenic & Gentle on Hair:</strong> Unlike rough wool or static-heavy acrylic, milk cotton has a smooth, cylindrical cuticle. It glides over hair without snapping strands or causing frizz, which makes our scrunchies and headbands a dream for delicate curls.</li>
         <li><strong>Crisp Architectural Stitch Tension:</strong> Milk cotton maintains its density. When crafted into structured pieces like our <em>Sunflower Backpack</em> or <em>Chocolate Bow Bag</em>, the stitches hold their form and sculptured petals under daily use.</li>
         <li><strong>Breathable in Indian Climates:</strong> India’s weather ranges from humid monsoons to scorching summers. Natural cotton-rich fibers allow airflow, wick moisture naturally, and feel refreshing to touch year-round.</li>
-        <li><strong>Rich, Non-Fading Pastel Pigments:</strong> Natural cotton fibers absorb environmentally conscious dyes deeply into their core. Even after gentle wash cycles, GoCocoon’s signature terracotta, sage green, and mocha tones stay rich and luminous.</li>
+        <li><strong>Rich, Non-Fading Pastel Pigments:</strong> Natural cotton fibers absorb environmentally conscious dyes deeply into their core. Even after gentle wash cycles, Cocoon’s signature terracotta, sage green, and mocha tones stay rich and luminous.</li>
       </ul>
 
       <h2>Slow Fashion: The True Value of Handcrafted Art</h2>
       <p>Authentic, intricate crochet stitches cannot be fully replicated by standard industrial textile looms in the way machine knitting is. The intricate manual manipulations of each individual crochet hook loop require authentic artisan craftsmanship, patience, and mindful dedication.</p>
-      <p>When you hold a piece from GoCocoon, you are holding 4 to 12 hours of dedicated artisan meditation. An heirloom designed to outlive fast-fashion cycles and bring gentle warmth to your everyday rhythm.</p>
+      <p>When you hold a piece from Cocoon, you are holding 4 to 12 hours of dedicated artisan meditation. An heirloom designed to outlive fast-fashion cycles and bring gentle warmth to your everyday rhythm.</p>
     `,
     relatedCategory: "bags"
   }

@@ -6,12 +6,12 @@ export async function generateMetadata({ params }) {
 
   if (!post) {
     return {
-      title: "Artisan Guide | GoCocoon",
-      description: "Crochet stories and craftsmanship guides from GoCocoon.",
+      title: "Artisan Guide | Cocoon",
+      description: "Crochet stories and craftsmanship guides from Cocoon.",
     };
   }
 
-  const title = `${post.title} | GoCocoon Journal`;
+  const title = `${post.title} | Cocoon Journal`;
   const pageUrl = `https://www.gococoon.store/blog/${post.slug}`;
   const imageUrl = `https://www.gococoon.store${post.image}`;
 
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }) {
     keywords: [
       ...post.tags,
       "crochet guide",
-      "GoCocoon journal",
+      "Cocoon journal",
       "handmade crochet India",
       "milk cotton crochet"
     ],
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }) {
       title,
       description: post.metaDescription,
       url: pageUrl,
-      siteName: "GoCocoon",
+      siteName: "Cocoon",
       images: [
         {
           url: imageUrl,
@@ -77,7 +77,7 @@ export default async function BlogPostLayout({ children, params }) {
         },
         publisher: {
           "@type": "Organization",
-          name: "GoCocoon",
+          name: "Cocoon",
           logo: {
             "@type": "ImageObject",
             url: "https://www.gococoon.store/icon.svg",

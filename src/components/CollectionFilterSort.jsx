@@ -164,7 +164,7 @@ export default function CollectionFilterSort({
                     <Link href={`/product/${product.id}`} prefetch={true} className="block w-full h-full">
                       <img
                         src={product.imgUrl}
-                        alt={`${product.name} - Handcrafted Crochet by GoCocoon`}
+                        alt={`${product.name} - Handcrafted Crochet by Cocoon`}
                         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 cursor-pointer"
                         loading="lazy"
                       />

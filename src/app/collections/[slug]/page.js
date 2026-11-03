@@ -20,7 +20,7 @@ export async function generateMetadata({ params }) {
 
   if (!catData) {
     return {
-      title: "Handcrafted Crochet Collections | GoCocoon",
+      title: "Handcrafted Crochet Collections | Cocoon",
       description: "Explore authentic organic milk cotton crochet essentials handmade in India.",
     };
   }
@@ -28,13 +28,13 @@ export async function generateMetadata({ params }) {
   const canonicalUrl = `https://www.gococoon.store/collections/${catData.slug}`;
 
   return {
-    title: `${catData.name} | GoCocoon Handcrafted Crochet India`,
+    title: `${catData.name} | Cocoon Handcrafted Crochet India`,
     description: catData.metaDescription || catData.intro,
     keywords: catData.keywords || [
       catData.name,
       `crochet ${catData.name.toLowerCase()} India`,
       `handmade ${catData.name.toLowerCase()}`,
-      "GoCocoon",
+      "Cocoon",
       "organic milk cotton crochet",
       "slow fashion knitwear India"
     ],
@@ -42,23 +42,23 @@ export async function generateMetadata({ params }) {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${catData.name} - Handcrafted Crochet Collection | GoCocoon`,
+      title: `${catData.name} - Handcrafted Crochet Collection | Cocoon`,
       description: catData.metaDescription || catData.intro,
       url: canonicalUrl,
-      siteName: "GoCocoon",
+      siteName: "Cocoon",
       type: "website",
       images: [
         {
           url: "https://www.gococoon.store/instagram-post.jpg",
           width: 1200,
           height: 1200,
-          alt: `${catData.name} by GoCocoon India`,
+          alt: `${catData.name} by Cocoon India`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${catData.name} | GoCocoon Handcrafted Crochet India`,
+      title: `${catData.name} | Cocoon Handcrafted Crochet India`,
       description: catData.metaDescription || catData.intro,
     },
   };
@@ -118,6 +118,11 @@ export default async function CollectionPage({ params }) {
     headline: catData.h1,
     description: catData.metaDescription || catData.intro,
     url: `https://www.gococoon.store/collections/${catData.slug}`,
+    publisher: {
+      "@type": "Organization",
+      name: "Cocoon",
+      url: "https://www.gococoon.store"
+    },
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: categoryProducts.length,

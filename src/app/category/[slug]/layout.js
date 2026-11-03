@@ -6,7 +6,7 @@ export async function generateMetadata({ params }) {
 
   if (!catData) {
     return {
-      title: "Handcrafted Crochet Collection | GoCocoon",
+      title: "Handcrafted Crochet Collection | Cocoon",
       description: "Artisanal crochet pieces handcrafted in India with pure organic milk cotton.",
     };
   }
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }) {
       title: catData.metaTitle,
       description: catData.metaDescription,
       url: pageUrl,
-      siteName: "GoCocoon",
+      siteName: "Cocoon",
       images: [
         {
           url: "https://www.gococoon.store/products/items/chocolate-bow-handbag.jpg",
@@ -58,7 +58,7 @@ export default async function CategoryLayout({ children, params }) {
         url: `https://www.gococoon.store/category/${catData.slug}`,
         isPartOf: {
           "@type": "WebSite",
-          name: "GoCocoon",
+          name: "Cocoon",
           url: "https://www.gococoon.store",
         },
       }

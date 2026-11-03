@@ -3,14 +3,14 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "Our Story & Letter from Mehak | GoCocoon Handcrafted Crochet",
-  description: "Learn about GoCocoon's artisanal philosophy: slow craftsmanship, zero-plastic packaging, and hand-knitted organic milk cotton heirloom creations by Mehak Agarwal.",
+  title: "Our Story & Letter from Mehak | Cocoon Handcrafted Crochet",
+  description: "Learn about Cocoon's artisanal philosophy: slow craftsmanship, zero-plastic packaging, and hand-knitted organic milk cotton heirloom creations by Mehak Agarwal.",
   alternates: {
     canonical: "https://www.gococoon.store/story",
   },
   openGraph: {
-    title: "Our Story & Letter from Mehak | GoCocoon",
-    description: "We choose to slow down. Discover the story behind GoCocoon's handcrafted crochet boutique in India.",
+    title: "Our Story & Letter from Mehak | Cocoon",
+    description: "We choose to slow down. Discover the story behind Cocoon's handcrafted crochet boutique in India.",
     url: "https://www.gococoon.store/story",
     type: "website",
   },
@@ -101,7 +101,7 @@ export default function StoryPage() {
               Our Ethos
             </span>
             <h2 className="text-2xl sm:text-4xl font-header font-bold text-[#2C2623]">
-              The Three Pillars of GoCocoon
+              The Three Pillars of Cocoon
             </h2>
           </div>
 

@@ -13,14 +13,14 @@ export async function generateMetadata({ params }) {
 
   if (!product) {
     return {
-      title: "Handcrafted Crochet Treasure | GoCocoon",
+      title: "Handcrafted Crochet Treasure | Cocoon",
       description: "Artisanal slow-fashion crochet piece handcrafted in India with pure organic milk cotton.",
     };
   }
 
   const categoryName = product.category ? (product.category.charAt(0).toUpperCase() + product.category.slice(1).replace("-", " ")) : "Crochet";
   const materialLabel = product.materials || "Handcrafted Cotton Cord";
-  const title = `${product.name} | Handcrafted ${categoryName} | GoCocoon`;
+  const title = `${product.name} | Handcrafted ${categoryName} | Cocoon`;
   const description = `${product.desc} Artisanal slow-fashion handcrafted knot-by-knot in India (${materialLabel}). Price: ₹${product.price}. Express pan-India dispatch.`;
   const pageUrl = `https://www.gococoon.store/product/${product.id}`;
   const imageUrl = product.imgUrl?.startsWith("http")
@@ -34,8 +34,8 @@ export async function generateMetadata({ params }) {
       product.name,
       `handmade ${product.name}`,
       `crochet ${categoryName}`,
-      "GoCocoon",
-      "GoCocoon store",
+      "Cocoon",
+      "Cocoon store",
       "COCOON crochet",
       "organic milk cotton crochet",
       "crochet boutique India"
@@ -47,13 +47,13 @@ export async function generateMetadata({ params }) {
       title,
       description,
       url: pageUrl,
-      siteName: "GoCocoon",
+      siteName: "Cocoon",
       images: [
         {
           url: imageUrl,
           width: 800,
           height: 800,
-          alt: `${product.name} - Handcrafted Crochet by GoCocoon`,
+          alt: `${product.name} - Handcrafted Crochet by Cocoon`,
         },
       ],
       locale: "en_IN",
@@ -97,7 +97,7 @@ export default async function ProductDetailLayout({ children, params }) {
         },
         brand: {
           "@type": "Brand",
-          name: "GoCocoon",
+          name: "Cocoon",
           url: "https://www.gococoon.store"
         },
         offers: {
@@ -110,7 +110,7 @@ export default async function ProductDetailLayout({ children, params }) {
           itemCondition: "https://schema.org/NewCondition",
           seller: {
             "@type": "Organization",
-            name: "GoCocoon",
+            name: "Cocoon",
             url: "https://www.gococoon.store"
           },
           hasMerchantReturnPolicy: {

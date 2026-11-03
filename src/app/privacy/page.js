@@ -133,7 +133,7 @@ export default function PrivacyPolicyPage() {
           </p>
           <div className="text-xs text-stone-800 space-y-1 font-mono pt-1">
             <p><strong>Attn:</strong> Mehak Agarwal (Founder & Data Controller)</p>
-            <p><strong>Brand:</strong> COCOON (GoCocoon)</p>
+            <p><strong>Brand:</strong> COCOON (Cocoon)</p>
             <p><strong>Registered Studio:</strong> Agra, Uttar Pradesh - 282001, India</p>
             <p><strong>Email:</strong> <a href="mailto:support@gococoon.store" className="text-[#B06B5B] underline font-bold">support@gococoon.store</a> (Alt: cocoon.by.mehak@gmail.com)</p>
             <p><strong>Studio WhatsApp:</strong> +91 8171902255</p>

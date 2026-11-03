@@ -37,8 +37,8 @@ const TARGET_KEYWORDS = [
   "crochet headband",
   "granny square crochet",
   "crochet granny square",
-  "GoCocoon",
-  "GoCocoon store",
+  "Cocoon",
+  "Cocoon store",
   "gococoon.store",
   "COCOON crochet"
 ];

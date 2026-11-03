@@ -1,7 +1,7 @@
 import Preset4 from "@/components/presets/Preset4";
 
 export const metadata = {
-  title: "GoCocoon | Handcrafted Crochet Bags, Belts & Accessories India",
+  title: "Cocoon | Handcrafted Crochet Bags, Belts & Accessories India",
   description: "Shop authentic artisanal crochet bags, floral bandanas, waist wraps, bow keychains & hair accessories. Slow-crafted knot-by-knot in India by Mehak Agarwal. Free all-India express delivery.",
   keywords: [
     "crochet bags",
@@ -42,8 +42,8 @@ export const metadata = {
     "crochet headband",
     "granny square crochet",
     "crochet granny square",
-    "GoCocoon",
-    "GoCocoon store",
+    "Cocoon",
+    "Cocoon store",
     "gococoon.store",
     "COCOON crochet"
 ],
@@ -51,16 +51,16 @@ export const metadata = {
     canonical: "https://www.gococoon.store",
   },
   openGraph: {
-    title: "GoCocoon | Handcrafted Crochet Boutique India",
+    title: "Cocoon | Handcrafted Crochet Boutique India",
     description: "Slow-crafted artisanal crochet bags, waist belts, bandanas & heirloom accessories handmade knot-by-knot in India by Mehak Agarwal.",
     url: "https://www.gococoon.store",
-    siteName: "GoCocoon",
+    siteName: "Cocoon",
     images: [
       {
         url: "https://www.gococoon.store/instagram-post.jpg",
         width: 1200,
         height: 1600,
-        alt: "GoCocoon Handcrafted Luxury Crochet Essentials",
+        alt: "Cocoon Handcrafted Luxury Crochet Essentials",
       },
     ],
     locale: "en_IN",
@@ -75,18 +75,18 @@ export default function HomePage() {
     mainEntity: [
       {
         "@type": "Question",
-        name: "Are GoCocoon products 100% handmade in India?",
+        name: "Are Cocoon products 100% handmade in India?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes, every single piece at GoCocoon is meticulously hand-crocheted knot-by-knot in India by Mehak Agarwal and artisanal craftswomen using pure, non-allergic organic milk cotton yarn. We do not use machine knitting or factory mass-production."
+          text: "Yes, every single piece at Cocoon is meticulously hand-crocheted knot-by-knot in India by Mehak Agarwal and artisanal craftswomen using pure, non-allergic organic milk cotton yarn. We do not use machine knitting or factory mass-production."
         }
       },
       {
         "@type": "Question",
-        name: "What handcrafted crochet items are available at GoCocoon?",
+        name: "What handcrafted crochet items are available at Cocoon?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "GoCocoon curates a slow-fashion boutique collection of handcrafted crochet handbags, tote bags, floral headscarf bandanas, boho waist wrap belts, flower scrunchies, claw clips, evil eye keychains, and mobile protection sleeves."
+          text: "Cocoon curates a slow-fashion boutique collection of handcrafted crochet handbags, tote bags, floral headscarf bandanas, boho waist wrap belts, flower scrunchies, claw clips, evil eye keychains, and mobile protection sleeves."
         }
       },
       {
@@ -99,10 +99,10 @@ export default function HomePage() {
       },
       {
         "@type": "Question",
-        name: "What payment methods are accepted on GoCocoon?",
+        name: "What payment methods are accepted on Cocoon?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "GoCocoon accepts 100% secure payments via Razorpay supporting UPI (Google Pay, PhonePe, Paytm, BHIM), debit & credit cards, net banking, as well as verified Cash on Delivery (COD) across serviceable pin codes in India."
+          text: "Cocoon accepts 100% secure payments via Razorpay supporting UPI (Google Pay, PhonePe, Paytm, BHIM), debit & credit cards, net banking, as well as verified Cash on Delivery (COD) across serviceable pin codes in India."
         }
       },
       {

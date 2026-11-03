@@ -5,13 +5,13 @@ import CollectionFilterSort from "@/components/CollectionFilterSort";
 import { PRODUCTS } from "@/data/products";
 
 export const metadata = {
-  title: "All Drops & Handcrafted Vault | GoCocoon India",
-  description: "Explore all authentic handcrafted crochet pieces by GoCocoon: bow knot handbags, floral bandanas, bohemian waist belts, phone sleeves, scrunchies & lucky charms.",
+  title: "All Drops & Handcrafted Vault | Cocoon India",
+  description: "Explore all authentic handcrafted crochet pieces by Cocoon: bow knot handbags, floral bandanas, bohemian waist belts, phone sleeves, scrunchies & lucky charms.",
   alternates: {
     canonical: "https://www.gococoon.store/shop",
   },
   openGraph: {
-    title: "All Drops & Handcrafted Vault | GoCocoon",
+    title: "All Drops & Handcrafted Vault | Cocoon",
     description: "Explore all artisanal crochet creations handcrafted knot-by-knot in India with pure organic milk cotton.",
     url: "https://www.gococoon.store/shop",
     type: "website",

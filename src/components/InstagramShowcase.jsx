@@ -9,7 +9,7 @@ export default function InstagramShowcase() {
   const [isPlaying, setIsPlaying] = useState(true);
   const videoRef = useRef(null);
 
-  // 3 authentic Instagram Reels downloaded directly from GoCocoon
+  // 3 authentic Instagram Reels downloaded directly from Cocoon
   const reelsList = [
     {
       id: "ruby-bow",

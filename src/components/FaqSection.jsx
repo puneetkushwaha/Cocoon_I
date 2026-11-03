@@ -8,8 +8,8 @@ export default function FaqSection() {
 
   const faqs = [
     {
-      q: "Are GoCocoon creations authentic 100% handmade in India?",
-      a: "Yes, every single piece at GoCocoon is meticulously hand-crocheted knot-by-knot in India by Mehak Agarwal and artisanal craftswomen using pure, non-allergic organic milk cotton yarn. We do not use machine knitting or factory mass-production. Authentic crochet stitches cannot be replicated by industrial machine looms."
+      q: "Are Cocoon creations authentic 100% handmade in India?",
+      a: "Yes, every single piece at Cocoon is meticulously hand-crocheted knot-by-knot in India by Mehak Agarwal and artisanal craftswomen using pure, non-allergic organic milk cotton yarn. We do not use machine knitting or factory mass-production. Authentic crochet stitches cannot be replicated by industrial machine looms."
     },
     {
       q: "What makes 100% organic milk cotton superior to synthetic acrylic?",
@@ -17,7 +17,7 @@ export default function FaqSection() {
     },
     {
       q: "How long does delivery take & is Cash on Delivery (COD) available?",
-      a: "Yes! GoCocoon provides verified Cash on Delivery (COD) with real-time SMS/email OTP verification and express courier dispatch across all serviceable pin codes in India. Orders are prepared with care and dispatched via express courier partners (Shiprocket, Bluedart, Delhivery), arriving in 3 to 7 business days with live tracking updates."
+      a: "Yes! Cocoon provides verified Cash on Delivery (COD) with real-time SMS/email OTP verification and express courier dispatch across all serviceable pin codes in India. Orders are prepared with care and dispatched via express courier partners (Shiprocket, Bluedart, Delhivery), arriving in 3 to 7 business days with live tracking updates."
     },
     {
       q: "How do I wash and care for handmade milk cotton crochet bags and accessories?",
@@ -111,7 +111,7 @@ export default function FaqSection() {
           </div>
 
           <a
-            href="https://wa.me/918171902255?text=Hi%20Mehak!%20I%20have%20a%20question%20regarding%20GoCocoon%20crochet."
+            href="https://wa.me/918171902255?text=Hi%20Mehak!%20I%20have%20a%20question%20regarding%20Cocoon%20crochet."
             target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-3 rounded-full bg-[#2C2623] hover:bg-[#B06B5B] text-white text-xs font-bold font-sans transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer shrink-0 inline-flex items-center gap-2 group"

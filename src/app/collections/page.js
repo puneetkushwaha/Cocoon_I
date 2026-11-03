@@ -5,13 +5,13 @@ import { CATEGORY_SEO_DATA } from "@/data/categories";
 import { PRODUCTS } from "@/data/products";
 
 export const metadata = {
-  title: "All Handcrafted Crochet Collections | GoCocoon India",
-  description: "Browse all handcrafted crochet collections by GoCocoon: artisanal handbags, macrame totes, waist belts, bandanas, plush scrunchies & lucky charms. 100% organic milk cotton.",
+  title: "All Handcrafted Crochet Collections | Cocoon India",
+  description: "Browse all handcrafted crochet collections by Cocoon: artisanal handbags, macrame totes, waist belts, bandanas, plush scrunchies & lucky charms. 100% organic milk cotton.",
   alternates: {
     canonical: "https://www.gococoon.store/collections",
   },
   openGraph: {
-    title: "All Handcrafted Crochet Collections | GoCocoon",
+    title: "All Handcrafted Crochet Collections | Cocoon",
     description: "Explore all artisanal crochet categories handcrafted in India with pure organic milk cotton.",
     url: "https://www.gococoon.store/collections",
     type: "website",

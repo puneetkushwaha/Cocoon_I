@@ -4,10 +4,10 @@ import "./globals.css";
 
 export const metadata = {
   title: {
-    default: "GoCocoon | Handcrafted Crochet Bags, Belts & Accessories India",
-    template: "%s | GoCocoon Crochet Boutique",
+    default: "Cocoon | Handcrafted Crochet Bags, Belts & Accessories India",
+    template: "%s | Cocoon Crochet Boutique",
   },
-  description: "Discover authentic handcrafted crochet bags, statement totes, hair accessories, waist wraps, bandanas & heirloom gifts at GoCocoon. Artisanal slow-fashion hand-crocheted knot-by-knot in India by Mehak Agarwal. All-India express delivery.",
+  description: "Discover authentic handcrafted crochet bags, statement totes, hair accessories, waist wraps, bandanas & heirloom gifts at Cocoon. Artisanal slow-fashion hand-crocheted knot-by-knot in India by Mehak Agarwal. All-India express delivery.",
   keywords: [
     "crochet bags",
     "crochet handbags",
@@ -47,14 +47,14 @@ export const metadata = {
     "crochet headband",
     "granny square crochet",
     "crochet granny square",
-    "GoCocoon",
-    "GoCocoon store",
+    "Cocoon",
+    "Cocoon store",
     "gococoon.store",
     "COCOON crochet"
 ],
   authors: [{ name: "Mehak Agarwal", url: "https://www.gococoon.store" }],
   creator: "Mehak Agarwal",
-  publisher: "GoCocoon",
+  publisher: "Cocoon",
   metadataBase: new URL("https://www.gococoon.store"),
   alternates: {
     canonical: "https://www.gococoon.store",
@@ -82,16 +82,16 @@ export const metadata = {
     apple: "/icon.svg?v=3",
   },
   openGraph: {
-    title: "GoCocoon | Handcrafted Crochet Boutique India",
+    title: "Cocoon | Handcrafted Crochet Boutique India",
     description: "Slow-crafted organic milk cotton crochet essentials, handbags, hair accessories & bespoke gifts handmade knot-by-knot in India by Mehak Agarwal.",
     url: "https://www.gococoon.store",
-    siteName: "GoCocoon",
+    siteName: "Cocoon",
     images: [
       {
         url: "/instagram-post.jpg",
         width: 1200,
         height: 1600,
-        alt: "GoCocoon Handcrafted Luxury Crochet Essentials",
+        alt: "Cocoon Handcrafted Luxury Crochet Essentials",
       },
     ],
     locale: "en_IN",
@@ -99,7 +99,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "GoCocoon | Handcrafted Crochet Boutique India",
+    title: "Cocoon | Handcrafted Crochet Boutique India",
     description: "100% Pure Organic Milk Cotton • Handmade with Care in India by Mehak",
     images: ["/instagram-post.jpg"],
   },
@@ -120,8 +120,8 @@ export default function RootLayout({ children }) {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "@id": "https://www.gococoon.store/#website",
-      name: "GoCocoon",
-      alternateName: ["COCOON", "GoCocoon Crochet", "GoCocoon Store", "COCOON Handcrafted Crochet"],
+      name: "Cocoon",
+      alternateName: ["COCOON", "Cocoon Crochet", "Cocoon Store", "COCOON Handcrafted Crochet"],
       url: "https://www.gococoon.store",
       description: "Authentic handcrafted crochet boutique in India specializing in slow-crafted organic milk cotton bags, bandanas, belts & accessories.",
       potentialAction: {
@@ -138,7 +138,7 @@ export default function RootLayout({ children }) {
       "@context": "https://schema.org",
       "@type": "ClothingStore",
       "@id": "https://www.gococoon.store/#store",
-      name: "GoCocoon",
+      name: "Cocoon",
       alternateName: "COCOON Handcrafted Crochet Boutique",
       url: "https://www.gococoon.store",
       logo: "https://www.gococoon.store/icon.svg",
@@ -196,10 +196,10 @@ export default function RootLayout({ children }) {
       mainEntity: [
         {
           "@type": "Question",
-          name: "Are GoCocoon products authentic handmade crochet?",
+          name: "Are Cocoon products authentic handmade crochet?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Yes, every single GoCocoon handbag, tote, phone pouch, bandana, and waist belt is 100% hand-knitted knot-by-knot in India by Mehak Agarwal using premium organic milk cotton. Authentic crochet cannot be replicated by industrial machine looms."
+            text: "Yes, every single Cocoon handbag, tote, phone pouch, bandana, and waist belt is 100% hand-knitted knot-by-knot in India by Mehak Agarwal using premium organic milk cotton. Authentic crochet cannot be replicated by industrial machine looms."
           }
         },
         {
@@ -207,12 +207,12 @@ export default function RootLayout({ children }) {
           name: "Is Cash on Delivery (COD) available across India?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Yes, GoCocoon provides verified Cash on Delivery (COD) with real-time SMS/email OTP verification and express courier dispatch across all serviceable pin codes in India."
+            text: "Yes, Cocoon provides verified Cash on Delivery (COD) with real-time SMS/email OTP verification and express courier dispatch across all serviceable pin codes in India."
           }
         },
         {
           "@type": "Question",
-          name: "What yarn materials does GoCocoon use?",
+          name: "What yarn materials does Cocoon use?",
           acceptedAnswer: {
             "@type": "Answer",
             text: "We exclusively craft with 100% premium organic milk cotton yarn. It is breathable, ultra-soft, hypoallergenic, skin-friendly, anti-pilling, and holds crisp structural stitch tension for everyday use."

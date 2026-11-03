@@ -354,7 +354,7 @@ export default function Preset4() {
               </h1>
 
               <p className="text-base text-[#2C2623]/75 font-light leading-relaxed max-w-lg font-serif">
-                Welcome to <strong>GoCocoon</strong>, an artisanal slow-fashion boutique by <strong>Mehak Agarwal</strong>. Explore handcrafted crochet handbags, statement bandanas, waist wraps, and bespoke heirloom gifts woven knot-by-knot with pure organic milk cotton.
+                Welcome to <strong>Cocoon</strong>, an artisanal slow-fashion boutique by <strong>Mehak Agarwal</strong>. Explore handcrafted crochet handbags, statement bandanas, waist wraps, and bespoke heirloom gifts woven knot-by-knot with pure organic milk cotton.
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-4">
@@ -700,7 +700,7 @@ export default function Preset4() {
                       <Link href={`/product/${product.id}`} prefetch={true} className="block w-full h-full">
                         <img
                           src={item.imgUrl}
-                          alt={`${item.title} - Handcrafted Crochet Bestseller GoCocoon`}
+                          alt={`${item.title} - Handcrafted Crochet Bestseller Cocoon`}
                           className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-700 cursor-pointer"
                           loading="lazy"
                         />
@@ -848,7 +848,7 @@ export default function Preset4() {
                       <Link href={`/product/${product.id}`} prefetch={true} className="block w-full h-full">
                         <img
                           src={product.imgUrl}
-                          alt={`${product.name} - Handcrafted Crochet by GoCocoon`}
+                          alt={`${product.name} - Handcrafted Crochet by Cocoon`}
                           className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 cursor-pointer"
                           loading="lazy"
                         />
