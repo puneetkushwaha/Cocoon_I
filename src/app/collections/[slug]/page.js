@@ -151,7 +151,7 @@ export default async function CollectionPage({ params }) {
       
       <Header />
 
-      <main className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-8 sm:py-12 text-left space-y-12 sm:space-y-16">
+      <main className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 py-8 sm:py-12 text-left space-y-12 sm:space-y-16">
         
         {/* Minimal Loomsmith-style Top Header (Title + Breadcrumbs directly above product catalog) */}
         <div className="space-y-4 pt-2">

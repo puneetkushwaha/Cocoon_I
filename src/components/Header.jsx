@@ -145,7 +145,7 @@ export default function Header({ onOpenCart, cartCountOverride }) {
 
       {/* 2. MASTER STICKY GLASS NAVBAR (Consistent Across All Pages) */}
       <header className="sticky top-0 z-40 bg-[#FAF7F2]/65 backdrop-blur-xl backdrop-saturate-180 border-b border-[#EAE0D2]/50 shadow-[0_8px_32px_0_rgba(44,38,35,0.04)] transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12">
           <div className="flex items-center justify-between h-20">
             
             {/* Brand Wordmark: Cocoon */}

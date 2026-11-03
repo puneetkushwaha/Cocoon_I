@@ -28,7 +28,7 @@ export default function AllCollectionsPage() {
     <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans selection:bg-[#F3D5CF] selection:text-[#5B2920]">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-8 sm:py-12 text-left space-y-12 sm:space-y-16">
+      <main className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-12 py-8 sm:py-12 text-left space-y-12 sm:space-y-16">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumbs" className="text-xs font-serif text-stone-500 space-x-2">
           <Link href="/" className="hover:text-[#B06B5B] underline">Home</Link>
@@ -49,8 +49,8 @@ export default function AllCollectionsPage() {
           </p>
         </div>
 
-        {/* 1. CIRCLE CATEGORY ICONS (Exactly matching homepage circle aesthetic) */}
-        <section className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 sm:p-10 border border-[#EAE1D3] shadow-xs">
+        {/* 1. CIRCLE CATEGORY ICONS (Floating clean like homepage) */}
+        <section className="py-2">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8">
             {collections.map((cat) => {
               const previewProduct = PRODUCTS.find((p) => p.category === cat.slug);
@@ -93,7 +93,7 @@ export default function AllCollectionsPage() {
               </h2>
             </div>
             <Link
-              href="/#shop"
+              href="/shop"
               className="text-xs font-bold uppercase tracking-widest text-[#B06B5B] hover:underline"
             >
               View Complete Catalog ({PRODUCTS.length}) &rarr;
