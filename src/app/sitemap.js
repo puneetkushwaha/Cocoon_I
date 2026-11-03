@@ -72,12 +72,20 @@ export default function sitemap() {
   const categories = Object.keys(CATEGORY_SEO_DATA);
 
   // High-priority dedicated collection authority landing pages (Loomsmith SEO model)
-  const collectionPages = categories.map((cat) => ({
-    url: `${baseUrl}/collections/${cat}`,
-    lastModified: new Date(),
-    changeFrequency: "daily",
-    priority: 0.9,
-  }));
+  const collectionPages = categories.map((cat) => {
+    const previewProduct = PRODUCTS.find((p) => p.category === cat);
+    return {
+      url: `${baseUrl}/collections/${cat}`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+      images: [
+        previewProduct?.imgUrl?.startsWith("http")
+          ? previewProduct.imgUrl
+          : `${baseUrl}${previewProduct?.imgUrl || "/instagram-post.jpg"}`,
+      ],
+    };
+  });
 
   const blogPages = BLOG_POSTS.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,

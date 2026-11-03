@@ -12,7 +12,7 @@ export default function robots() {
       },
       {
         userAgent: "Pinterestbot",
-        allow: ["/", "/products/", "/category/", "/blog/", "/shop"],
+        allow: ["/", "/products/", "/collections/", "/product/", "/blog/", "/shop", "/story", "/custom-order"],
       },
       {
         userAgent: "Bingbot",
