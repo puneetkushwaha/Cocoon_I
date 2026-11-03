@@ -127,6 +127,56 @@ export const INITIAL_ORDERS = [
 export const INITIAL_CUSTOMIZATIONS = [];
 
 export const INITIAL_REVIEWS = [
+
+  {
+    "id": "REV-105",
+    "productId": 15,
+    "productName": "Sunflower Baguette Shoulder Bag",
+    "customerName": "Ananya Deshmukh",
+    "rating": 5,
+    "title": "Dreamy summer bag!",
+    "comment": "The sunflower motifs on this baguette bag are knitted with such precision. Fits my phone, cardholder, and lipstick comfortably. I get stopped by people asking where I bought it!",
+    "date": "2026-10-05T12:00:00.000Z",
+    "verified": true,
+    "mediaUrl": "/products/items/sunflower-baguette-shoulder-bag.jpg"
+  },
+  {
+    "id": "REV-106",
+    "productId": 11,
+    "productName": "Chunky Striped Crossbody with Gold Chain",
+    "customerName": "Meera Sen",
+    "rating": 5,
+    "title": "Chic luxury feel",
+    "comment": "The gold chain combined with the chunky cotton cord creates a high-end designer look. Very lightweight and doesn't hurt my shoulder.",
+    "date": "2026-10-08T15:30:00.000Z",
+    "verified": true,
+    "mediaUrl": "/products/items/striped-gold-chain-crossbody.jpg"
+  },
+  {
+    "id": "REV-107",
+    "productId": 23,
+    "productName": "Terracotta Floral Drawstring Pouch",
+    "customerName": "Divya Nambiar",
+    "rating": 5,
+    "title": "Earthy and durable",
+    "comment": "The terracotta shade is rich and warm. The drawstring works very smoothly and keeps everything secure. Truly heirloom quality.",
+    "date": "2026-10-14T11:20:00.000Z",
+    "verified": true,
+    "mediaUrl": "/products/items/terracotta-floral-pouch.jpg"
+  },
+  {
+    "id": "REV-108",
+    "productId": 26,
+    "productName": "Sun-Kissed Sunflower Crossbody Tote",
+    "customerName": "Tanvi Saxena",
+    "rating": 5,
+    "title": "My favorite everyday tote",
+    "comment": "Spacious, sturdy, and radiant. Pure organic milk cotton means zero roughness. Mehak did an incredible job with the craftsmanship!",
+    "date": "2026-10-18T17:45:00.000Z",
+    "verified": true,
+    "mediaUrl": "/products/items/sunflower-crossbody-tote.jpg"
+  }
+,
   {
     id: "REV-201",
     productId: 6,

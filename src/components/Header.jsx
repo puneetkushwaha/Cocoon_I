@@ -149,7 +149,7 @@ export default function Header({ onOpenCart, cartCountOverride }) {
           <div className="flex items-center justify-between h-20">
             
             {/* Brand Wordmark: Cocoon */}
-            <Link href="/" className="group flex items-center select-none py-1 text-left shrink-0">
+            <Link href="/" className="group flex items-center select-none py-1 text-left shrink-0 outline-none focus:outline-none focus:ring-0">
               <span className="font-header text-2xl sm:text-4xl font-light tracking-[0.22em] sm:tracking-[0.28em] uppercase text-[#231F20] group-hover:text-[#B06B5B] transition-colors duration-300 leading-none">
                 COCOON
               </span>
@@ -157,20 +157,20 @@ export default function Header({ onOpenCart, cartCountOverride }) {
 
             {/* Nav links with Glass Pill container */}
             <nav className="hidden md:flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#2C2623] bg-white/40 backdrop-blur-md p-1.5 rounded-full border border-white/70 shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
-              <Link href="/#shop" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
+              <Link href="/shop" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
                 All Drops
               </Link>
-              <Link href="/#categories" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
-                Categories
+              <Link href="/collections" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-[#B06B5B] transition-all duration-200">
+                Collections
               </Link>
-              <Link href="/#custom-order" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
+              <Link href="/custom-order" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
                 Custom Order
               </Link>
-              <Link href="/#our-story" className="px-4 py-2 rounded-full hover:bg-white/80 text-[#B06B5B] transition-all duration-200 flex items-center gap-1">
-                Letter from Mehak
+              <Link href="/story" className="px-4 py-2 rounded-full hover:bg-white/80 text-[#B06B5B] transition-all duration-200 flex items-center gap-1">
+                Story
               </Link>
               <Link href="/blog" className="px-4 py-2 rounded-full hover:bg-white/80 hover:text-stone-900 transition-all duration-200">
-                Journal &amp; Guides
+                Blogs
               </Link>
             </nav>
 
@@ -371,14 +371,8 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                 ]).map((cat) => (
                   <Link
                     key={cat.id}
-                    href="/#shop"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      try {
-                        const target = document.getElementById("shop") || document.getElementById("p4-treasures");
-                        if (target) target.scrollIntoView({ behavior: "smooth" });
-                      } catch (e) {}
-                    }}
+                    href={`/collections/${cat.id}`}
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="group bg-white rounded-2xl p-2.5 border border-[#EAE0D2] hover:border-[#B06B5B]/50 transition-all text-center flex flex-col items-center shadow-2xs hover:shadow-xs active:scale-95"
                   >
                     <div className="w-14 h-14 rounded-full overflow-hidden bg-[#FAF6F0] border border-[#EAE0D2] mb-2 p-0.5">

@@ -119,7 +119,7 @@ export default async function BlogPostPage({ params }) {
       
       <Header />
 
-      <article className="max-w-4xl mx-auto px-6 sm:px-10 py-16 sm:py-20 text-left space-y-12">
+      <article className="max-w-4xl mx-auto px-6 sm:px-10 lg:px-12 py-16 sm:py-20 text-left space-y-12">
         {/* Breadcrumb */}
         <div className="text-xs font-serif text-stone-500 space-x-2">
           <Link href="/" className="hover:text-[#B06B5B] underline">Home</Link>

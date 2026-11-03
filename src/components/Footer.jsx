@@ -59,32 +59,32 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/category/bags" className="hover:text-[#B06B5B] transition">
+                <Link href="/collections/bags" className="hover:text-[#B06B5B] transition">
                   Handbags &amp; Totes
                 </Link>
               </li>
               <li>
-                <Link href="/category/bandanas" className="hover:text-[#B06B5B] transition">
+                <Link href="/collections/bandanas" className="hover:text-[#B06B5B] transition">
                   Bandanas &amp; Headscarves
                 </Link>
               </li>
               <li>
-                <Link href="/category/belts" className="hover:text-[#B06B5B] transition">
+                <Link href="/collections/belts" className="hover:text-[#B06B5B] transition">
                   Waist Belts &amp; Hip Scarves
                 </Link>
               </li>
               <li>
-                <Link href="/category/hair-accessories" className="hover:text-[#B06B5B] transition">
+                <Link href="/collections/hair-accessories" className="hover:text-[#B06B5B] transition">
                   Scrunchies &amp; Hair Ties
                 </Link>
               </li>
               <li>
-                <Link href="/category/phone-cases" className="hover:text-[#B06B5B] transition">
+                <Link href="/collections/phone-cases" className="hover:text-[#B06B5B] transition">
                   Phone Pouches &amp; Slings
                 </Link>
               </li>
               <li>
-                <Link href="/category/keychains" className="hover:text-[#B06B5B] transition">
+                <Link href="/collections/keychains" className="hover:text-[#B06B5B] transition">
                   Keychains &amp; Charms
                 </Link>
               </li>

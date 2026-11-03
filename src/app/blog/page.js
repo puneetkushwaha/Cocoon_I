@@ -46,7 +46,7 @@ export default function BlogIndexPage() {
     <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans selection:bg-[#F3D5CF] selection:text-[#5B2920]">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-6 sm:px-10 py-16 sm:py-24 space-y-16 text-left">
+      <main className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 py-16 sm:py-24 space-y-16 text-left">
         {/* Breadcrumb */}
         <div className="text-xs font-serif text-stone-500 space-x-2">
           <Link href="/" className="hover:text-[#B06B5B] underline">Home</Link>

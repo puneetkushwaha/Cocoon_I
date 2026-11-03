@@ -373,16 +373,16 @@ export default function Preset4() {
               </div>
 
               {/* 3 Risk-Removal Trust Badges */}
-              <div className="pt-6 border-t border-[#EFE8DD] grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-left">
+              <div className="pt-6 border-t border-[#EFE8DD] grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-left" suppressHydrationWarning>
                 <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white/80 border border-[#EAE1D3] shadow-2xs">
                   <svg className="w-4 h-4 text-[#B06B5B] shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25" />
                   </svg>
-                  <div>
-                    <p className="text-[11px] font-bold text-[#2C2623] leading-none">
+                  <div suppressHydrationWarning>
+                    <p className="text-[11px] font-bold text-[#2C2623] leading-none" suppressHydrationWarning>
                       {storeSettings?.freeDeliveryOnOnline !== false ? "Free Express Transit" : "Express Transit"}
                     </p>
-                    <p className="text-[9px] text-stone-500 font-serif mt-0.5">
+                    <p className="text-[9px] text-stone-500 font-serif mt-0.5" suppressHydrationWarning>
                       {storeSettings?.freeDeliveryOnOnline !== false ? "Free on Online Orders" : "Free on Orders ₹999+"}
                     </p>
                   </div>
@@ -391,11 +391,11 @@ export default function Preset4() {
                   <svg className="w-4 h-4 text-[#B06B5B] shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6H2.25m0 0H3m0 0v1.5m0-1.5h18m-18 0a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 4.5v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 16.5V6z" />
                   </svg>
-                  <div>
-                    <p className="text-[11px] font-bold text-[#2C2623] leading-none">
+                  <div suppressHydrationWarning>
+                    <p className="text-[11px] font-bold text-[#2C2623] leading-none" suppressHydrationWarning>
                       {storeSettings?.codEnabled !== false ? "Cash on Delivery" : "Prepaid Express"}
                     </p>
-                    <p className="text-[9px] text-stone-500 font-serif mt-0.5">
+                    <p className="text-[9px] text-stone-500 font-serif mt-0.5" suppressHydrationWarning>
                       {storeSettings?.codEnabled !== false ? "Pay at Doorstep" : "Instant UPI & Cards"}
                     </p>
                   </div>
@@ -517,20 +517,20 @@ export default function Preset4() {
               <span className="text-[11px] font-black uppercase tracking-[0.25em] text-[#B06B5B]">Curated Collections</span>
               <h2 className="text-3xl sm:text-4xl font-light font-header text-[#2C2623] mt-1">Shop Our Categories</h2>
             </div>
-            <button
-              onClick={() => { setActiveCategory("all"); (document.getElementById("shop") || document.getElementById("p4-treasures"))?.scrollIntoView({ behavior: "smooth" }); }}
+            <Link
+              href="/collections"
               className="text-xs font-bold uppercase tracking-widest text-[#2C2623] hover:text-[#B06B5B] transition flex items-center gap-1 cursor-pointer"
             >
-              <span>View All ({storeProducts.length || STORE.products.length})</span>
+              <span>View All Collections ({storeCategories.length})</span>
               <span>&rarr;</span>
-            </button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8">
             {storeCategories.map((cat) => (
-              <button
+              <Link
                 key={cat.id}
-                onClick={() => { setActiveCategory(cat.id); (document.getElementById("shop") || document.getElementById("p4-treasures"))?.scrollIntoView({ behavior: "smooth" }); }}
+                href={`/collections/${cat.id}`}
                 className="group flex flex-col items-center text-center cursor-pointer transition-transform hover:-translate-y-1"
               >
                 <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-[#F5EFEB] border-2 border-[#EFE8DE] group-hover:border-[#B06B5B] shadow-sm group-hover:shadow-md transition-all duration-300 p-1">
@@ -538,7 +538,7 @@ export default function Preset4() {
                 </div>
                 <h4 className="mt-4 text-xs font-bold uppercase tracking-widest text-[#2C2623] group-hover:text-[#B06B5B] transition">{cat.name}</h4>
                 <p className="text-[11px] text-[#2C2623]/60 font-sans font-medium mt-0.5">{cat.itemCount || 0} Items • From Rs. {cat.minPrice}</p>
-              </button>
+              </Link>
             ))}
           </div>
 

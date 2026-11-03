@@ -77,13 +77,7 @@ const nextConfig = {
   },
 
   async redirects() {
-    return [
-      {
-        source: "/shop",
-        destination: "/#shop",
-        permanent: true,
-      },
-    ];
+    return [];
   },
 };
 

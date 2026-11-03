@@ -173,14 +173,14 @@ export default async function ProductDetailLayout({ children, params }) {
           {
             "@type": "ListItem",
             position: 2,
-            name: "Shop All",
-            item: "https://www.gococoon.store/#shop"
+            name: "Collections",
+            item: "https://www.gococoon.store/collections"
           },
           {
             "@type": "ListItem",
             position: 3,
             name: categoryName,
-            item: `https://www.gococoon.store/category/${product.category || "bags"}`
+            item: `https://www.gococoon.store/collections/${product.category || "bags"}`
           },
           {
             "@type": "ListItem",
