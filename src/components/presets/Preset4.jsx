@@ -344,7 +344,7 @@ export default function Preset4() {
         <div className="absolute top-10 left-10 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-[#FCEEEA]/70 filter blur-3xl pointer-events-none -z-0"></div>
         <div className="absolute bottom-10 right-0 sm:right-10 w-64 sm:w-80 h-64 sm:h-80 rounded-full bg-[#EDF3EE]/70 filter blur-3xl pointer-events-none -z-0"></div>
 
-        <div className="max-w-7xl mx-auto px-6 sm:px-10 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:px-10 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Left Content */}
@@ -510,7 +510,7 @@ export default function Preset4() {
       {/* 4. SHOP BY CATEGORY (Dynamic from Admin) */}
       <section id="categories" className="py-16 bg-[#FAF7F2] border-b border-[#EFE8DD] relative">
         <span id="p4-chapters" className="sr-only" />
-        <div className="max-w-7xl mx-auto px-6 sm:px-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:px-10">
           
           <div className="flex items-center justify-between mb-10 pb-4 border-b border-[#EAE0D2]">
             <div className="text-left">
@@ -547,7 +547,7 @@ export default function Preset4() {
 
       {/* 4.2 IMPULSE HOOK: UNDER ₹199 • YOUR FIRST CROCHET TREASURE */}
       <section id="under-199" className="py-16 bg-gradient-to-b from-[#FDFBF7] to-[#FAF5EE] border-b border-[#EAE0D2] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 sm:px-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:px-10">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-3 border-b border-[#EAE0D2] gap-4">
             <div className="text-left">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF0EA] border border-[#F3D5CF] text-[10px] font-black uppercase tracking-[0.25em] text-[#B06B5B] mb-2">
@@ -650,7 +650,7 @@ export default function Preset4() {
       <section id="p4-lookbook" className="py-20 bg-[#F5EFEB] border-b border-[#E8DFC9] relative overflow-hidden text-center">
         <div className="absolute top-0 left-1/3 w-96 h-96 bg-[#F8E5E1]/50 rounded-full blur-3xl pointer-events-none" />
         
-        <div className="max-w-7xl mx-auto px-6 sm:px-10 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:px-10 relative z-10">
           
           <div className="max-w-2xl mx-auto space-y-2 mb-14 text-center">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF5EE] border border-[#E0D5C1] text-[10px] font-bold uppercase tracking-[0.35em] text-[#B06B5B]">
@@ -759,7 +759,7 @@ export default function Preset4() {
       {/* 5. MAIN CATALOG: "What's New in the Shop" */}
       <section id="shop" className="py-20 relative">
         <span id="p4-treasures" className="sr-only" />
-        <div className="max-w-7xl mx-auto px-6 sm:px-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:px-10">
           
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 text-left border-b border-[#EFE8DD] pb-6">
             <div>
@@ -978,7 +978,7 @@ export default function Preset4() {
           </svg>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 sm:px-10 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:px-10 relative z-10">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             
@@ -1061,7 +1061,7 @@ export default function Preset4() {
       {/* 6. A LETTER FROM THE MAKER (Minimalist Luxury • Zara / Jacquemus Vibe) */}
       <section id="our-story" className="py-24 sm:py-32 bg-[#FAF7F2] border-y border-[#EAE3D6] relative overflow-hidden text-left">
         <span id="p4-maker-letter" className="sr-only" />
-        <div className="max-w-7xl mx-auto px-6 sm:px-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:px-10">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
             
@@ -1144,7 +1144,7 @@ export default function Preset4() {
         <div className="absolute top-10 right-10 w-96 h-96 bg-[#F8E5E1]/40 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-10 left-10 w-96 h-96 bg-[#EDF3EE]/40 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-6 sm:px-10 relative z-10 text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:px-10 relative z-10 text-left">
           
           {/* HEADER */}
           <div className="text-center max-w-2xl mx-auto space-y-3 mb-14">

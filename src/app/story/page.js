@@ -21,7 +21,7 @@ export default function StoryPage() {
     <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans selection:bg-[#F3D5CF] selection:text-[#5B2920]">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-6 sm:px-10 py-8 sm:py-12 text-left space-y-12 sm:space-y-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:px-10 py-8 sm:py-12 text-left space-y-12 sm:space-y-16">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumbs" className="text-xs font-serif text-stone-500 space-x-2">
           <Link href="/" className="hover:text-[#B06B5B] underline">Home</Link>

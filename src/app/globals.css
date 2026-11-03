@@ -50,11 +50,6 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Ensure structural containers never exceed viewport bounds */
-main, section, header, footer, nav {
-  max-width: 100%;
-}
-
 *, *::before, *::after {
   font-variant-numeric: lining-nums tabular-nums;
   -webkit-font-feature-settings: "lnum" 1, "tnum" 1;
