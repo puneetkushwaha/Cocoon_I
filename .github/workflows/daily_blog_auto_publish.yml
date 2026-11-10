@@ -1,0 +1,56 @@
+name: Daily Automated Blog Publisher & Search Engine Pinger
+
+on:
+  schedule:
+    # Runs everyday at 00:00 UTC (05:30 AM IST)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  publish_daily_blog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Generate New Daily Blog Post
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python scripts/generate_daily_blog.py
+
+      - name: Verify Build
+        run: npm run build
+
+      - name: Commit and Push New Blog Post
+        run: |
+          git config --global user.name "Cocoon Daily Blog Bot"
+          git config --global user.email "bot@gococoon.store"
+          git add src/data/blogPosts.js
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "feat(blog): publish daily artisan guide $(date +'%Y-%m-%d')"
+            git push origin main
+          fi
+
+      - name: Ping Search Engines for Immediate Indexing
+        run: python scripts/ping_search_engines.py
