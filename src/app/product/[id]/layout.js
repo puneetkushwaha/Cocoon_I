@@ -20,9 +20,13 @@ export async function generateMetadata({ params }) {
 
   const categoryName = product.category ? (product.category.charAt(0).toUpperCase() + product.category.slice(1).replace("-", " ")) : "Crochet";
   const materialLabel = product.materials || "Handcrafted Cotton Cord";
-  const title = `${product.name} | Handcrafted ${categoryName}`;
+  const title = product.targetKeyword
+    ? `${product.name} - ${product.targetKeyword}`
+    : `${product.name} | Handcrafted ${categoryName}`;
   const fullTitle = `${title} | Cocoon`;
-  const description = `${product.desc} Artisanal slow-fashion handcrafted knot-by-knot in India (${materialLabel}). Price: ₹${product.price}. Express pan-India dispatch.`;
+  const description = product.targetKeyword
+    ? `${product.desc} Buy ${product.targetKeyword} online. 100% handmade in India (${materialLabel}). Price: ₹${product.price}. Cash on Delivery & fast dispatch.`
+    : `${product.desc} Artisanal slow-fashion handcrafted knot-by-knot in India (${materialLabel}). Price: ₹${product.price}. Express pan-India dispatch.`;
   const pageUrl = `https://www.gococoon.store/product/${product.id}`;
   const imageUrl = product.imgUrl?.startsWith("http")
     ? product.imgUrl
@@ -33,14 +37,18 @@ export async function generateMetadata({ params }) {
     description,
     keywords: [
       product.name,
+      product.targetKeyword,
+      ...(product.secondaryKeywords || []),
       `handmade ${product.name}`,
       `crochet ${categoryName}`,
+      "crochet bags in india",
+      "best crochet bags",
       "Cocoon",
       "Cocoon store",
       "COCOON crochet",
       "organic milk cotton crochet",
       "crochet boutique India"
-    ],
+    ].filter(Boolean),
     alternates: {
       canonical: pageUrl,
     },

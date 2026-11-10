@@ -26,9 +26,12 @@ export async function generateMetadata({ params }) {
   }
 
   const canonicalUrl = `https://www.gococoon.store/collections/${catData.slug}`;
+  const pageTitle = catData.metaTitle
+    ? catData.metaTitle.replace(/\s*\|\s*Cocoon$/i, "")
+    : `${catData.name} | Handcrafted Crochet Collection`;
 
   return {
-    title: `${catData.name} Collection`,
+    title: pageTitle,
     description: catData.metaDescription || catData.intro,
     keywords: catData.keywords || [
       catData.name,
@@ -172,7 +175,7 @@ export default async function CollectionPage({ params }) {
           {/* Clean Loomsmith-style H1 Heading */}
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-[#EAE1D3] pb-4">
             <h1 className="text-3xl sm:text-5xl font-header font-bold text-[#2C2623] tracking-tight">
-              {catData.name}
+              {catData.h1 || catData.name}
             </h1>
             <span className="text-xs font-mono text-stone-500">
               {categoryProducts.length} Artisanal Pieces Available

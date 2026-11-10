@@ -14,7 +14,9 @@ export const PRODUCTS = [
     reviews: 24,
     colors: ["Mocha Brown","Cream Vanilla"],
     sizes: ["Mini Handbag (8\" x 7\")"],
-    materials: "100% Chunky Cotton Cord"
+    materials: "100% Chunky Cotton Cord",
+    targetKeyword: "best crochet bags for women india",
+    secondaryKeywords: ["chocolate bow knot handbag","brown crochet bow purse","chunky knit tote bag","crochet bags in india"]
   },
   {
     id: 2,
@@ -30,7 +32,9 @@ export const PRODUCTS = [
     reviews: 19,
     colors: ["Dusty Rose","Soft Blush"],
     sizes: ["Free Size (Tie-Up Length 52\")"],
-    materials: "Ultra-Soft Milk Cotton"
+    materials: "Ultra-Soft Milk Cotton",
+    targetKeyword: "crochet hip scarf wrap india",
+    secondaryKeywords: ["blush pink boho crochet hip wrap","festival lace fringe waist tie","crochet waist belt india"]
   },
   {
     id: 3,
@@ -46,7 +50,9 @@ export const PRODUCTS = [
     reviews: 16,
     colors: ["Lilac Pastel","Cream Ivory"],
     sizes: ["Comfort Elastic Tie"],
-    materials: "100% Breathable Cotton Yarn"
+    materials: "100% Breathable Cotton Yarn",
+    targetKeyword: "pastel crochet headband india",
+    secondaryKeywords: ["lilac open mesh hair band","scalloped border crochet headband","crochet bandana india"]
   },
   {
     id: 4,
@@ -62,7 +68,9 @@ export const PRODUCTS = [
     reviews: 38,
     colors: ["Ruby Red","Wine Red"],
     sizes: ["Handy Clip (4\" drop)"],
-    materials: "Fine Cotton Thread & Faux Pearls"
+    materials: "Fine Cotton Thread & Faux Pearls",
+    targetKeyword: "crochet bow keychain under 200",
+    secondaryKeywords: ["ruby red bow bag charm","mini pearl crochet keychain","crochet keychain india"]
   },
   {
     id: 5,
@@ -78,7 +86,9 @@ export const PRODUCTS = [
     reviews: 27,
     colors: ["Blush Pink & Cherry Red","Peach"],
     sizes: ["Handy Clip (4.5\" drop)"],
-    materials: "Soft Milk Cotton & Acrylic Beads"
+    materials: "Soft Milk Cotton & Acrylic Beads",
+    targetKeyword: "crochet cherry keychain india",
+    secondaryKeywords: ["3D handmade cherry bag charm","beaded fruit crochet keyring","cute keychain india"]
   },
   {
     id: 6,
@@ -94,7 +104,9 @@ export const PRODUCTS = [
     reviews: 31,
     colors: ["English Rose Pink","Petal Peach"],
     sizes: ["Stretch Elastic Fit"],
-    materials: "Delicate Fine Cotton"
+    materials: "Delicate Fine Cotton",
+    targetKeyword: "crochet flower hair ties india",
+    secondaryKeywords: ["rose crochet hair tie with bells","cottagecore floral hair tie","crochet hair accessories india"]
   },
   {
     id: 7,
@@ -110,7 +122,9 @@ export const PRODUCTS = [
     reviews: 42,
     colors: ["Pastel Multicolor Floral","Daisy White & Yellow"],
     sizes: ["Free Size (Tie-Up 48\")"],
-    materials: "High-Durability Cotton Thread"
+    materials: "High-Durability Cotton Thread",
+    targetKeyword: "crochet belt for jeans india",
+    secondaryKeywords: ["daisy chain crochet waist tie","flower vine belt for denim","crochet waist belt india"]
   },
   {
     id: 8,
@@ -126,7 +140,9 @@ export const PRODUCTS = [
     reviews: 45,
     colors: ["Deep Burgundy","Earthy Terracotta"],
     sizes: ["Standard Free Size"],
-    materials: "Soft Lightweight Acrylic Yarn"
+    materials: "Soft Lightweight Acrylic Yarn",
+    targetKeyword: "crochet triangle bandana india",
+    secondaryKeywords: ["wine red crochet hair kerchief","retro cottagecore headscarf india","crochet bandana india"]
   },
   {
     id: 9,
@@ -142,7 +158,9 @@ export const PRODUCTS = [
     reviews: 22,
     colors: ["Mocha Cream","Caramel Tan"],
     sizes: ["Medium Claw Clip (3.5\")"],
-    materials: "Milk Cotton on Sturdy Acrylic Clip"
+    materials: "Milk Cotton on Sturdy Acrylic Clip",
+    targetKeyword: "crochet hair claw clip india",
+    secondaryKeywords: ["brown floral applique claw clip","cottagecore hair clip india","crochet hair accessories india"]
   },
   {
     id: 10,
@@ -158,7 +176,9 @@ export const PRODUCTS = [
     reviews: 58,
     colors: ["Wine Red & Cream","Forest Green & Cream"],
     sizes: ["Oversized Ruffle"],
-    materials: "Velvety Soft Chenille Yarn"
+    materials: "Velvety Soft Chenille Yarn",
+    targetKeyword: "crochet scrunchies online india",
+    secondaryKeywords: ["oversized dual tone chenille scrunchie","velvet crochet hair scrunchie","crochet hair accessories india"]
   },
   {
     id: 11,
@@ -174,7 +194,9 @@ export const PRODUCTS = [
     reviews: 17,
     colors: ["Navy & Cream","Forest & Cream"],
     sizes: ["Crossbody Pouch (8.5\" x 6\")"],
-    materials: "Chunky Polyester Cord & Gold Alloy Chain"
+    materials: "Chunky Polyester Cord & Gold Alloy Chain",
+    targetKeyword: "crochet sling bag online india",
+    secondaryKeywords: ["chunky striped crochet crossbody","crochet bag with gold chain strap","crochet bags in india"]
   },
   {
     id: 12,
@@ -190,7 +212,9 @@ export const PRODUCTS = [
     reviews: 33,
     colors: ["Sage Green","Dusty Lavender"],
     sizes: ["Universal Fit (Up to 6.7\" phones)"],
-    materials: "Cushioned Milk Cotton"
+    materials: "Cushioned Milk Cotton",
+    targetKeyword: "granny square phone cover india",
+    secondaryKeywords: ["sage green mobile pouch with strap","handmade cushioned phone sleeve","crochet phone pouch india"]
   },
   {
     id: 13,
@@ -206,7 +230,9 @@ export const PRODUCTS = [
     reviews: 49,
     colors: ["Cobalt Blue & White","Turquoise Blue"],
     sizes: ["Pocket Size (3.5\")"],
-    materials: "Fine Mercerized Cotton Thread"
+    materials: "Fine Mercerized Cotton Thread",
+    targetKeyword: "evil eye crochet keychain india",
+    secondaryKeywords: ["blue nazar protection bag charm","handmade evil eye keyring tassel","crochet keychain india"]
   },
   {
     id: 14,
@@ -222,7 +248,9 @@ export const PRODUCTS = [
     reviews: 37,
     colors: ["Sapphire Blue","Aegean Teal"],
     sizes: ["Handy Keyring (4\")"],
-    materials: "Mercerized Cotton & Wood Beads"
+    materials: "Mercerized Cotton & Wood Beads",
+    targetKeyword: "handmade nazar amulet keychain",
+    secondaryKeywords: ["evil eye charm with wooden beads","circular crochet medallion keyring","crochet keychain india"]
   },
   {
     id: 15,
@@ -238,7 +266,9 @@ export const PRODUCTS = [
     reviews: 29,
     colors: ["Multicolor Bloom","Monochrome Earth"],
     sizes: ["Compact Baguette (10\" x 6\")"],
-    materials: "100% Breathable Cotton Blend"
+    materials: "100% Breathable Cotton Blend",
+    targetKeyword: "aesthetic crochet bags india",
+    secondaryKeywords: ["sunflower crochet baguette bag","Y2K floral granny square shoulder bag","crochet bags in india"]
   },
   {
     id: 16,
@@ -254,7 +284,9 @@ export const PRODUCTS = [
     reviews: 25,
     colors: ["Pastel Mint Cherry","Blush Bow","Vanilla Buttercup"],
     sizes: ["Universal Fit (Up to 6.7\" phones)"],
-    materials: "Plush Baby Cotton Yarn"
+    materials: "Plush Baby Cotton Yarn",
+    targetKeyword: "cute crochet phone case india",
+    secondaryKeywords: ["3D cherry crochet mobile cover","pastel knitted smartphone sleeve","crochet phone pouch india"]
   },
   {
     id: 17,
@@ -270,7 +302,9 @@ export const PRODUCTS = [
     reviews: 52,
     colors: ["Sunflower Gold & Navy","Sunflower & Sage"],
     sizes: ["Mini Backpack (11\" x 10\" x 4\")"],
-    materials: "Heavyweight Durable Cotton Yarn"
+    materials: "Heavyweight Durable Cotton Yarn",
+    targetKeyword: "crochet backpack india",
+    secondaryKeywords: ["sunflower crochet backpack","handmade granny square mini backpack","crochet bags in india"]
   },
   {
     id: 18,
@@ -286,7 +320,9 @@ export const PRODUCTS = [
     reviews: 41,
     colors: ["Navy Floral","Sage Floral"],
     sizes: ["Universal Smartphone Fit (with 46\" sling)"],
-    materials: "Structured Cotton Cord"
+    materials: "Structured Cotton Cord",
+    targetKeyword: "crochet phone sling bag india",
+    secondaryKeywords: ["envelope flap mobile crossbody pouch","floral crochet phone bag with button","crochet phone pouch india"]
   },
   {
     id: 19,
@@ -302,7 +338,9 @@ export const PRODUCTS = [
     reviews: 20,
     colors: ["Royal Navy","Midnight Black"],
     sizes: ["Free Size (Tie-Up 50\")"],
-    materials: "Mercerized Cotton Thread"
+    materials: "Mercerized Cotton Thread",
+    targetKeyword: "crochet lace belt for dress india",
+    secondaryKeywords: ["royal navy crochet lace belt","geometric crochet corset belt","crochet waist belt india"]
   },
   {
     id: 20,
@@ -318,7 +356,9 @@ export const PRODUCTS = [
     reviews: 36,
     colors: ["Butter Yellow & Cream","Pure Vanilla"],
     sizes: ["Oversized Ruffle"],
-    materials: "Hypoallergenic Chunky Knit Yarn"
+    materials: "Hypoallergenic Chunky Knit Yarn",
+    targetKeyword: "chunky crochet scrunchie india",
+    secondaryKeywords: ["butter yellow oversized hair scrunchie","hypoallergenic crochet hair tie","crochet hair accessories india"]
   },
   {
     id: 21,
@@ -334,7 +374,9 @@ export const PRODUCTS = [
     reviews: 48,
     colors: ["Sunny Yellow","Warm Honey"],
     sizes: ["Medium Claw Clip (3.5\")"],
-    materials: "Cotton Floral Motif on Resin Clip"
+    materials: "Cotton Floral Motif on Resin Clip",
+    targetKeyword: "sunflower hair claw clip india",
+    secondaryKeywords: ["sunflower crochet hair jaw clip","sunny yellow flower hair clip","crochet hair accessories india"]
   },
   {
     id: 22,
@@ -350,7 +392,9 @@ export const PRODUCTS = [
     reviews: 28,
     colors: ["Ivory White","Powder Blue"],
     sizes: ["Stretch Elastic Fit"],
-    materials: "Fine Mercerized Cotton"
+    materials: "Fine Mercerized Cotton",
+    targetKeyword: "bell flower crochet hair tie",
+    secondaryKeywords: ["lily of the valley crochet hair tie","cottagecore flower hair elastic","crochet hair accessories india"]
   },
   {
     id: 23,
@@ -366,7 +410,9 @@ export const PRODUCTS = [
     reviews: 34,
     colors: ["Terracotta Rust","Olive Meadow"],
     sizes: ["Compact Pouch (7\" x 7\")"],
-    materials: "Natural Cotton & Linen Blend"
+    materials: "Natural Cotton & Linen Blend",
+    targetKeyword: "crochet pouch bag india",
+    secondaryKeywords: ["terracotta floral crochet drawstring pouch","boho handmade cosmetic pouch","crochet bags in india"]
   },
   {
     id: 24,
@@ -382,7 +428,9 @@ export const PRODUCTS = [
     reviews: 32,
     colors: ["Pastel Lilac","Baby Pink"],
     sizes: ["Handy Clip (4\" drop)"],
-    materials: "Fine Cotton Thread & Faux Pearls"
+    materials: "Fine Cotton Thread & Faux Pearls",
+    targetKeyword: "pastel bow keychain crochet",
+    secondaryKeywords: ["lilac bow pearl charm keychain","lavender crochet bow bag charm","crochet keychain india"]
   },
   {
     id: 25,
@@ -398,7 +446,9 @@ export const PRODUCTS = [
     reviews: 39,
     colors: ["Blush Pink","Cream Ivory"],
     sizes: ["Universal Fit (Up to 6.7\" phones)"],
-    materials: "Soft Cushioned Cotton"
+    materials: "Soft Cushioned Cotton",
+    targetKeyword: "3d floral crochet phone sleeve",
+    secondaryKeywords: ["pink flower applique mobile case","cushioned knitted phone cover","crochet phone pouch india"]
   },
   {
     id: 26,
@@ -414,7 +464,9 @@ export const PRODUCTS = [
     reviews: 44,
     colors: ["Golden Ochre","Earthy Brown"],
     sizes: ["Medium Tote (11\" x 11\")"],
-    materials: "Heavy Organic Cotton"
+    materials: "Heavy Organic Cotton",
+    targetKeyword: "crochet tote bags in india",
+    secondaryKeywords: ["sunflower crochet crossbody tote bag","yellow sunflower knit shoulder tote","crochet bags in india"]
   },
   {
     id: 27,
@@ -430,7 +482,9 @@ export const PRODUCTS = [
     reviews: 23,
     colors: ["Onyx Black","Smoky Charcoal"],
     sizes: ["Standard Free Size"],
-    materials: "Fine Mercerized Black Cotton"
+    materials: "Fine Mercerized Black Cotton",
+    targetKeyword: "black spiderweb crochet bandana",
+    secondaryKeywords: ["gothic crochet hair kerchief","alt cottagecore spiderweb headscarf","crochet bandana india"]
   },
   {
     id: 28,
@@ -446,7 +500,9 @@ export const PRODUCTS = [
     reviews: 30,
     colors: ["Vintage Ivory","Chalk White"],
     sizes: ["Free Size (Tie-Up 50\")"],
-    materials: "100% Fine Organic Cotton"
+    materials: "100% Fine Organic Cotton",
+    targetKeyword: "vintage crochet belt for dress",
+    secondaryKeywords: ["white lace vintage tie belt","scalloped tie belt for dress","crochet waist belt india"]
   },
   {
     id: 29,
@@ -462,7 +518,9 @@ export const PRODUCTS = [
     reviews: 51,
     colors: ["Candy Red & White","Pink & White"],
     sizes: ["Everyday Stretch"],
-    materials: "Milk Cotton with Premium Elastic"
+    materials: "Milk Cotton with Premium Elastic",
+    targetKeyword: "handmade crochet hair ties under 150",
+    secondaryKeywords: ["candy red vanilla swirl hair tie","candy cane ruffle hair scrunchie","crochet hair accessories india"]
   },
   {
     id: 30,
@@ -478,6 +536,8 @@ export const PRODUCTS = [
     reviews: 18,
     colors: ["Snow White & Green", "Cream Vanilla & Green", "Blush Pink & Green"],
     sizes: ["Standard Charm (Rose Ø 2.8\", Stems 4\")"],
-    materials: "100% Organic Milk Cotton Yarn"
+    materials: "100% Organic Milk Cotton Yarn",
+    targetKeyword: "crochet car mirror hanging charm",
+    secondaryKeywords: ["snow white rose twin buds charm","blooming rose crochet car charm","crochet keychain india"]
   }
 ];

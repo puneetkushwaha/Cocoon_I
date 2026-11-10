@@ -770,7 +770,10 @@ export default function ProductDetailPage({ params }) {
     image: product.imgUrl?.startsWith("http")
       ? product.imgUrl
       : `https://www.gococoon.store${product.imgUrl}`,
-    description: product.desc || `${product.name} handcrafted with 100% pure organic milk cotton by Mehak Agarwal at Cocoon.`,
+    description: product.targetKeyword
+      ? `${product.desc} Buy ${product.targetKeyword} online in India. Handcrafted slow-fashion knitwear with ${product.materials || "100% organic cotton"}.`
+      : (product.desc || `${product.name} handcrafted with 100% pure organic milk cotton by Mehak Agarwal at Cocoon.`),
+    keywords: [product.name, product.targetKeyword, ...(product.secondaryKeywords || []), "crochet bags in india", "Cocoon"].filter(Boolean).join(", "),
     sku: `COCOON-${product.id}`,
     mpn: `GC-PRD-${product.id}`,
     category: categoryName,
@@ -959,6 +962,11 @@ export default function ProductDetailPage({ params }) {
               <h1 className="text-3xl sm:text-4xl font-header font-bold text-[#2C2623] leading-tight">
                 {product.name}
               </h1>
+              {product.targetKeyword && (
+                <p className="text-xs text-[#B06B5B] font-medium tracking-wide">
+                  {product.targetKeyword.toUpperCase()}
+                </p>
+              )}
 
               {/* Pricing */}
               <div className="flex items-baseline gap-3 pt-1">
