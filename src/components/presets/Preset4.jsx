@@ -10,6 +10,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import InstagramShowcase from "@/components/InstagramShowcase";
 import FaqSection from "@/components/FaqSection";
+import HomeJournalSection from "@/components/HomeJournalSection";
 import { generateOrderId, getCraftStats } from "@/lib/orderUtils";
 
 export default function Preset4() {
@@ -1516,6 +1517,9 @@ export default function Preset4() {
 
       {/* 7.5 ATELIER FREQUENTLY ASKED QUESTIONS */}
       <FaqSection />
+
+      {/* 7.8 THE ARTISAN JOURNAL & STYLING GUIDES (NEWEST BLOG SPOTLIGHT) */}
+      <HomeJournalSection />
 
       {/* 8. MASTER STUDIO FOOTER */}
       <Footer />
