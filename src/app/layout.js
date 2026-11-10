@@ -71,6 +71,7 @@ export const metadata = {
     google: "googleaa021cb5a04c5bfc",
     other: {
       "msvalidate.01": "03F5A5A02DCA945B4D9EBACC8CFEC530",
+      "p:domain_verify": "e48294e82e7bd892930350c1f28c1bf8",
     },
   },
   icons: {
@@ -194,6 +195,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="max-w-full overflow-x-hidden overflow-x-clip">
       <head>
+        <meta name="p:domain_verify" content="e48294e82e7bd892930350c1f28c1bf8" />
         <link rel="icon" type="image/svg+xml" href="/icon.svg?v=3" />
         <link rel="alternate icon" href="/favicon.ico?v=3" />
         <link rel="apple-touch-icon" href="/icon.svg?v=3" />
