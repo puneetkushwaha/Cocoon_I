@@ -77,88 +77,6 @@ export default async function ProductDetailLayout({ children, params }) {
     ? (product.category.charAt(0).toUpperCase() + product.category.slice(1).replace("-", " ")) 
     : "Crochet";
 
-  const productSchema = product
-    ? {
-        "@context": "https://schema.org/",
-        "@type": "Product",
-        name: product.name,
-        image: product.imgUrl?.startsWith("http")
-          ? product.imgUrl
-          : `https://www.gococoon.store${product.imgUrl}`,
-        description: product.desc,
-        sku: `COCOON-${product.id}`,
-        mpn: `GC-PRD-${product.id}`,
-        category: categoryName,
-        material: product.materials || "Handcrafted Cotton Cord",
-        color: product.colors?.join(", ") || "Artisanal Multi",
-        countryOfOrigin: {
-          "@type": "Country",
-          name: "India"
-        },
-        brand: {
-          "@type": "Brand",
-          name: "Cocoon",
-          url: "https://www.gococoon.store"
-        },
-        offers: {
-          "@type": "Offer",
-          url: `https://www.gococoon.store/product/${product.id}`,
-          priceCurrency: "INR",
-          price: product.price,
-          priceValidUntil: "2027-12-31",
-          availability: "https://schema.org/InStock",
-          itemCondition: "https://schema.org/NewCondition",
-          seller: {
-            "@type": "Organization",
-            name: "Cocoon",
-            url: "https://www.gococoon.store"
-          },
-          hasMerchantReturnPolicy: {
-            "@type": "MerchantReturnPolicy",
-            applicableCountry: "IN",
-            returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-            merchantReturnDays: 7,
-            returnMethod: "https://schema.org/ReturnByMail",
-            returnFees: "https://schema.org/FreeReturn"
-          },
-          shippingDetails: {
-            "@type": "OfferShippingDetails",
-            shippingRate: {
-              "@type": "MonetaryAmount",
-              value: "0",
-              currency: "INR"
-            },
-            shippingDestination: {
-              "@type": "DefinedRegion",
-              addressCountry: "IN"
-            },
-            deliveryTime: {
-              "@type": "ShippingDeliveryTime",
-              handlingTime: {
-                "@type": "QuantitativeValue",
-                minValue: 3,
-                maxValue: 5,
-                unitCode: "d"
-              },
-              transitTime: {
-                "@type": "QuantitativeValue",
-                minValue: 2,
-                maxValue: 5,
-                unitCode: "d"
-              }
-            }
-          }
-        },
-        ...(Number(product.reviews) > 0 ? {
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: "5.0",
-            reviewCount: Number(product.reviews),
-          }
-        } : {}),
-      }
-    : null;
-
   const breadcrumbSchema = product
     ? {
         "@context": "https://schema.org",
@@ -194,12 +112,6 @@ export default async function ProductDetailLayout({ children, params }) {
 
   return (
     <>
-      {productSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
-        />
-      )}
       {breadcrumbSchema && (
         <script
           type="application/ld+json"

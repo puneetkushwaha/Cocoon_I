@@ -129,6 +129,10 @@ export default function ProductDetailPage({ params }) {
         setSelectedColor((prev) => prev || (found.colors ? found.colors[0] : "Standard"));
         STORE.addRecentlyViewed(found.id);
       }
+
+      // Sync reviews from local store whenever store updates
+      const currentReviews = STORE.getReviews(productId);
+      setReviews(currentReviews);
     };
 
     syncProductData();
@@ -667,33 +671,42 @@ export default function ProductDetailPage({ params }) {
 
     setIsUploadingMedia(true);
     let uploadedMediaUrl = null;
-    if (reviewForm.mediaFile) {
-      triggerToast("Uploading photo/video to storage... ⏳");
-      uploadedMediaUrl = await uploadMediaToSupabase(reviewForm.mediaFile, "cocoon-media");
+    try {
+      if (reviewForm.mediaFile) {
+        triggerToast("Uploading photo/video to storage... ⏳");
+        uploadedMediaUrl = await uploadMediaToSupabase(reviewForm.mediaFile, "cocoon-media");
+      }
+
+      const newRev = {
+        id: "REV-" + Math.floor(1000 + Math.random() * 9000),
+        productId: product.id,
+        productName: product.name,
+        customerName: reviewForm.name.trim(),
+        customerPhone: reviewForm.phone.trim() || null,
+        rating: Number(reviewForm.rating),
+        title: reviewForm.title.trim() || "Verified Heirloom Piece",
+        comment: reviewForm.comment.trim(),
+        mediaUrl: uploadedMediaUrl || reviewForm.mediaPreview,
+        date: new Date().toISOString(),
+        verified: true
+      };
+
+      STORE.addReview(newRev);
+      setReviews((prev) => [newRev, ...prev.filter((r) => r.id !== newRev.id)]);
+      setIsReviewModalOpen(false);
+      setIsUploadingMedia(false);
+      setReviewForm({ rating: 5, title: "", comment: "", name: customerUser?.name || "", phone: customerUser?.phone || "", mediaFile: null, mediaPreview: null });
+      triggerToast("Thank you for your review! Your review has been published.");
+
+      // Asynchronously sync to Supabase database without blocking UI
+      saveReviewToSupabase(newRev).catch((err) => {
+        console.warn("Supabase background review sync notice:", err);
+      });
+    } catch (err) {
+      console.error("Error submitting review:", err);
+      setIsUploadingMedia(false);
+      triggerToast("Something went wrong while publishing your review.");
     }
-
-    const newRev = {
-      id: "REV-" + Math.floor(1000 + Math.random() * 9000),
-      productId: product.id,
-      productName: product.name,
-      customerName: reviewForm.name.trim(),
-      customerPhone: reviewForm.phone.trim() || null,
-      rating: Number(reviewForm.rating),
-      title: reviewForm.title.trim() || "Verified Heirloom Piece",
-      comment: reviewForm.comment.trim(),
-      mediaUrl: uploadedMediaUrl || reviewForm.mediaPreview,
-      date: new Date().toISOString(),
-      verified: true
-    };
-
-    STORE.addReview(newRev);
-    await saveReviewToSupabase(newRev);
-
-    setReviews((prev) => [newRev, ...prev]);
-    setIsReviewModalOpen(false);
-    setIsUploadingMedia(false);
-    setReviewForm({ rating: 5, title: "", comment: "", name: customerUser?.name || "", phone: customerUser?.phone || "", mediaFile: null, mediaPreview: null });
-    triggerToast("Thank you for your review! Your review has been published.");
   };
 
   // Calculation for review rating breakdown
@@ -746,21 +759,32 @@ export default function ProductDetailPage({ params }) {
 
   const craftStats = useMemo(() => getCraftStats(product), [product]);
 
+  const categoryName = product.category 
+    ? (product.category.charAt(0).toUpperCase() + product.category.slice(1).replace("-", " ")) 
+    : "Crochet";
+
   const productSchema = {
-    "@context": "https://schema.org",
+    "@context": "https://schema.org/",
     "@type": "Product",
     name: product.name,
     image: product.imgUrl?.startsWith("http")
       ? product.imgUrl
       : `https://www.gococoon.store${product.imgUrl}`,
     description: product.desc || `${product.name} handcrafted with 100% pure organic milk cotton by Mehak Agarwal at Cocoon.`,
-    sku: `GC-${product.id}`,
-    category: product.category,
+    sku: `COCOON-${product.id}`,
+    mpn: `GC-PRD-${product.id}`,
+    category: categoryName,
+    material: product.materials || "100% Organic Milk Cotton",
+    color: product.colors?.join(", ") || "Artisanal Multi",
+    countryOfOrigin: {
+      "@type": "Country",
+      name: "India"
+    },
     brand: {
       "@type": "Brand",
-      name: "Cocoon"
+      name: "Cocoon",
+      url: "https://www.gococoon.store"
     },
-    material: "100% Organic Milk Cotton",
     offers: {
       "@type": "Offer",
       url: `https://www.gococoon.store/product/${product.id}`,
@@ -771,14 +795,56 @@ export default function ProductDetailPage({ params }) {
       itemCondition: "https://schema.org/NewCondition",
       seller: {
         "@type": "Organization",
-        name: "Cocoon"
+        name: "Cocoon",
+        url: "https://www.gococoon.store"
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "IN",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 7,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/FreeReturn"
+      },
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: "0",
+          currency: "INR"
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "IN"
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: 3,
+            maxValue: 5,
+            unitCode: "d"
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 2,
+            maxValue: 5,
+            unitCode: "d"
+          }
+        }
       }
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: reviewStats.count > 0 ? reviewStats.avg : "4.9",
-      reviewCount: reviewStats.count > 0 ? String(reviewStats.count) : "14"
-    }
+    ...(Number(reviewStats.count) > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: String(reviewStats.avg),
+            reviewCount: String(reviewStats.count),
+            bestRating: "5",
+            worstRating: "1"
+          }
+        }
+      : {})
   };
 
   return (
@@ -881,7 +947,7 @@ export default function ProductDetailPage({ params }) {
                   <a href="#reviews" className="text-xs font-semibold text-amber-700 hover:underline flex items-center gap-1">
                     <span>★</span>
                     <span>{reviewStats.avg}</span>
-                    <span className="text-stone-400">({reviewStats.count} reviews)</span>
+                    <span className="text-stone-400">({reviewStats.count} {reviewStats.count === 1 ? "review" : "reviews"})</span>
                   </a>
                 ) : (
                   <a href="#reviews" className="text-xs font-semibold text-[#B06B5B] hover:underline">
@@ -1233,8 +1299,13 @@ export default function ProductDetailPage({ params }) {
                 
                 <div className="md:col-span-4 text-center md:border-r border-[#EFE8DD] md:pr-6 space-y-2">
                   <span className="text-5xl font-header font-bold text-[#2C2623] block">{reviewStats.avg}</span>
-                  <div className="text-amber-500 text-lg">★★★★★</div>
-                  <p className="text-xs text-stone-500 font-serif">Based on {reviewStats.count} verified reviews</p>
+                  <div className="text-amber-500 text-lg">
+                    {"★".repeat(Math.min(5, Math.max(1, Math.round(Number(reviewStats.avg)))))}
+                    {"☆".repeat(Math.max(0, 5 - Math.min(5, Math.max(1, Math.round(Number(reviewStats.avg))))))}
+                  </div>
+                  <p className="text-xs text-stone-500 font-serif">
+                    Based on {reviewStats.count} {reviewStats.count === 1 ? "verified review" : "verified reviews"}
+                  </p>
                 </div>
 
                 <div className="md:col-span-8 space-y-2 text-xs">

@@ -4,7 +4,7 @@ export default function robots() {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/", "/cart", "/wishlist", "/profile", "/login", "/review"],
+        disallow: ["/admin", "/admin/*", "/admin/", "/api/", "/cart", "/wishlist", "/profile", "/login", "/review"],
       },
       {
         userAgent: "Googlebot-Image",
@@ -17,7 +17,7 @@ export default function robots() {
       {
         userAgent: "Bingbot",
         allow: "/",
-        disallow: ["/admin/", "/api/", "/cart", "/wishlist", "/profile", "/login", "/review"],
+        disallow: ["/admin", "/admin/*", "/admin/", "/api/", "/cart", "/wishlist", "/profile", "/login", "/review"],
       },
     ],
     sitemap: "https://www.gococoon.store/sitemap.xml",
