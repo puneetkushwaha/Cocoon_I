@@ -132,7 +132,7 @@ export default async function CollectionPage({ params }) {
       itemListElement: categoryProducts.map((p, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        url: `https://www.gococoon.store/product/${p.id}`,
+        url: `https://www.gococoon.store/product/${p.slug || p.id}`,
         name: p.name,
         image: p.imgUrl?.startsWith("http") ? p.imgUrl : `https://www.gococoon.store${p.imgUrl}`,
         offers: {

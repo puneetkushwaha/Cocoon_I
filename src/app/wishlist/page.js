@@ -172,7 +172,7 @@ export default function WishlistPage() {
                 <div>
                   {/* Product Image Clickable to /product/[id] */}
                   <Link
-                    href={`/product/${product.id}`}
+                    href={`/product/${product.slug || product.id}`}
                     className="block relative aspect-square rounded-2xl overflow-hidden bg-[#FAF6F0] mb-4 cursor-pointer"
                   >
                     <span className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md text-[9px] font-black uppercase tracking-wider text-[#B06B5B] shadow-2xs">
@@ -205,7 +205,7 @@ export default function WishlistPage() {
                       {product.category}
                     </span>
                     <Link
-                      href={`/product/${product.id}`}
+                      href={`/product/${product.slug || product.id}`}
                       className="font-header font-bold text-base text-[#2C2623] hover:text-[#B06B5B] transition block line-clamp-1"
                       title={product.name}
                     >
@@ -235,7 +235,7 @@ export default function WishlistPage() {
 
                   <div className="grid grid-cols-2 gap-2">
                     <Link
-                      href={`/product/${product.id}`}
+                      href={`/product/${product.slug || product.id}`}
                       className="py-2.5 rounded-xl border border-stone-300 hover:border-[#2C2623] text-stone-800 text-center text-xs font-bold uppercase tracking-wider transition"
                     >
                       View Details

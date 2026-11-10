@@ -2,6 +2,7 @@
 export const PRODUCTS = [
   {
     id: 1,
+    slug: "chocolate-bow-knot-handbag",
     name: "Chocolate Bow Knot Handbag",
     category: "bags",
     subcategory: "totes-handbags",
@@ -20,6 +21,7 @@ export const PRODUCTS = [
   },
   {
     id: 2,
+    slug: "blush-pink-crochet-waist-scarf",
     name: "Blush Pink Crochet Waist Scarf & Hip Wrap",
     category: "belts",
     subcategory: "waist-scarves",
@@ -38,6 +40,7 @@ export const PRODUCTS = [
   },
   {
     id: 3,
+    slug: "lilac-cloud-mesh-headband",
     name: "Lilac Cloud Mesh Headband",
     category: "bandanas",
     subcategory: "headbands",
@@ -56,6 +59,7 @@ export const PRODUCTS = [
   },
   {
     id: 4,
+    slug: "ruby-red-bow-pearl-charm-keychain",
     name: "Ruby Red Bow & Pearl Charm Keychain",
     category: "keychains",
     subcategory: "bow-keychains",
@@ -74,6 +78,7 @@ export const PRODUCTS = [
   },
   {
     id: 5,
+    slug: "cherry-blossom-bow-bead-keychain",
     name: "Cherry Blossom Bow & Bead Keychain",
     category: "keychains",
     subcategory: "fruit-keychains",
@@ -92,6 +97,7 @@ export const PRODUCTS = [
   },
   {
     id: 6,
+    slug: "pink-rose-bell-flower-ponytail-tie",
     name: "Pink Rose & Bell Flower Ponytail Tie",
     category: "hair-accessories",
     subcategory: "scrunchies-ties",
@@ -110,6 +116,7 @@ export const PRODUCTS = [
   },
   {
     id: 7,
+    slug: "floral-bloom-vine-waist-belt",
     name: "Floral Bloom Vine Waist Belt for Denim",
     category: "belts",
     subcategory: "lace-belts",
@@ -128,6 +135,7 @@ export const PRODUCTS = [
   },
   {
     id: 8,
+    slug: "burgundy-wine-triangle-hair-bandana",
     name: "Burgundy Wine Triangle Hair Bandana",
     category: "bandanas",
     subcategory: "bandanas",
@@ -146,6 +154,7 @@ export const PRODUCTS = [
   },
   {
     id: 9,
+    slug: "mocha-floral-hair-claw-clip",
     name: "Mocha Floral Hair Claw Clip",
     category: "hair-accessories",
     subcategory: "hair-clips",
@@ -164,6 +173,7 @@ export const PRODUCTS = [
   },
   {
     id: 10,
+    slug: "wine-red-cream-fluffy-scrunchie",
     name: "Wine Red & Cream Fluffy Scrunchie",
     category: "hair-accessories",
     subcategory: "scrunchies-ties",
@@ -182,6 +192,7 @@ export const PRODUCTS = [
   },
   {
     id: 11,
+    slug: "chunky-striped-crossbody-gold-chain",
     name: "Chunky Striped Crossbody with Gold Chain",
     category: "bags",
     subcategory: "crossbody-slings",
@@ -200,6 +211,7 @@ export const PRODUCTS = [
   },
   {
     id: 12,
+    slug: "sage-green-granny-square-phone-cover",
     name: "Sage Green Granny Square Phone Cover",
     category: "phone-cases",
     subcategory: "phone-sleeves",
@@ -218,6 +230,7 @@ export const PRODUCTS = [
   },
   {
     id: 13,
+    slug: "solo-nazar-evil-eye-protection-keychain",
     name: "Solo Nazar Evil Eye Protection Keychain",
     category: "keychains",
     subcategory: "evil-eye",
@@ -236,6 +249,7 @@ export const PRODUCTS = [
   },
   {
     id: 14,
+    slug: "nazar-amulet-evil-eye-keyring-set",
     name: "Nazar Amulet Evil Eye Keyring Set",
     category: "keychains",
     subcategory: "evil-eye",
@@ -254,6 +268,7 @@ export const PRODUCTS = [
   },
   {
     id: 15,
+    slug: "sunflower-baguette-shoulder-bag",
     name: "Sunflower Baguette Shoulder Bag",
     category: "bags",
     subcategory: "totes-handbags",
@@ -272,6 +287,7 @@ export const PRODUCTS = [
   },
   {
     id: 16,
+    slug: "pastel-cherry-bow-phone-cases-collection",
     name: "Pastel Cherry & Bow Phone Cases Collection",
     category: "phone-cases",
     subcategory: "phone-sleeves",
@@ -290,6 +306,7 @@ export const PRODUCTS = [
   },
   {
     id: 17,
+    slug: "sunflower-granny-square-mini-backpack",
     name: "Sunflower Granny Square Mini Backpack",
     category: "bags",
     subcategory: "backpacks",
@@ -308,6 +325,7 @@ export const PRODUCTS = [
   },
   {
     id: 18,
+    slug: "navy-floral-flap-phone-sling-crossbody",
     name: "Navy Floral Flap Phone Sling Crossbody",
     category: "phone-cases",
     subcategory: "phone-slings",
@@ -326,6 +344,7 @@ export const PRODUCTS = [
   },
   {
     id: 19,
+    slug: "navy-blue-royal-lace-waist-belt",
     name: "Navy Blue Royal Lace Waist Belt",
     category: "belts",
     subcategory: "lace-belts",
@@ -344,6 +363,7 @@ export const PRODUCTS = [
   },
   {
     id: 20,
+    slug: "cream-butter-chunky-ruffled-scrunchie",
     name: "Cream & Butter Chunky Ruffled Scrunchie",
     category: "hair-accessories",
     subcategory: "scrunchies-ties",
@@ -362,6 +382,7 @@ export const PRODUCTS = [
   },
   {
     id: 21,
+    slug: "sunflower-crochet-hair-claw-clip",
     name: "Sunflower Crochet Hair Claw Clip",
     category: "hair-accessories",
     subcategory: "hair-clips",
@@ -380,6 +401,7 @@ export const PRODUCTS = [
   },
   {
     id: 22,
+    slug: "white-blossom-bell-bud-hair-tie",
     name: "White Blossom & Bell Bud Hair Tie",
     category: "hair-accessories",
     subcategory: "scrunchies-ties",
@@ -398,6 +420,7 @@ export const PRODUCTS = [
   },
   {
     id: 23,
+    slug: "terracotta-floral-drawstring-pouch",
     name: "Terracotta Floral Drawstring Pouch",
     category: "bags",
     subcategory: "pouches",
@@ -416,6 +439,7 @@ export const PRODUCTS = [
   },
   {
     id: 24,
+    slug: "lilac-bow-pearl-charm-keychain",
     name: "Lilac Bow & Pearl Charm Keychain",
     category: "keychains",
     subcategory: "bow-keychains",
@@ -434,6 +458,7 @@ export const PRODUCTS = [
   },
   {
     id: 25,
+    slug: "blush-pink-3d-floral-phone-sleeve",
     name: "Blush Pink 3D Floral Phone Sleeve",
     category: "phone-cases",
     subcategory: "phone-sleeves",
@@ -452,6 +477,7 @@ export const PRODUCTS = [
   },
   {
     id: 26,
+    slug: "sun-kissed-sunflower-crossbody-tote",
     name: "Sun-Kissed Sunflower Crossbody Tote",
     category: "bags",
     subcategory: "crossbody-slings",
@@ -470,6 +496,7 @@ export const PRODUCTS = [
   },
   {
     id: 27,
+    slug: "gothic-spiderweb-lace-bandana",
     name: "Gothic Spiderweb Lace Bandana",
     category: "bandanas",
     subcategory: "bandanas",
@@ -488,6 +515,7 @@ export const PRODUCTS = [
   },
   {
     id: 28,
+    slug: "white-lace-vintage-tie-belt",
     name: "White Lace Vintage Tie Belt",
     category: "belts",
     subcategory: "lace-belts",
@@ -506,6 +534,7 @@ export const PRODUCTS = [
   },
   {
     id: 29,
+    slug: "candy-red-vanilla-swirl-hair-tie",
     name: "Candy Red & Vanilla Swirl Hair Tie",
     category: "hair-accessories",
     subcategory: "scrunchies-ties",
@@ -524,6 +553,7 @@ export const PRODUCTS = [
   },
   {
     id: 30,
+    slug: "snow-white-rose-twin-buds-charm",
     name: "Snow White Rose & Twin Buds Charm",
     category: "keychains",
     subcategory: "flower-charms",

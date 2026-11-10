@@ -161,7 +161,7 @@ export default function CollectionFilterSort({
                       </span>
                     )}
 
-                    <Link href={`/product/${product.id}`} prefetch={true} className="block w-full h-full">
+                    <Link href={`/product/${product.slug || product.id}`} prefetch={true} className="block w-full h-full">
                       <img
                         src={product.imgUrl}
                         alt={`${product.name} - Handcrafted Crochet by Cocoon`}
@@ -181,7 +181,7 @@ export default function CollectionFilterSort({
                       </span>
                     </div>
                     
-                    <Link href={`/product/${product.id}`} prefetch={true} className="block">
+                    <Link href={`/product/${product.slug || product.id}`} prefetch={true} className="block">
                       <h3
                         className="font-header font-bold text-xs sm:text-base text-[#2C2623] line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] leading-snug group-hover:text-[#B06B5B] transition cursor-pointer"
                         title={product.name}

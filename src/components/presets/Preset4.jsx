@@ -329,7 +329,7 @@ export default function Preset4() {
 
   const openQuickView = (product) => {
     if (product?.id) {
-      router.push(`/product/${product.id}`);
+      router.push(`/product/${product.slug || product.id}`);
     }
   };
 
@@ -592,7 +592,7 @@ export default function Preset4() {
                         {craft.hours} Craft
                       </span>
 
-                      <Link href={`/product/${p.id}`} prefetch={true} className="block w-full h-full">
+                      <Link href={`/product/${p.slug || p.id}`} prefetch={true} className="block w-full h-full">
                         <img
                           src={p.imgUrl}
                           alt={`${p.name} - Handcrafted Crochet Under 199`}
@@ -606,7 +606,7 @@ export default function Preset4() {
                       <span className="text-[9px] font-sans font-bold uppercase text-[#B06B5B] tracking-wider block">
                         {p.subcategory ? p.subcategory.replace('-', ' ') : p.category}
                       </span>
-                      <Link href={`/product/${p.id}`} prefetch={true} className="block">
+                      <Link href={`/product/${p.slug || p.id}`} prefetch={true} className="block">
                         <h3 className="font-header font-bold text-xs sm:text-sm text-[#2C2623] line-clamp-2 min-h-[2rem] leading-snug group-hover:text-[#B06B5B] transition cursor-pointer">
                           {p.name}
                         </h3>
@@ -697,7 +697,7 @@ export default function Preset4() {
                         ♥
                       </button>
 
-                      <Link href={`/product/${product.id}`} prefetch={true} className="block w-full h-full">
+                      <Link href={`/product/${product.slug || product.id}`} prefetch={true} className="block w-full h-full">
                         <img
                           src={item.imgUrl}
                           alt={`${item.title} - Handcrafted Crochet Bestseller Cocoon`}
@@ -717,7 +717,7 @@ export default function Preset4() {
                       <span className="text-[10px] font-black uppercase text-[#B06B5B] tracking-widest block">
                         {item.lookNote || item.tag}
                       </span>
-                      <Link href={`/product/${product.id}`} prefetch={true} className="block">
+                      <Link href={`/product/${product.slug || product.id}`} prefetch={true} className="block">
                         <h4 className="text-lg font-bold font-header text-[#2C2623] group-hover:text-[#B06B5B] transition cursor-pointer">
                           {item.title}
                         </h4>
@@ -845,7 +845,7 @@ export default function Preset4() {
                         </span>
                       )}
 
-                      <Link href={`/product/${product.id}`} prefetch={true} className="block w-full h-full">
+                      <Link href={`/product/${product.slug || product.id}`} prefetch={true} className="block w-full h-full">
                         <img
                           src={product.imgUrl}
                           alt={`${product.name} - Handcrafted Crochet by Cocoon`}
@@ -864,7 +864,7 @@ export default function Preset4() {
                           {craft.hours}
                         </span>
                       </div>
-                      <Link href={`/product/${product.id}`} prefetch={true} className="block">
+                      <Link href={`/product/${product.slug || product.id}`} prefetch={true} className="block">
                         <h3
                           className="font-header font-bold text-xs sm:text-base text-[#2C2623] line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] leading-snug group-hover:text-[#B06B5B] transition cursor-pointer"
                           title={product.name}

@@ -645,7 +645,8 @@ export default function CustomerProfilePage() {
                       {/* Ordered Items List */}
                       <div className="divide-y divide-[#F4EFEA]">
                         {order.items?.map((item, idx) => {
-                          const itemProdId = item.id || item.productId || 1;
+                          const itemProd = PRODUCTS.find((p) => p.id === (item.id || item.productId));
+                          const itemLinkTarget = item.slug || itemProd?.slug || item.id || item.productId || 1;
                           return (
                             <div key={idx} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                               <div className="flex items-center gap-4">
@@ -658,7 +659,7 @@ export default function CustomerProfilePage() {
                                 </div>
                                 <div className="space-y-0.5">
                                   <Link
-                                    href={`/product/${itemProdId}`}
+                                    href={`/product/${itemLinkTarget}`}
                                     className="font-header font-bold text-sm text-[#2C2623] hover:text-[#B06B5B] transition"
                                   >
                                     {item.name} &rarr;
@@ -675,7 +676,7 @@ export default function CustomerProfilePage() {
                               {/* Write a Review Button for each ordered item! */}
                               <div className="flex items-center gap-2">
                                 <Link
-                                  href={`/product/${itemProdId}`}
+                                  href={`/product/${itemLinkTarget}`}
                                   className="px-3.5 py-1.5 rounded-full border border-[#DDD3C4] text-[11px] font-bold uppercase tracking-wider text-[#2C2623] hover:bg-[#FAF4ED] transition"
                                 >
                                   View Item
@@ -789,7 +790,7 @@ export default function CustomerProfilePage() {
                     <div className="pt-3 border-t border-[#F4EFEA] flex items-center justify-between text-xs text-[#2C2623]/60">
                       <span>Reviewed: {rev.productName || "Handcrafted Piece"}</span>
                       <Link
-                        href={`/product/${rev.productId}`}
+                        href={`/product/${PRODUCTS.find((p) => p.id === rev.productId)?.slug || rev.productId}`}
                         className="text-[#B06B5B] font-bold hover:underline"
                       >
                         View Product &rarr;
@@ -846,7 +847,7 @@ export default function CustomerProfilePage() {
 
                     <div className="pt-3 border-t border-[#F4EFEA] flex items-center justify-between gap-2 mt-3">
                       <Link
-                        href={`/product/${item.id}`}
+                        href={`/product/${item.slug || PRODUCTS.find((p) => p.id === item.id)?.slug || item.id}`}
                         className="flex-1 py-1.5 rounded-lg bg-[#2C2623] hover:bg-rose-600 text-white text-center text-xs font-bold uppercase tracking-wider transition"
                       >
                         View &rarr;
@@ -877,7 +878,7 @@ export default function CustomerProfilePage() {
                 return (
                   <Link
                     key={prod.id}
-                    href={`/product/${prod.id}`}
+                    href={`/product/${prod.slug || prod.id}`}
                     className="group bg-white rounded-2xl p-4 border border-[#EAE1D3] shadow-xs hover:shadow-md transition flex flex-col justify-between"
                   >
                     <div>

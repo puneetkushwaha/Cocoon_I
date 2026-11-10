@@ -200,7 +200,7 @@ export default async function BlogPostPage({ params }) {
               {relatedProducts.map((prod) => (
                 <Link
                   key={prod.id}
-                  href={`/product/${prod.id}`}
+                  href={`/product/${prod.slug || prod.id}`}
                   className="bg-white rounded-2xl p-4 border border-[#EAE1D3] shadow-xs hover:shadow-xl transition-all duration-300 group flex flex-col justify-between"
                 >
                   <div className="space-y-2.5">

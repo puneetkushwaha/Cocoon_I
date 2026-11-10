@@ -1,15 +1,16 @@
 import { PRODUCTS } from "@/data/products";
+import { permanentRedirect, notFound } from "next/navigation";
 
 export async function generateStaticParams() {
-  return PRODUCTS.map((product) => ({
-    id: String(product.id),
+  return PRODUCTS.filter((product) => product.slug).map((product) => ({
+    id: product.slug,
   }));
 }
 
 export async function generateMetadata({ params }) {
   const unwrappedParams = await params;
-  const productId = Number(unwrappedParams.id);
-  const product = PRODUCTS.find((p) => p.id === productId);
+  const rawId = unwrappedParams.id;
+  const product = PRODUCTS.find((p) => p.slug === rawId || String(p.id) === String(rawId));
 
   if (!product) {
     return {
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }) {
   const description = product.targetKeyword
     ? `${product.desc} Buy ${product.targetKeyword} online. 100% handmade in India (${materialLabel}). Price: ₹${product.price}. Cash on Delivery & fast dispatch.`
     : `${product.desc} Artisanal slow-fashion handcrafted knot-by-knot in India (${materialLabel}). Price: ₹${product.price}. Express pan-India dispatch.`;
-  const pageUrl = `https://www.gococoon.store/product/${product.id}`;
+  const canonicalUrl = `https://www.gococoon.store/product/${product.slug || product.id}`;
   const imageUrl = product.imgUrl?.startsWith("http")
     ? product.imgUrl
     : `https://www.gococoon.store${product.imgUrl}`;
@@ -50,12 +51,12 @@ export async function generateMetadata({ params }) {
       "crochet boutique India"
     ].filter(Boolean),
     alternates: {
-      canonical: pageUrl,
+      canonical: canonicalUrl,
     },
     openGraph: {
       title: fullTitle,
       description,
-      url: pageUrl,
+      url: canonicalUrl,
       siteName: "Cocoon",
       images: [
         {
@@ -79,54 +80,61 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductDetailLayout({ children, params }) {
   const unwrappedParams = await params;
-  const productId = Number(unwrappedParams.id);
-  const product = PRODUCTS.find((p) => p.id === productId);
+  const rawId = unwrappedParams.id;
+  const product = PRODUCTS.find((p) => p.slug === rawId || String(p.id) === String(rawId));
 
-  const categoryName = product?.category 
+  if (!product) {
+    notFound();
+  }
+
+  // Backward compatibility: If accessed via numeric ID or uncanonical slug, permanent 301/308 redirect
+  if (product.slug && rawId !== product.slug) {
+    permanentRedirect(`/product/${product.slug}`);
+  }
+
+  const categoryName = product.category 
     ? (product.category.charAt(0).toUpperCase() + product.category.slice(1).replace("-", " ")) 
     : "Crochet";
 
-  const breadcrumbSchema = product
-    ? {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: "https://www.gococoon.store"
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Collections",
-            item: "https://www.gococoon.store/collections"
-          },
-          {
-            "@type": "ListItem",
-            position: 3,
-            name: categoryName,
-            item: `https://www.gococoon.store/collections/${product.category || "bags"}`
-          },
-          {
-            "@type": "ListItem",
-            position: 4,
-            name: product.name,
-            item: `https://www.gococoon.store/product/${product.id}`
-          }
-        ]
+  const canonicalUrl = `https://www.gococoon.store/product/${product.slug || product.id}`;
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://www.gococoon.store"
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Collections",
+        item: "https://www.gococoon.store/collections"
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: categoryName,
+        item: `https://www.gococoon.store/collections/${product.category || "bags"}`
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: product.name,
+        item: canonicalUrl
       }
-    : null;
+    ]
+  };
 
   return (
     <>
-      {breadcrumbSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
-      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       {children}
     </>
   );

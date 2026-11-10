@@ -2136,7 +2136,7 @@ export default function AdminPage() {
 
                     <div className="pt-3 border-t border-[#F4EFEA] flex items-center justify-between">
                       <Link
-                        href={`/product/${rev.productId}`}
+                        href={`/product/${products.find((p) => p.id === Number(rev.productId))?.slug || rev.productId}`}
                         target="_blank"
                         className="text-xs text-[#B06B5B] font-bold hover:underline"
                       >

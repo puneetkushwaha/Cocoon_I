@@ -1,3 +1,5 @@
+import { PRODUCTS } from "./src/data/products.js";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   compress: true,
@@ -77,7 +79,11 @@ const nextConfig = {
   },
 
   async redirects() {
-    return [];
+    return PRODUCTS.filter((product) => product.slug).map((product) => ({
+      source: `/product/${product.id}`,
+      destination: `/product/${product.slug}`,
+      permanent: true,
+    }));
   },
 };
 

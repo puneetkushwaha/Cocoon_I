@@ -123,7 +123,7 @@ export default function CategoryReviewsSection({
 
                 {rev.productName && (
                   <Link
-                    href={`/product/${rev.productId}`}
+                    href={`/product/${products.find(p => p.id === rev.productId)?.slug || rev.productId}`}
                     className="inline-block text-[11px] text-[#B06B5B] hover:underline font-bold truncate max-w-full"
                   >
                     Piece: {rev.productName} &rarr;

@@ -13,13 +13,22 @@ import { generateOrderId, getCraftStats } from "@/lib/orderUtils";
 
 export default function ProductDetailPage({ params }) {
   const unwrappedParams = use(params);
-  const productId = Number(unwrappedParams.id);
+  const rawId = unwrappedParams.id;
   const router = useRouter();
 
-  // Instant synchronous initialization from static catalog
+  // Instant synchronous initialization from static catalog (lookup by slug or numeric ID)
   const initialProduct = useMemo(() => {
-    return PRODUCTS.find((p) => Number(p.id) === productId) || null;
-  }, [productId]);
+    return PRODUCTS.find((p) => p.slug === rawId || String(p.id) === String(rawId)) || null;
+  }, [rawId]);
+
+  const productId = initialProduct ? initialProduct.id : (Number(rawId) || 1);
+
+  // Client-side fallback redirect if accessed via numeric ID
+  useEffect(() => {
+    if (initialProduct?.slug && rawId !== initialProduct.slug) {
+      router.replace(`/product/${initialProduct.slug}`);
+    }
+  }, [initialProduct, rawId, router]);
 
   // Find product from store or fallback
   const [storeProducts, setStoreProducts] = useState(PRODUCTS);
@@ -122,7 +131,7 @@ export default function ProductDetailPage({ params }) {
       const prods = STORE.getProducts();
       setStoreProducts(prods);
 
-      const found = prods.find((p) => Number(p.id) === productId) || PRODUCTS.find((p) => Number(p.id) === productId);
+      const found = prods.find((p) => p.slug === rawId || Number(p.id) === productId) || PRODUCTS.find((p) => p.slug === rawId || Number(p.id) === productId);
       if (found) {
         setProduct(found);
         setSelectedImage((prev) => prev || found.imgUrl);
@@ -141,7 +150,7 @@ export default function ProductDetailPage({ params }) {
     STORE.fetchServerStoreData().then((serverData) => {
       if (serverData && Array.isArray(serverData.products)) {
         setStoreProducts(serverData.products);
-        const updated = serverData.products.find((p) => Number(p.id) === productId);
+        const updated = serverData.products.find((p) => p.slug === rawId || Number(p.id) === productId);
         if (updated) {
           setProduct(updated);
         }
@@ -774,6 +783,7 @@ export default function ProductDetailPage({ params }) {
     description: product.targetKeyword
       ? `${product.desc} Buy ${product.targetKeyword} online in India. Handcrafted slow-fashion knitwear with ${product.materials || "100% organic cotton"}.`
       : (product.desc || `${product.name} handcrafted with 100% pure organic milk cotton by Mehak Agarwal at Cocoon.`),
+    url: `https://www.gococoon.store/product/${product.slug || product.id}`,
     keywords: [product.name, product.targetKeyword, ...(product.secondaryKeywords || []), "crochet bags in india", "Cocoon"].filter(Boolean).join(", "),
     sku: `COCOON-${product.id}`,
     mpn: `GC-PRD-${product.id}`,
@@ -791,7 +801,7 @@ export default function ProductDetailPage({ params }) {
     },
     offers: {
       "@type": "Offer",
-      url: `https://www.gococoon.store/product/${product.id}`,
+      url: `https://www.gococoon.store/product/${product.slug || product.id}`,
       priceCurrency: "INR",
       price: product.price,
       priceValidUntil: "2027-12-31",
@@ -1426,7 +1436,7 @@ export default function ProductDetailPage({ params }) {
               {relatedProducts.map((rel) => (
                 <Link
                   key={rel.id}
-                  href={`/product/${rel.id}`}
+                  href={`/product/${rel.slug || rel.id}`}
                   prefetch={true}
                   className="group bg-white rounded-3xl p-4 border border-[#E8DFC9] shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
                 >

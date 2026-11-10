@@ -542,7 +542,7 @@ export async function sendCustomInquiryEmails(inquiry) {
  * 4. NEW PRODUCT LAUNCH BROADCAST EMAIL
  */
 export async function sendProductLaunchBroadcast({ product, recipients, siteUrl = "https://www.gococoon.store" }) {
-  const productUrl = `${siteUrl}/product/${product.id}`;
+  const productUrl = `${siteUrl}/product/${product.slug || product.id}`;
   const imgUrl = product.imgUrl && product.imgUrl.startsWith("http")
     ? product.imgUrl
     : `${siteUrl}${product.imgUrl || "/products/items/sunflower-granny-backpack.jpg"}`;

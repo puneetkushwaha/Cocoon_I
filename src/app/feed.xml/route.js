@@ -34,7 +34,7 @@ export async function GET() {
       ? `${product.desc} 100% handcrafted slow-fashion knitwear made with ${product.materials || "organic milk cotton"} in India by Mehak Agarwal. Cash on delivery and free shipping available.`
       : `${product.name} handcrafted by Cocoon.`;
 
-    const link = `${baseUrl}/product/${product.id}`;
+    const link = `${baseUrl}/product/${product.slug || product.id}`;
     const imageUrl = product.imgUrl?.startsWith("http")
       ? product.imgUrl
       : `${baseUrl}${product.imgUrl}`;

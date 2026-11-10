@@ -109,7 +109,7 @@ export default function AllCollectionsPage() {
               return (
                 <Link
                   key={product.id}
-                  href={`/product/${product.id}`}
+                  href={`/product/${product.slug || product.id}`}
                   className="group bg-white rounded-3xl p-3 sm:p-3.5 border border-[#EAE1D3] hover:border-[#B06B5B] shadow-2xs hover:shadow-md transition-all duration-300 flex flex-col justify-between"
                 >
                   <div className="aspect-square rounded-2xl overflow-hidden bg-[#FAF5EE] relative mb-3">
