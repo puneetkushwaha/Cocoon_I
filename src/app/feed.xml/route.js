@@ -43,6 +43,8 @@ export async function GET() {
     const primaryColor = product.colors && product.colors.length > 0 ? product.colors[0] : "Multicolor";
     const material = product.materials || "100% Organic Milk Cotton";
 
+    const shippingFee = product.price >= 999 ? "0.00" : "60.00";
+
     return `    <item>
       <g:id>COCOON-${product.id}</g:id>
       <title><![CDATA[${title}]]></title>
@@ -60,8 +62,8 @@ export async function GET() {
       <g:material><![CDATA[${material}]]></g:material>
       <g:shipping>
         <g:country>IN</g:country>
-        <g:service>Standard Shipping</g:service>
-        <g:price>0.00 INR</g:price>
+        <g:service>Standard Express Delivery</g:service>
+        <g:price>${shippingFee} INR</g:price>
       </g:shipping>
       <g:tax>
         <g:country>IN</g:country>
