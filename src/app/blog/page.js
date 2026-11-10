@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import { BLOG_POSTS } from "@/data/blogPosts";
 
 export const metadata = {
-  title: "Artisan Crochet Journal, Care Guides & Styling Tips | Cocoon India",
+  title: "Artisan Crochet Journal & Styling Guides",
   description: "Read artisan guides on washing handcrafted crochet bags, styling bandanas & waist wraps, and the tactile beauty of milk cotton yarn. Written by Mehak Agarwal.",
   keywords: [
     "crochet care guide",

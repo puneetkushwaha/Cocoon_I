@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "Our Story & Letter from Mehak | Cocoon Handcrafted Crochet",
+  title: "Our Story & Letter from Mehak",
   description: "Learn about Cocoon's artisanal philosophy: slow craftsmanship, zero-plastic packaging, and hand-knitted organic milk cotton heirloom creations by Mehak Agarwal.",
   alternates: {
     canonical: "https://www.gococoon.store/story",

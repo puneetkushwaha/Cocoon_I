@@ -13,14 +13,15 @@ export async function generateMetadata({ params }) {
 
   if (!product) {
     return {
-      title: "Handcrafted Crochet Treasure | Cocoon",
+      title: "Handcrafted Crochet Treasure",
       description: "Artisanal slow-fashion crochet piece handcrafted in India with pure organic milk cotton.",
     };
   }
 
   const categoryName = product.category ? (product.category.charAt(0).toUpperCase() + product.category.slice(1).replace("-", " ")) : "Crochet";
   const materialLabel = product.materials || "Handcrafted Cotton Cord";
-  const title = `${product.name} | Handcrafted ${categoryName} | Cocoon`;
+  const title = `${product.name} | Handcrafted ${categoryName}`;
+  const fullTitle = `${title} | Cocoon`;
   const description = `${product.desc} Artisanal slow-fashion handcrafted knot-by-knot in India (${materialLabel}). Price: ₹${product.price}. Express pan-India dispatch.`;
   const pageUrl = `https://www.gococoon.store/product/${product.id}`;
   const imageUrl = product.imgUrl?.startsWith("http")
@@ -44,7 +45,7 @@ export async function generateMetadata({ params }) {
       canonical: pageUrl,
     },
     openGraph: {
-      title,
+      title: fullTitle,
       description,
       url: pageUrl,
       siteName: "Cocoon",
@@ -61,7 +62,7 @@ export async function generateMetadata({ params }) {
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: fullTitle,
       description,
       images: [imageUrl],
     },

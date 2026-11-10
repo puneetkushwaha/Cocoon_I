@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "Terms & Conditions | COCOON Handcrafted Crochet",
+  title: "Terms & Conditions",
   description: "Terms of service, handmade craftsmanship policy, and order guidelines for COCOON Artisanal Studio.",
 };
 

@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "Privacy Policy | COCOON Handcrafted Crochet",
+  title: "Privacy Policy",
   description: "Privacy Policy and DPDP Act 2023 compliance for COCOON Artisanal Studio.",
 };
 

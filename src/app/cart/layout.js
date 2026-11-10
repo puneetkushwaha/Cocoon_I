@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Shopping Bag & Checkout | COCOON Handcrafted Crochet",
+  title: "Shopping Bag & Checkout",
   description: "Review your handcrafted crochet items and complete your purchase with secure direct UPI or Card payment.",
   alternates: {
     canonical: "https://www.gococoon.store/cart",

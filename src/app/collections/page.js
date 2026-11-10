@@ -5,7 +5,7 @@ import { CATEGORY_SEO_DATA } from "@/data/categories";
 import { PRODUCTS } from "@/data/products";
 
 export const metadata = {
-  title: "All Handcrafted Crochet Collections | Cocoon India",
+  title: "All Handcrafted Crochet Collections",
   description: "Browse all handcrafted crochet collections by Cocoon: artisanal handbags, macrame totes, waist belts, bandanas, plush scrunchies & lucky charms. 100% organic milk cotton.",
   alternates: {
     canonical: "https://www.gococoon.store/collections",

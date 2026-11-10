@@ -5,7 +5,7 @@ import CollectionFilterSort from "@/components/CollectionFilterSort";
 import { PRODUCTS } from "@/data/products";
 
 export const metadata = {
-  title: "All Drops & Handcrafted Vault | Cocoon India",
+  title: "All Drops & Handcrafted Vault",
   description: "Explore all authentic handcrafted crochet pieces by Cocoon: bow knot handbags, floral bandanas, bohemian waist belts, phone sleeves, scrunchies & lucky charms.",
   alternates: {
     canonical: "https://www.gococoon.store/shop",

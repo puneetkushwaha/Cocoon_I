@@ -20,7 +20,7 @@ export async function generateMetadata({ params }) {
 
   if (!catData) {
     return {
-      title: "Handcrafted Crochet Collections | Cocoon",
+      title: "Handcrafted Crochet Collections",
       description: "Explore authentic organic milk cotton crochet essentials handmade in India.",
     };
   }
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
   const canonicalUrl = `https://www.gococoon.store/collections/${catData.slug}`;
 
   return {
-    title: `${catData.name} | Cocoon Handcrafted Crochet India`,
+    title: `${catData.name} Collection`,
     description: catData.metaDescription || catData.intro,
     keywords: catData.keywords || [
       catData.name,

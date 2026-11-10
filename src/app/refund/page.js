@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "Refund & Cancellation Policy | COCOON Handcrafted Crochet",
+  title: "Refund & Cancellation Policy",
   description: "Transparent returns, transit replacement, and cancellation guidelines for COCOON Artisanal Studio.",
 };
 

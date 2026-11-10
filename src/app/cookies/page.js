@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "Cookies Policy | COCOON Handcrafted Crochet",
+  title: "Cookies Policy",
   description: "Learn how COCOON uses essential and functional cookies to preserve your basket and secure checkout.",
 };
 
