@@ -110,12 +110,31 @@ export default async function BlogPostPage({ params }) {
     }
   };
 
+  const faqSchema = post.faqs && post.faqs.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": post.faqs.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  } : null;
+
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-[#2C2623] font-sans selection:bg-[#F3D5CF] selection:text-[#5B2920]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
       
       <Header />
 
@@ -174,6 +193,29 @@ export default async function BlogPostPage({ params }) {
           className="prose prose-stone max-w-none font-serif text-stone-800 leading-relaxed text-base sm:text-lg space-y-6 [&_h2]:font-header [&_h2]:text-2xl [&_h2]:sm:text-3xl [&_h2]:font-bold [&_h2]:text-[#2C2623] [&_h2]:pt-6 [&_h3]:font-header [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-[#2C2623] [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:space-y-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_li]:leading-relaxed [&_strong]:text-[#2C2623] [&_strong]:font-semibold"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
+
+        {/* AI & Search FAQ Section */}
+        {post.faqs && post.faqs.length > 0 && (
+          <section className="p-6 sm:p-8 bg-stone-50 rounded-3xl border border-[#EAE1D3] space-y-6">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#B06B5B] block">Direct Answers</span>
+              <h3 className="font-header font-bold text-2xl text-[#2C2623]">Frequently Asked Questions</h3>
+            </div>
+            <div className="space-y-4">
+              {post.faqs.map((faq, idx) => (
+                <div key={idx} className="bg-white rounded-2xl p-5 border border-[#EAE1D3]/80 space-y-2">
+                  <h4 className="font-header font-bold text-[#2C2623] text-base sm:text-lg flex items-start gap-2">
+                    <span className="text-[#B06B5B] font-bold shrink-0">Q:</span>
+                    <span>{faq.question}</span>
+                  </h4>
+                  <p className="text-stone-600 font-serif text-sm sm:text-base leading-relaxed pl-6">
+                    {faq.answer}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Author Bio Box */}
         <div className="p-6 sm:p-8 bg-[#FAF5EE] rounded-3xl border border-[#EAE1D3] flex flex-col sm:flex-row items-center gap-6">
