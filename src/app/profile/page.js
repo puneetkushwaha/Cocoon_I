@@ -698,9 +698,18 @@ export default function CustomerProfilePage() {
                           <span className="font-bold text-[#2C2623]">Delivering To: </span>
                           <span>{order.address || [customerUser?.address, customerUser?.city, customerUser?.pincode].filter(Boolean).join(", ") || "Address on File"}</span>
                         </div>
-                        <div className="text-right">
-                          <span className="text-xs font-sans text-stone-500 mr-2">Grand Total:</span>
-                          <span className="font-sans font-bold text-lg text-[#2C2623]">Rs. {order.totalAmount}</span>
+                        <div className="flex flex-wrap items-center justify-end gap-3">
+                          <Link
+                            href={`/refund?orderId=${encodeURIComponent(order.id)}`}
+                            className="px-3 py-1.5 rounded-full border border-[#DDD3C4] text-[11px] font-bold uppercase tracking-wider text-[#2C2623] hover:text-[#B06B5B] hover:bg-[#FAF4ED] transition flex items-center gap-1.5 shadow-2xs"
+                            title="Request 7-day size exchange, replacement, or return"
+                          >
+                            <span>🔄 Return / Exchange</span>
+                          </Link>
+                          <div>
+                            <span className="text-xs font-sans text-stone-500 mr-2">Grand Total:</span>
+                            <span className="font-sans font-bold text-lg text-[#2C2623]">Rs. {order.totalAmount}</span>
+                          </div>
                         </div>
                       </div>
 

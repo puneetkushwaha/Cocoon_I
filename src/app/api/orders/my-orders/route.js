@@ -27,8 +27,9 @@ export async function GET(request) {
     const email = (searchParams.get("email") || "").trim().toLowerCase();
     const rawPhone = (searchParams.get("phone") || "").replace(/\D/g, "");
     const phone = rawPhone.length >= 10 ? rawPhone.slice(-10) : "";
+    const orderId = (searchParams.get("orderId") || "").trim().toUpperCase();
 
-    if (!email && !phone) {
+    if (!email && !phone && !orderId) {
       return NextResponse.json({ success: true, orders: [] });
     }
 
@@ -44,6 +45,9 @@ export async function GET(request) {
     }
 
     const matchingOrders = (allOrders || []).filter((order) => {
+      if (orderId && order.id && order.id.toUpperCase() === orderId) {
+        return true;
+      }
       const orderEmail = (order.customerEmail || "").trim().toLowerCase();
       const orderPhoneRaw = (order.customerPhone || "").replace(/\D/g, "");
       const orderPhone = orderPhoneRaw.length >= 10 ? orderPhoneRaw.slice(-10) : "";

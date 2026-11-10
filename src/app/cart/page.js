@@ -2132,11 +2132,14 @@ export default function CartPage() {
                     <span className="font-serif leading-snug text-stone-600">
                       I agree to COCOON&apos;s{" "}
                       <Link href="/terms" target="_blank" className="text-[#B06B5B] font-sans font-semibold underline underline-offset-2 hover:text-[#964B44]">
-                        Terms of Service
+                        Terms
+                      </Link>,{" "}
+                      <Link href="/refund" target="_blank" className="text-[#B06B5B] font-sans font-semibold underline underline-offset-2 hover:text-[#964B44]">
+                        Return &amp; Exchange Policy
                       </Link>{" "}
-                      &{" "}
+                      &amp;{" "}
                       <Link href="/privacy" target="_blank" className="text-[#B06B5B] font-sans font-semibold underline underline-offset-2 hover:text-[#964B44]">
-                        Privacy Policy
+                        Privacy
                       </Link>.
                     </span>
                   </label>

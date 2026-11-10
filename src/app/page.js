@@ -91,10 +91,18 @@ export default function HomePage() {
       },
       {
         "@type": "Question",
-        name: "How long does shipping take across India?",
+        name: "How long does shipping take and what are the delivery charges?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Orders are prepared with care and dispatched via express courier partners (Shiprocket, Bluedart, Delhivery) across India. Packages typically arrive within 3 to 7 business days with end-to-end real-time tracking updates sent to your contact details."
+          text: "Orders are dispatched via express courier partners (Shiprocket, Bluedart, Delhivery) arriving in 3 to 7 business days. Delivery is 100% free on all online prepaid payments and orders above ₹999 across India. A flat ₹80 standard delivery fee applies to Cash on Delivery (COD) orders below ₹999."
+        }
+      },
+      {
+        "@type": "Question",
+        name: "What is Cocoon's return and size exchange policy?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Cocoon offers a 7-day guarantee for defective or courier transit-damaged items with 100% free replacement or full refund. Wearable crochet pieces (waist belts, headscarf bandanas) qualify for 1 free size exchange. Customers can submit requests directly via our online Return & Exchange Portal."
         }
       },
       {
@@ -102,7 +110,7 @@ export default function HomePage() {
         name: "What payment methods are accepted on Cocoon?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Cocoon accepts 100% secure payments via Razorpay supporting UPI (Google Pay, PhonePe, Paytm, BHIM), debit & credit cards, net banking, as well as verified Cash on Delivery (COD) across serviceable pin codes in India."
+          text: "Cocoon accepts 100% secure payments via Razorpay supporting UPI (Google Pay, PhonePe, Paytm, BHIM), debit & credit cards, net banking, as well as verified Cash on Delivery (COD with email OTP verification) across all serviceable pin codes in India."
         }
       },
       {

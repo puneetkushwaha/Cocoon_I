@@ -132,11 +132,12 @@ export default function PrivacyPolicyPage() {
             For privacy inquiries, rights requests, or feedback, contact our designated Grievance Officer under Rule 5(9) of the IT (Intermediary Guidelines and Digital Media Ethics Code) Rules and DPDP Act:
           </p>
           <div className="text-xs text-stone-800 space-y-1 font-mono pt-1">
-            <p><strong>Attn:</strong> Mehak Agarwal (Founder & Data Controller)</p>
+            <p><strong>Attn:</strong> Mehak Agarwal (Founder & Data Controller / Grievance Officer)</p>
             <p><strong>Brand:</strong> COCOON (Cocoon)</p>
             <p><strong>Registered Studio:</strong> Agra, Uttar Pradesh - 282001, India</p>
             <p><strong>Email:</strong> <a href="mailto:support@gococoon.store" className="text-[#B06B5B] underline font-bold">support@gococoon.store</a> (Alt: cocoon.by.mehak@gmail.com)</p>
-            <p><strong>Studio WhatsApp:</strong> +91 8171902255</p>
+            <p><strong>Studio WhatsApp / Helpline:</strong> <a href="https://wa.me/918171902255" className="text-[#B06B5B] underline font-bold">+91 8171902255</a></p>
+            <p><strong>Redressal Timelines:</strong> Acknowledged within 48 hours; resolved within 15 days.</p>
           </div>
         </section>
 

@@ -43,7 +43,7 @@ export async function GET() {
     const primaryColor = product.colors && product.colors.length > 0 ? product.colors[0] : "Multicolor";
     const material = product.materials || "100% Organic Milk Cotton";
 
-    const shippingFee = product.price >= 999 ? "0.00" : "60.00";
+    const shippingFee = product.price >= 999 ? "0.00" : "80.00";
 
     return `    <item>
       <g:id>COCOON-${product.id}</g:id>

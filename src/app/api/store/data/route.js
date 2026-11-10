@@ -26,6 +26,7 @@ let serverStoreCache = {
   ticker: null,
   bestsellers: null,
   settings: null,
+  returns: null,
   cachedAt: 0,
   lastUpdated: null
 };
@@ -82,6 +83,7 @@ export async function GET(request) {
               if (freshData.ticker) serverStoreCache.ticker = freshData.ticker;
               if (freshData.bestsellers) serverStoreCache.bestsellers = freshData.bestsellers;
               if (freshData.settings) serverStoreCache.settings = freshData.settings;
+              if (freshData.returns) serverStoreCache.returns = freshData.returns;
             }
             serverStoreCache.cachedAt = Date.now();
           } finally {
@@ -99,6 +101,7 @@ export async function GET(request) {
     const ticker = serverStoreCache.ticker || INITIAL_TICKER;
     const bestsellers = serverStoreCache.bestsellers || INITIAL_BESTSELLERS;
     const settings = serverStoreCache.settings || DEFAULT_SETTINGS;
+    const returns = serverStoreCache.returns || [];
 
     // Dynamic Store Data must never be cached by CDN or browser to guarantee real-time admin sync
     const cacheHeaders = {
@@ -120,6 +123,9 @@ export async function GET(request) {
     if (type === "settings") {
       return NextResponse.json({ success: true, settings }, { headers: cacheHeaders });
     }
+    if (type === "returns") {
+      return NextResponse.json({ success: true, returns }, { headers: cacheHeaders });
+    }
 
     return NextResponse.json(
       {
@@ -131,6 +137,7 @@ export async function GET(request) {
         ticker,
         bestsellers,
         settings,
+        returns,
         source: isCacheFresh ? "memory_cache" : "origin_db"
       },
       { headers: cacheHeaders }
@@ -173,6 +180,7 @@ export async function POST(request) {
     if (key === "ticker") serverStoreCache.ticker = data;
     if (key === "bestsellers") serverStoreCache.bestsellers = data;
     if (key === "settings") serverStoreCache.settings = data;
+    if (key === "returns") serverStoreCache.returns = data;
     serverStoreCache.cachedAt = Date.now();
     serverStoreCache.lastUpdated = new Date().toISOString();
 

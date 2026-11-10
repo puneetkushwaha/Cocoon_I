@@ -664,7 +664,7 @@ export async function sendOfferBroadcast({ offer, recipients, siteUrl = "https:/
     </div>
 
     <div style="text-align: center; font-size: 12px; color: #7A726A;">
-      <p style="margin: 0;">100% Handcrafted with pure organic milk cotton • Prepaid online delivery across India.</p>
+      <p style="margin: 0;">100% Handcrafted with pure organic milk cotton • Express delivery across India (Free delivery on prepaid &amp; orders ₹999+ • Verified COD available).</p>
     </div>
   `;
 
@@ -802,3 +802,130 @@ export async function sendCodVerificationOtpEmail({ email, otp, customerName = "
     html,
   });
 }
+
+/**
+ * 8. RETURN & EXCHANGE REQUEST CONFIRMATION EMAILS
+ * Dispatches acknowledgment to customer and alert to studio desk / Mehak
+ */
+export async function sendReturnRequestEmails(returnRequest) {
+  if (!returnRequest || !returnRequest.id) return { success: false, error: "Invalid return request" };
+
+  const {
+    id,
+    orderId,
+    customerName,
+    customerEmail,
+    customerPhone,
+    requestType,
+    items = [],
+    reason,
+    description,
+    proofUrls = [],
+    preferredResolution,
+    refundDetails
+  } = returnRequest;
+
+  const itemNames = items.map((i) => i.name || i.title || "Crochet Item").join(", ") || "Ordered Item";
+  const resolutionLabel =
+    requestType === "exchange"
+      ? "Size / Fitting Exchange"
+      : requestType === "replacement"
+      ? "Free Transit Damage Replacement"
+      : "Full Refund";
+
+  // Customer Acknowledgment Email
+  const customerContent = `
+    <div style="text-align: center; margin-bottom: 24px;">
+      <span style="display: inline-block; background-color: #FAF0ED; color: #B06B5B; border: 1px solid #ECCEC7; border-radius: 50px; padding: 4px 16px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.15em;">
+        Return &amp; Exchange Request Received
+      </span>
+      <h2 style="font-size: 22px; font-weight: 300; color: #2C2623; margin: 12px 0 6px 0;">
+        We have received your request, ${customerName}
+      </h2>
+      <p style="font-size: 13px; color: #6E665E; margin: 0;">
+        Reference Ticket ID: <strong style="color: #2C2623; font-family: monospace;">${id}</strong>
+      </p>
+    </div>
+
+    <div style="background-color: #FAF7F2; border-radius: 16px; padding: 20px; border: 1px solid #EDE5DA; margin-bottom: 24px; font-size: 13px; color: #4A423B;">
+      <p style="margin: 0 0 8px 0;"><strong>Original Order ID:</strong> ${orderId}</p>
+      <p style="margin: 0 0 8px 0;"><strong>Request Type:</strong> ${resolutionLabel}</p>
+      <p style="margin: 0 0 8px 0;"><strong>Item(s):</strong> ${itemNames}</p>
+      <p style="margin: 0 0 8px 0;"><strong>Reason:</strong> ${reason}</p>
+      ${description ? `<p style="margin: 0 0 8px 0;"><strong>Your Note:</strong> "${description}"</p>` : ""}
+      ${refundDetails?.upiId ? `<p style="margin: 0 0 8px 0;"><strong>Refund UPI ID:</strong> ${refundDetails.upiId}</p>` : ""}
+    </div>
+
+    <div style="background-color: #F0F6F1; border: 1px solid #D5E2D7; border-radius: 16px; padding: 18px; margin-bottom: 24px; font-size: 12px; color: #2E4836; line-height: 1.6;">
+      <strong style="display: block; font-size: 13px; margin-bottom: 6px;">Next Steps (Within 48 Hours):</strong>
+      <p style="margin: 0 0 6px 0;">1. Our lead artisan Mehak Agarwal will inspect your submitted proof and details.</p>
+      <p style="margin: 0 0 6px 0;">2. If eligible under our 7-day policy, a reverse courier pickup will be scheduled at your doorstep at no additional charge.</p>
+      <p style="margin: 0;">3. For size exchanges, your new piece will be prioritized on our needles; for refunds, funds are disbursed within 5–7 business days of parcel receipt.</p>
+    </div>
+
+    <div style="text-align: center; margin: 24px 0 12px 0;">
+      <a href="https://wa.me/918171902255?text=${encodeURIComponent(`Hi Mehak, I have submitted a Return/Exchange request (${id}) for Order #${orderId}.`)}"
+         style="display: inline-block; background-color: #526B57; color: #FFFFFF; padding: 12px 28px; border-radius: 50px; font-size: 12px; font-weight: bold; text-decoration: none;">
+        Chat with Mehak on WhatsApp &rarr;
+      </a>
+    </div>
+
+    <p style="font-size: 11px; color: #8A8177; text-align: center; margin: 0;">
+      COCOON Grievance Redressal Desk • support@gococoon.store • Agra, UP, India
+    </p>
+  `;
+
+  const customerHtml = renderEmailShell({
+    title: `Return/Exchange Request Received: ${id}`,
+    preheader: `We have received your return/exchange request for order ${orderId}. Ticket ID: ${id}`,
+    contentHtml: customerContent
+  });
+
+  // Admin Notification Email
+  const adminContent = `
+    <h2 style="font-size: 20px; font-weight: bold; color: #B06B5B; margin-top: 0;">
+      New Return / Exchange Request: ${id}
+    </h2>
+    <div style="background-color: #FAF7F2; padding: 16px; border-radius: 12px; border: 1px solid #EAE0D2; font-size: 13px; line-height: 1.6;">
+      <p style="margin: 0 0 6px 0;"><strong>Ticket ID:</strong> ${id}</p>
+      <p style="margin: 0 0 6px 0;"><strong>Order ID:</strong> ${orderId}</p>
+      <p style="margin: 0 0 6px 0;"><strong>Customer:</strong> ${customerName} (${customerPhone || "No phone"}, ${customerEmail || "No email"})</p>
+      <p style="margin: 0 0 6px 0;"><strong>Type:</strong> ${resolutionLabel}</p>
+      <p style="margin: 0 0 6px 0;"><strong>Items:</strong> ${itemNames}</p>
+      <p style="margin: 0 0 6px 0;"><strong>Reason:</strong> ${reason}</p>
+      <p style="margin: 0 0 6px 0;"><strong>Customer Note:</strong> ${description || "None"}</p>
+      ${proofUrls.length > 0 ? `<p style="margin: 0 0 6px 0;"><strong>Proof Attachments:</strong> ${proofUrls.length} file(s) attached</p>` : ""}
+      ${refundDetails?.upiId ? `<p style="margin: 0;"><strong>COD Refund UPI:</strong> ${refundDetails.upiId}</p>` : ""}
+      ${refundDetails?.accountNo ? `<p style="margin: 0;"><strong>COD Bank A/c:</strong> ${refundDetails.accountNo} (${refundDetails.ifsc}) - ${refundDetails.accountHolder}</p>` : ""}
+    </div>
+  `;
+
+  const adminHtml = renderEmailShell({
+    title: `[ALERT] Return/Exchange Request: ${id} (${orderId})`,
+    preheader: `Customer ${customerName} submitted a ${resolutionLabel} request for Order ${orderId}.`,
+    contentHtml: adminContent
+  });
+
+  const promises = [];
+  if (customerEmail) {
+    promises.push(
+      sendEmail({
+        to: customerEmail,
+        subject: `COCOON Request Received: ${resolutionLabel} [Ticket #${id}]`,
+        html: customerHtml
+      })
+    );
+  }
+
+  promises.push(
+    sendEmail({
+      to: ADMIN_EMAIL,
+      subject: `[ACTION REQUIRED] New Return/Exchange Request #${id} for Order #${orderId}`,
+      html: adminHtml
+    })
+  );
+
+  const results = await Promise.allSettled(promises);
+  return { success: true, results };
+}
+

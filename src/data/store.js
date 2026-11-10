@@ -3,7 +3,8 @@ import { PRODUCTS } from "./products";
 
 export const INITIAL_TICKER = [
   "100% Handcrafted Slow Fashion",
-  "Flat ₹60 Standard Express Shipping Across India",
+  "Free Delivery on Online Orders & Orders Above ₹999",
+  "Verified Cash on Delivery (COD) Available Across India",
   "30 Exclusive Artisanal Drops Active",
   "Hypoallergenic Premium Milk Cotton",
   "Custom Sizing and Fitting Available",
@@ -348,7 +349,8 @@ const STORAGE_KEYS = {
   SUBSCRIBERS: "cocoon_store_subscribers",
   OFFERS: "cocoon_store_offers",
   ADDRESSES: "cocoon_saved_addresses",
-  SETTINGS: "cocoon_store_settings"
+  SETTINGS: "cocoon_store_settings",
+  RETURNS: "cocoon_store_returns"
 };
 
 // Safe localStorage access with automatic dummy data purge
@@ -422,6 +424,7 @@ export const setStoredData = (key, data) => {
     else if (key === STORAGE_KEYS.TICKER) apiKey = "ticker";
     else if (key === STORAGE_KEYS.BESTSELLERS) apiKey = "bestsellers";
     else if (key === STORAGE_KEYS.SETTINGS) apiKey = "settings";
+    else if (key === STORAGE_KEYS.RETURNS) apiKey = "returns";
 
     if (apiKey) {
       fetch("/api/store/data", {
@@ -486,6 +489,9 @@ export const STORE = {
         if (json.settings && typeof json.settings === "object") {
           localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(json.settings));
         }
+        if (Array.isArray(json.returns)) {
+          localStorage.setItem(STORAGE_KEYS.RETURNS, JSON.stringify(json.returns));
+        }
         return json;
       }
     } catch (e) {
@@ -546,6 +552,39 @@ export const STORE = {
 
   getCustomizations: () => getStoredData(STORAGE_KEYS.CUSTOMIZATIONS, INITIAL_CUSTOMIZATIONS),
   setCustomizations: (data) => setStoredData(STORAGE_KEYS.CUSTOMIZATIONS, data),
+
+  // Return & Exchange Engine Data Layer
+  getReturnRequests: () => getStoredData(STORAGE_KEYS.RETURNS, []),
+  setReturnRequests: (data) => setStoredData(STORAGE_KEYS.RETURNS, data),
+  addReturnRequest: (request) => {
+    const all = STORE.getReturnRequests();
+    const newReq = {
+      id: request.id || `RET-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
+      orderId: request.orderId,
+      customerName: request.customerName,
+      customerEmail: request.customerEmail,
+      customerPhone: request.customerPhone,
+      requestType: request.requestType || "exchange", // "exchange" | "replacement" | "refund"
+      items: request.items || [],
+      reason: request.reason || "",
+      description: request.description || "",
+      proofUrls: request.proofUrls || [],
+      preferredResolution: request.preferredResolution || "exchange",
+      refundDetails: request.refundDetails || null, // { method: "upi"|"bank", upiId, accountNo, ifsc, accountHolder }
+      status: request.status || "Under Review", // "Under Review" | "Approved" | "Pickup Scheduled" | "Completed" | "Rejected"
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    const updated = [newReq, ...all];
+    STORE.setReturnRequests(updated);
+    return newReq;
+  },
+  findOrderById: (orderId) => {
+    if (!orderId) return null;
+    const cleanId = String(orderId).trim().toUpperCase();
+    const all = STORE.getOrders();
+    return all.find((o) => (o.id && String(o.id).trim().toUpperCase() === cleanId)) || null;
+  },
 
   getReviews: (productId) => {
     const rawStored = getStoredData(STORAGE_KEYS.REVIEWS, []);

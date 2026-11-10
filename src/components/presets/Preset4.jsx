@@ -380,10 +380,10 @@ export default function Preset4() {
                   </svg>
                   <div suppressHydrationWarning>
                     <p className="text-[11px] font-bold text-[#2C2623] leading-none" suppressHydrationWarning>
-                      {storeSettings?.freeDeliveryOnOnline !== false ? "Free Express Transit" : "Express Transit"}
+                      Free Express Transit
                     </p>
                     <p className="text-[9px] text-stone-500 font-serif mt-0.5" suppressHydrationWarning>
-                      {storeSettings?.freeDeliveryOnOnline !== false ? "Free on Online Orders" : "Free on Orders ₹999+"}
+                      On Online Orders &amp; ₹999+
                     </p>
                   </div>
                 </div>
@@ -393,10 +393,10 @@ export default function Preset4() {
                   </svg>
                   <div suppressHydrationWarning>
                     <p className="text-[11px] font-bold text-[#2C2623] leading-none" suppressHydrationWarning>
-                      {storeSettings?.codEnabled !== false ? "Cash on Delivery" : "Prepaid Express"}
+                      Verified Cash on Delivery
                     </p>
                     <p className="text-[9px] text-stone-500 font-serif mt-0.5" suppressHydrationWarning>
-                      {storeSettings?.codEnabled !== false ? "Pay at Doorstep" : "Instant UPI & Cards"}
+                      Available Across India (OTP Verified)
                     </p>
                   </div>
                 </div>

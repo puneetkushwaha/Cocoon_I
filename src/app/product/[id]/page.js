@@ -554,8 +554,9 @@ export default function ProductDetailPage({ params }) {
   };
 
   const processOrderPlacement = async (custData) => {
-    const totalAmount = product.price * quantity;
     const isOnline = paymentMethod === "upi" || paymentMethod === "online";
+    const shippingFee = isOnline || (product.price * quantity >= 999) ? 0 : 80;
+    const totalAmount = product.price * quantity + shippingFee;
 
     if (isOnline) {
       triggerToast("Opening secure Razorpay payment gateway...");
@@ -1191,9 +1192,9 @@ export default function ProductDetailPage({ params }) {
                   </div>
 
                   <div className="flex items-center gap-3 text-[10px] text-emerald-900 font-semibold pt-1 border-t border-emerald-200/60">
-                    <span>✓ Free Delivery Above ₹999</span>
+                    <span>✓ Free Delivery on Prepaid &amp; Orders Above ₹999</span>
                     <span>•</span>
-                    <span>✓ Secure Online Checkout (UPI & Cards) & Verified COD</span>
+                    <span>✓ Verified Cash on Delivery (COD) Available</span>
                   </div>
                 </div>
               ) : (
@@ -1259,7 +1260,7 @@ export default function ProductDetailPage({ params }) {
                 >
                   <span className="flex items-center gap-2">
                     
-                    <span>Care Guidelines & Exchange Policy</span>
+                    <span>Care Guidelines &amp; Return / Exchange Policy</span>
                   </span>
                   <span>{activeAccordion === "policy" ? "▲" : "▼"}</span>
                 </button>
@@ -1269,7 +1270,12 @@ export default function ProductDetailPage({ params }) {
                       <strong>Care:</strong> Spot clean with cold water and mild detergent. Lay flat on a towel in the shade to dry. Do not wring or machine-wash.
                     </p>
                     <p>
-                      <strong>Exchange:</strong> Since each treasure is handcrafted individually, orders are eligible for free replacement if damaged in transit.
+                      <strong>7-Day Defect / Transit Guarantee:</strong> 100% free replacement or full refund if damaged in transit or defective. Wearable pieces (belts, bandanas) qualify for 1 free size exchange. Custom orders exempt.
+                    </p>
+                    <p className="pt-1">
+                      <Link href="/refund" className="text-[#B06B5B] hover:text-[#2C2623] font-bold font-sans uppercase tracking-wider underline underline-offset-2 inline-flex items-center gap-1">
+                        <span>Open Return &amp; Exchange Request Portal &rarr;</span>
+                      </Link>
                     </p>
                   </div>
                 )}
@@ -1779,7 +1785,7 @@ export default function ProductDetailPage({ params }) {
                 <span>
                   {paymentMethod === "upi"
                     ? `Pay ₹${product.price * quantity} via UPI / Card →`
-                    : `Confirm Cash on Delivery (₹${product.price * quantity}) →`}
+                    : `Confirm Cash on Delivery (₹${product.price * quantity + (product.price * quantity >= 999 ? 0 : 80)}) →`}
                 </span>
               </button>
             </form>

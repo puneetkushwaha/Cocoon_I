@@ -6,6 +6,7 @@ import {
   sendProductLaunchBroadcast,
   sendOfferBroadcast,
   sendNewsletterWelcome,
+  sendReturnRequestEmails,
 } from "@/lib/email";
 import { checkRateLimit } from "@/lib/rateLimit";
 
@@ -90,6 +91,14 @@ export async function POST(request) {
           recipients: recipients,
           siteUrl: origin,
         });
+        return NextResponse.json({ success: true, result });
+      }
+
+      case "return_request": {
+        if (!payload?.returnRequest) {
+          return NextResponse.json({ success: false, error: "returnRequest details required" }, { status: 400 });
+        }
+        const result = await sendReturnRequestEmails(payload.returnRequest);
         return NextResponse.json({ success: true, result });
       }
 

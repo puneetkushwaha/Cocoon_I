@@ -247,6 +247,11 @@ export default function CustomOrderPage() {
                 </div>
               </div>
 
+              <div className="p-3.5 bg-[#FAF7F2] rounded-xl border border-[#EDE5DA] text-[11px] text-stone-600 font-serif leading-relaxed">
+                <strong className="block text-stone-900 font-sans mb-0.5">✦ Artisan &amp; Statutory Policy:</strong>
+                Custom pieces are made-to-order based on your chosen measurements and colorways. Under the Indian Consumer Protection (E-Commerce) Rules 2020, bespoke personalized goods are exempt from return/exchange once crafted, except in cases of transit damage or defects (which are 100% protected under our 7-day guarantee).
+              </div>
+
               <button
                 type="submit"
                 disabled={isSubmitting}

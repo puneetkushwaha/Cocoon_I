@@ -17,7 +17,15 @@ export default function FaqSection() {
     },
     {
       q: "How long does delivery take & is Cash on Delivery (COD) available?",
-      a: "Yes! Cocoon provides verified Cash on Delivery (COD) with real-time SMS/email OTP verification and express courier dispatch across all serviceable pin codes in India. Orders are prepared with care and dispatched via express courier partners (Shiprocket, Bluedart, Delhivery), arriving in 3 to 7 business days with live tracking updates."
+      a: "Yes! Cocoon provides verified Cash on Delivery (COD) with mandatory 6-digit email OTP verification across all serviceable PIN codes in India. Online prepaid payments and all basket orders above ₹999 enjoy 100% complimentary Free Delivery. For COD orders below ₹999, a flat standard delivery fee of ₹80 applies. Handcrafted orders are dispatched via express logistics partners (Shiprocket, Bluedart, Delhivery), arriving in 3 to 7 business days with live tracking."
+    },
+    {
+      q: "What is your return, replacement, and size exchange policy?",
+      a: "We offer a 7-day guarantee for defective, transit-damaged, or incorrect items with 100% free replacement or full refund. Wearable crochet accessories (waist belts, hip scarves, bandanas) qualify for 1 Free Size/Fit Exchange within 7 days of delivery. Custom bespoke personalized orders are exempt under Indian Consumer Protection (E-Commerce) Rules 2020. You can submit requests directly via our online Return & Exchange Request Portal."
+    },
+    {
+      q: "How does Cash on Delivery (COD) verification work?",
+      a: "To protect our artisans from phantom or unauthorized bookings, selecting COD sends an instant 6-digit verification code to your email. Entering the OTP immediately confirms your handcrafted order. You pay the courier partner upon parcel arrival at your doorstep."
     },
     {
       q: "How do I wash and care for handmade milk cotton crochet bags and accessories?",

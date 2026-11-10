@@ -108,6 +108,11 @@ export default function Footer() {
                   Artisan Journal &amp; Guides
                 </Link>
               </li>
+              <li>
+                <Link href="/refund" className="hover:text-[#B06B5B] transition text-emerald-800 font-semibold flex items-center gap-1">
+                  <span>🔄 Return &amp; Exchange Portal</span>
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -203,7 +208,11 @@ export default function Footer() {
             </Link>
             <span className="text-[#DDD3C4]">•</span>
             <Link href="/refund" className="hover:text-[#B06B5B] transition">
-              Refund &amp; Cancellation Policy
+              Return &amp; Refund Policy
+            </Link>
+            <span className="text-[#DDD3C4]">•</span>
+            <Link href="/refund" className="hover:text-[#B06B5B] transition text-[#B06B5B] font-semibold">
+              Exchange Portal
             </Link>
             <span className="text-[#DDD3C4]">•</span>
             <Link href="/cookies" className="hover:text-[#B06B5B] transition">

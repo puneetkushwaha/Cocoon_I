@@ -87,6 +87,7 @@ export default function AdminPage() {
   // COD and Online Delivery Fee setting state
   const [isCodEnabled, setIsCodEnabled] = useState(true);
   const [isOnlineFreeDelivery, setIsOnlineFreeDelivery] = useState(true);
+  const [returnRequests, setReturnRequests] = useState([]);
   const [dbStatus, setDbStatus] = useState("checking");
 
   // Orders Verification Filter
@@ -197,6 +198,7 @@ export default function AdminPage() {
     setSubscribers(STORE.getSubscribers());
     setIsCodEnabled(STORE.isCodEnabled());
     setIsOnlineFreeDelivery(STORE.isOnlineFreeDeliveryEnabled());
+    setReturnRequests(STORE.getReturnRequests());
 
     // Sync live store data from backend API
     try {
@@ -341,6 +343,7 @@ export default function AdminPage() {
       setSubscribers(STORE.getSubscribers());
       setIsCodEnabled(STORE.isCodEnabled());
       setIsOnlineFreeDelivery(STORE.isOnlineFreeDeliveryEnabled());
+      setReturnRequests(STORE.getReturnRequests());
     };
     window.addEventListener("cocoon_store_update", handleUpdate);
     return () => window.removeEventListener("cocoon_store_update", handleUpdate);
@@ -1088,6 +1091,7 @@ export default function AdminPage() {
           {[
             { id: "dashboard", label: "Dashboard & Analytics", icon: "" },
             { id: "orders", label: `Orders (${orders.length})`, icon: "" },
+            { id: "returns", label: `Returns & Exchanges (${returnRequests.length})`, icon: "" },
             { id: "coupons", label: `Coupons & BOGO (${coupons.length})`, icon: "" },
             { id: "reviews", label: `Reviews (${reviews.length})`, icon: "" },
             { id: "customizations", label: `Custom Slips (${customizations.length})`, icon: "" },
@@ -2595,6 +2599,144 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* ================= TAB: RETURNS & EXCHANGES ================= */}
+        {activeTab === "returns" && (
+          <div className="space-y-6 text-left">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#E8DFC9] gap-4">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-header font-light text-[#2C2623]">
+                  Return &amp; Exchange Requests
+                </h2>
+                <p className="text-xs text-stone-500 font-serif">
+                  Customer 7-day size swaps, courier transit damage claims, and refund requests.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                  {returnRequests.filter((r) => r.status === "Under Review").length} Pending Review
+                </span>
+                <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  {returnRequests.length} Total Filed
+                </span>
+              </div>
+            </div>
+
+            {returnRequests.length === 0 ? (
+              <div className="bg-white rounded-3xl p-12 border border-[#E8DFC9] text-center space-y-3">
+                <span className="text-4xl block">📦</span>
+                <h3 className="text-lg font-header font-bold text-[#2C2623]">No Return or Exchange Requests Yet</h3>
+                <p className="text-xs text-stone-500 font-serif max-w-md mx-auto">
+                  When customers submit requests through the Return &amp; Exchange Portal on the website, they will appear here with proof media and contact details.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {returnRequests.map((req) => (
+                  <div
+                    key={req.id}
+                    className="bg-white rounded-3xl p-6 border border-[#E8DFC9] shadow-xs space-y-4"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 pb-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-stone-900 text-sm">{req.id}</span>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                            req.requestType === "exchange"
+                              ? "bg-blue-100 text-blue-900 border border-blue-200"
+                              : req.requestType === "replacement"
+                              ? "bg-purple-100 text-purple-900 border border-purple-200"
+                              : "bg-rose-100 text-rose-900 border border-rose-200"
+                          }`}>
+                            {req.requestType === "exchange" ? "Size Exchange" : req.requestType === "replacement" ? "Defect Replacement" : "Return & Refund"}
+                          </span>
+                        </div>
+                        <p className="text-xs text-stone-500 pt-0.5">
+                          Order Ref: <strong className="font-mono text-stone-800">#{req.orderId}</strong> • Filed {new Date(req.createdAt).toLocaleString("en-IN")}
+                        </p>
+                      </div>
+
+                      {/* Status Selector */}
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={req.status || "Under Review"}
+                          onChange={(e) => {
+                            const newStatus = e.target.value;
+                            const updated = returnRequests.map((r) => r.id === req.id ? { ...r, status: newStatus } : r);
+                            setReturnRequests(updated);
+                            STORE.setReturnRequests(updated);
+                            triggerToast(`Request ${req.id} status updated to: ${newStatus}`);
+                          }}
+                          className="px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold bg-[#FAF7F2] text-stone-800 focus:outline-none"
+                        >
+                          <option value="Under Review">Under Review</option>
+                          <option value="Approved">Approved</option>
+                          <option value="Pickup Scheduled">Pickup Scheduled</option>
+                          <option value="Completed">Completed</option>
+                          <option value="Rejected">Rejected</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Customer & Reason Info */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-serif text-stone-700">
+                      <div className="space-y-1.5 p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#EDE5DA]">
+                        <p className="font-bold text-stone-900 font-sans">Customer Contact:</p>
+                        <p><strong>Name:</strong> {req.customerName}</p>
+                        <p><strong>Phone:</strong> {req.customerPhone || "N/A"}</p>
+                        <p><strong>Email:</strong> {req.customerEmail || "N/A"}</p>
+                        {req.customerPhone && (
+                          <div className="pt-1">
+                            <a
+                              href={`https://wa.me/${req.customerPhone.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${req.customerName}, this is Mehak from Cocoon. Regarding your Return/Exchange request (${req.id}) for Order #${req.orderId}...`)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#526B57] text-white text-[11px] font-sans font-bold"
+                            >
+                              <span>WhatsApp Customer</span>
+                              <span>&rarr;</span>
+                            </a>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="space-y-1.5 p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#EDE5DA]">
+                        <p className="font-bold text-stone-900 font-sans">Claim Details:</p>
+                        <p><strong>Reason:</strong> {req.reason}</p>
+                        <p><strong>Items:</strong> {req.items?.map((it) => it.name).join(", ")}</p>
+                        {req.description && <p><strong>Customer Note:</strong> &ldquo;{req.description}&rdquo;</p>}
+                        {req.refundDetails?.upiId && (
+                          <p className="font-sans text-emerald-800 font-bold pt-1">
+                            Refund UPI: {req.refundDetails.upiId}
+                          </p>
+                        )}
+                        {req.refundDetails?.accountNo && (
+                          <p className="font-sans text-emerald-800 font-bold pt-1">
+                            Bank A/c: {req.refundDetails.accountNo} ({req.refundDetails.ifsc}) - {req.refundDetails.accountHolder}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Proof Media Clips */}
+                    {req.proofUrls && req.proofUrls.length > 0 && (
+                      <div className="space-y-1.5">
+                        <span className="text-[11px] font-bold text-stone-700 block">Uploaded Proof ({req.proofUrls.length}):</span>
+                        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                          {req.proofUrls.map((url, idx) => (
+                            <a key={idx} href={url} target="_blank" rel="noreferrer" className="w-16 h-16 rounded-xl overflow-hidden border border-stone-300 shrink-0 block bg-stone-100 hover:opacity-80">
+                              <img src={url} alt="Proof" className="w-full h-full object-cover" />
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

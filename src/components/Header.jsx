@@ -492,6 +492,29 @@ export default function Header({ onOpenCart, cartCountOverride }) {
                     &rarr;
                   </span>
                 </Link>
+
+                <Link
+                  href="/refund"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 hover:border-emerald-400 transition-all shadow-2xs group"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-9 h-9 rounded-xl bg-[#526B57] text-white flex items-center justify-center font-bold text-xs">
+                      05
+                    </div>
+                    <div>
+                      <h4 className="font-header text-lg font-medium text-emerald-950 group-hover:text-emerald-800 transition-colors leading-tight">
+                        Return &amp; Exchange Portal
+                      </h4>
+                      <p className="text-[11px] font-sans text-emerald-800/80">
+                        7-day size swap &amp; defect replacement
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-emerald-800 group-hover:translate-x-1 transition-transform text-sm">
+                    &rarr;
+                  </span>
+                </Link>
               </div>
             </div>
 

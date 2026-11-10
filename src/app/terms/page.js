@@ -83,11 +83,12 @@ export default function TermsPage() {
             <p>
               All prices are listed in Indian Rupees (₹ INR) inclusive of all applicable taxes. We accept online payments through our certified Razorpay gateway (UPI, Credit/Debit Cards, NetBanking) and Cash on Delivery:
             </p>
-            <ul className="list-disc list-inside space-y-1.5 pl-2 text-stone-600">
-              <li><strong>Prepaid Orders:</strong> Processed instantly and securely via Razorpay with 256-bit SSL encryption. We never handle or store your banking credentials.</li>
-              <li><strong>COD Policy:</strong> Cash on Delivery orders require mandatory 6-digit email OTP verification before shipment dispatch to ensure authenticity.</li>
-              <li><strong>Free Shipping:</strong> Complimentary standard shipping applies to all basket orders of ₹999 and above across India, as well as on all prepaid orders placed online via Razorpay.</li>
-              <li><strong>Standard Delivery Fees:</strong> For COD orders under ₹999, a nominal delivery fee applies. Courier dispatch fees incurred are non-refundable once an order is shipped.</li>
+            <ul className="list-disc list-inside space-y-2 pl-2 text-stone-600">
+              <li><strong>Prepaid Online Orders:</strong> 100% Free Express Delivery across India. Processed securely via Razorpay with 256-bit SSL encryption (UPI, Google Pay, PhonePe, Cards, NetBanking). We never handle or store your banking credentials.</li>
+              <li><strong>Cash on Delivery (COD):</strong> Verified Cash on Delivery is available across all serviceable postal PIN codes in India. Cash on Delivery orders require mandatory 6-digit email OTP verification before shipment dispatch to ensure authenticity.</li>
+              <li><strong>Free Shipping:</strong> Complimentary standard shipping applies to all prepaid online orders, as well as all basket orders of ₹999 and above across India.</li>
+              <li><strong>Standard Delivery Fees:</strong> For Cash on Delivery (COD) orders below ₹999, a flat standard delivery fee of ₹80 applies. Courier dispatch fees incurred are non-refundable once an order is shipped from our studio.</li>
+              <li><strong>Returns &amp; Exchanges:</strong> Defective items or courier transit damages qualify for 100% free replacement or refund within 7 days of delivery. Wearables (belts, bandanas) qualify for 1 free size exchange. Customers can initiate requests directly via our <Link href="/refund" className="text-[#B06B5B] underline font-bold">Return &amp; Exchange Portal</Link>. Bespoke personalized commissions are exempt under Indian law.</li>
             </ul>
           </div>
         </section>
@@ -133,7 +134,7 @@ export default function TermsPage() {
               <p><strong>Brand:</strong> COCOON (Cocoon)</p>
               <p><strong>Location:</strong> Agra, Uttar Pradesh - 282001, India</p>
               <p><strong>Operating Hours:</strong> Mon - Sat, 10:00 AM - 7:00 PM IST</p>
-              <p><strong>Redressal Timeline:</strong> Acknowledged within 48 hours; resolved within 1 month.</p>
+              <p><strong>Redressal Timeline:</strong> Acknowledged within 48 hours; resolved within 15 days (Consumer Protection E-Commerce Rules 2020).</p>
             </div>
           </div>
         </section>
