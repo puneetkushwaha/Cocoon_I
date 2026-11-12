@@ -231,28 +231,35 @@ export default function RootLayout({ children }) {
             `,
           }}
         />
+        {/* Google Customer Reviews Badge (Google Merchant Center) */}
         <Script
-          src="https://apis.google.com/js/platform.js?onload=renderBadge"
+          id="merchantWidgetScript"
+          src="https://www.gstatic.com/shopping/merchant/merchantwidget.js"
           strategy="afterInteractive"
         />
         <Script
-          id="google-customer-reviews-badge"
+          id="google-customer-reviews-merchant-widget"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
-              window.renderBadge = function() {
-                var ratingBadgeContainer = document.createElement("div");
-                document.body.appendChild(ratingBadgeContainer);
-                if (window.gapi && window.gapi.load) {
-                  window.gapi.load('ratingbadge', function() {
-                    window.gapi.ratingbadge.render(
-                      ratingBadgeContainer, {
-                        "merchant_id": 5902941398,
-                        "position": "BOTTOM_LEFT"
-                      });
-                  });
+              (function() {
+                function initMerchantWidget() {
+                  if (typeof merchantwidget !== 'undefined' && merchantwidget.start) {
+                    merchantwidget.start({
+                      merchant_id: 5902941398,
+                      position: 'BOTTOM_LEFT',
+                      region: 'IN'
+                    });
+                  }
                 }
-              };
+                var scriptEl = document.getElementById('merchantWidgetScript');
+                if (scriptEl) {
+                  scriptEl.addEventListener('load', initMerchantWidget);
+                }
+                if (typeof merchantwidget !== 'undefined') {
+                  initMerchantWidget();
+                }
+              })();
             `,
           }}
         />
