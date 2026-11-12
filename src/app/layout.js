@@ -231,6 +231,31 @@ export default function RootLayout({ children }) {
             `,
           }}
         />
+        <Script
+          src="https://apis.google.com/js/platform.js?onload=renderBadge"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="google-customer-reviews-badge"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.renderBadge = function() {
+                var ratingBadgeContainer = document.createElement("div");
+                document.body.appendChild(ratingBadgeContainer);
+                if (window.gapi && window.gapi.load) {
+                  window.gapi.load('ratingbadge', function() {
+                    window.gapi.ratingbadge.render(
+                      ratingBadgeContainer, {
+                        "merchant_id": 5902941398,
+                        "position": "BOTTOM_LEFT"
+                      });
+                  });
+                }
+              };
+            `,
+          }}
+        />
         <ReactLenis root options={{ autoRaf: true, smoothTouch: false }}>
           {children}
         </ReactLenis>

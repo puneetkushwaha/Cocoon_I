@@ -10,6 +10,7 @@ import { PRODUCTS } from "@/data/products";
 import { saveOrderToSupabase, validateCouponFromSupabase } from "@/lib/supabase";
 import { captureLiveGpsAddress } from "@/lib/location";
 import { generateOrderId } from "@/lib/orderUtils";
+import GoogleCustomerReviewsOptIn from "@/components/GoogleCustomerReviewsOptIn";
 
 export default function CartPage() {
   const router = useRouter();
@@ -2403,6 +2404,10 @@ export default function CartPage() {
       {/* ================= 3. PLACED ORDER SUCCESS MODAL ================= */}
       {placedOrderSummary && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-fadeIn">
+          <GoogleCustomerReviewsOptIn
+            orderId={placedOrderSummary.id}
+            email={placedOrderSummary.customerEmail}
+          />
           <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center space-y-5 shadow-2xl border border-[#EFE8DD] relative">
             <button
               onClick={() => {
