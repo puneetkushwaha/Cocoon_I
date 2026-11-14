@@ -340,6 +340,7 @@ export default function Preset4() {
       {/* 1 & 2. UNIFIED MASTER ATELIER HEADER & TICKER */}
       <Header cartCountOverride={totalQty} />
 
+      <main id="main-content">
       {/* 3. HERO: VINTAGE COTTAGE SCRAPBOOK & NEEDLEWORK */}
       <section className="py-14 lg:py-20 border-b border-[#EFE8DD] relative overflow-hidden bg-gradient-to-b from-[#FDFBF7] via-[#FAF4EE] to-[#FDFBF7] max-w-full" style={{ contain: "paint" }}>
         <div className="absolute top-10 left-10 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-[#FCEEEA]/70 filter blur-3xl pointer-events-none -z-0"></div>
@@ -775,12 +776,14 @@ export default function Preset4() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products..."
+                aria-label="Search handcrafted crochet products"
                 className="w-full sm:w-56 px-4 py-2 rounded-full bg-white border border-[#DDD3C4] text-xs font-sans focus:outline-none focus:border-[#B06B5B] shadow-2xs"
               />
 
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
+                aria-label="Sort products by"
                 className="w-full sm:w-auto px-4 py-2 rounded-full bg-white border border-[#DDD3C4] text-xs font-sans text-[#2C2623] focus:outline-none cursor-pointer shadow-2xs"
               >
                 <option value="featured">Featured Treasures</option>
@@ -1520,6 +1523,7 @@ export default function Preset4() {
 
       {/* 7.8 THE ARTISAN JOURNAL & STYLING GUIDES (NEWEST BLOG SPOTLIGHT) */}
       <HomeJournalSection />
+      </main>
 
       {/* 8. MASTER STUDIO FOOTER */}
       <Footer />
