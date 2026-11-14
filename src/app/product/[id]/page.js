@@ -805,6 +805,7 @@ export default function ProductDetailPage({ params }) {
       priceCurrency: "INR",
       price: product.price,
       priceValidUntil: "2027-12-31",
+      validFrom: "2024-01-01",
       availability: "https://schema.org/InStock",
       itemCondition: "https://schema.org/NewCondition",
       seller: {

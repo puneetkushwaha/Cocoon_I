@@ -139,6 +139,8 @@ export default async function CollectionPage({ params }) {
           "@type": "Offer",
           price: p.price,
           priceCurrency: "INR",
+          priceValidUntil: "2027-12-31",
+          validFrom: "2024-01-01",
           availability: "https://schema.org/InStock",
         },
       })),
