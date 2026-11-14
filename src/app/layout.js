@@ -181,14 +181,7 @@ export default function RootLayout({ children }) {
       ],
       priceRange: "₹ - ₹₹₹",
       currenciesAccepted: "INR",
-      paymentAccepted: "Cash on Delivery, UPI, Credit Card, Debit Card, Net Banking",
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: "4.9",
-        reviewCount: "148",
-        bestRating: "5",
-        worstRating: "1"
-      }
+      paymentAccepted: "Cash on Delivery, UPI, Credit Card, Debit Card, Net Banking"
     }
   ];
 
