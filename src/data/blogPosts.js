@@ -1,6 +1,61 @@
 // Curated Editorial & Styling Guides for Cocoon
 export const BLOG_POSTS = [
   {
+    slug: "milk-cotton-journey-into-slow-fashion",
+    title: "Milk Cotton Journey: Embracing Slow Fashion One Hand\u2011Crocheted Bag at a Time",
+    subtitle: "Explore how Cocoon\u2019s organic milk cotton transforms everyday accessories into timeless, hypoallergenic style statements.",
+    date: "2026-11-17",
+    readTime: "5 min read",
+    author: "Mehak Agarwal",
+    authorRole: "Founder and Lead Artisan at Cocoon",
+    image: "/products/items/chocolate-bow-handbag.jpg",
+    tags: ["slow fashion", "organic cotton", "handmade", "crochet bags"],
+    excerpt: "Cocoon\u2019s milk cotton crochet bags blend heritage craft with modern slow\u2011fashion ethics. Learn how organic fibers, hand\u2011woven artistry, and versatile styling converge in every piece.",
+    metaDescription: "Discover Cocoon's hypoallergenic milk cotton crochet bags, the art of slow fashion, and styling tips for timeless, organic accessories.",
+    relatedCategory: "bags",
+    faqs: [{"question": "What makes milk cotton hypoallergenic?", "answer": "Milk cotton is harvested from the cotton plant\u2019s seed fibers, which are naturally free of harsh chemicals and pesticides. Cocoon processes the yarn using gentle, organic methods, ensuring each bag is safe for sensitive skin."}, {"question": "How long does it take to hand\u2011craft a Cocoon bag?", "answer": "Each bag is crocheted by a skilled artisan in India and typically requires 12\u201118 hours of focused work, depending on the design complexity and yarn weight."}],
+    content: `<h2>The Roots of Milk Cotton</h2>
+<p>Milk cotton, often called <strong>organic cotton</strong>, is cultivated without synthetic fertilizers or pesticides. In the fertile valleys of Gujarat, our partner farms nurture the plant using traditional, water‑wise methods. The result is a fiber that feels buttery soft against the skin and carries a naturally low allergen profile.</p>
+
+<h2>Why Milk Cotton Matters in Slow Fashion</h2>
+<p>Slow fashion is a philosophy that values durability, traceability, and ethical production over rapid turnover. Milk cotton aligns perfectly with this ethos because:</p>
+<ul>
+  <li><strong>Biodegradability:</strong> The fibers decompose naturally, reducing landfill waste.</li>
+  <li><strong>Carbon Footprint:</strong> Organic farming sequesters more carbon than conventional cotton.</li>
+  <li><strong>Community Impact:</strong> Fair‑trade wages empower the artisans who bring each piece to life.</li>
+</ul>
+
+<h2>Crafting a Bag by Hand</h2>
+<p>Every Cocoon bag begins with a skein of hand‑spun milk cotton yarn. Our artisans follow a <em>single‑color, single‑stitch</em> technique that has been passed down through generations. The process unfolds in three stages:</p>
+<ul>
+  <li><strong>Design Drafting:</strong> A sketch is translated into a crochet chart, ensuring consistency across batches.</li>
+  <li><strong>Stitching:</strong> Using a 4 mm crochet hook, the artisan builds the bag row by row, incorporating reinforced loops at stress points.</li>
+  <li><strong>Finishing Touches:</strong> Handles are attached, edges are block‑stitched for shape retention, and each piece receives a hand‑sewn label bearing the Cocoon seal.</li>
+</ul>
+<p>The tactile rhythm of the hook, the scent of fresh yarn, and the quiet focus of the maker create a meditative experience that cannot be replicated by machines.</p>
+
+<h2>Styling Your Cocoon Creation</h2>
+<p>Our milk cotton bags are designed to be versatile companions for any wardrobe. Pair a chocolate‑bow handbag with a crisp white shirt for a polished office look, or drape a woven tote over a boho maxi dress for weekend wanderings. Because the yarn is naturally breathable, the bag stays fresh even on hot days.</p>
+<ul>
+  <li><strong>Layering:</strong> Slip a smaller crossbody underneath for a chic, tiered effect.</li>
+  <li><strong>Contrast:</strong> Pair the neutral cotton with bold, metallic accessories to let the texture shine.</li>
+  <li><strong>Seasonal Swaps:</strong> Swap the internal lining with a patterned fabric for a seasonal refresh without buying a new bag.</li>
+</ul>
+
+<h2>Caring for Your Crochet Treasure</h2>
+<p>To preserve the softness and shape of your milk cotton bag, follow these simple guidelines:</p>
+<ul>
+  <li>Hand‑wash in lukewarm water with a mild, plant‑based detergent.</li>
+  <li>Gently squeeze out excess water—do not wring.</li>
+  <li>Lay flat on a clean towel to dry, reshaping the edges as needed.</li>
+  <li>Avoid direct sunlight for extended periods to prevent fading.</li>
+</ul>
+<p>With proper care, a Cocoon bag can become a heirloom piece, aging gracefully and gaining character over the years.</p>
+
+<h2>Beyond the Bag: A Commitment to the Planet</h2>
+<p>Every purchase supports a circular ecosystem. A portion of sales funds re‑planting initiatives in cotton‑growing regions, and unsold yarn is recycled into insulation for community shelters. By choosing Cocoon, you become part of a movement that values people, planet, and timeless design.</p>`
+  },
+  {
     slug: "crafting-heritage-with-milk-cotton",
     title: "Weaving Heritage: The Art of Milk\u2011Cotton Crochet Bags",
     subtitle: "Discover how Cocoon\u2019s 100% hypoallergenic organic milk cotton transforms slow fashion into timeless, skin\u2011friendly accessories.",
