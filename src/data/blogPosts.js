@@ -1,6 +1,42 @@
 // Curated Editorial & Styling Guides for Cocoon
 export const BLOG_POSTS = [
   {
+    slug: "silk-soul-of-milk-cotton",
+    title: "The Silk Soul of Milk Cotton: A Slow\u2011Fashion Revival",
+    subtitle: "Discover how Cocoon\u2019s 100% hypoallergenic organic milk\u2011cotton crochet bags embody mindful style and timeless comfort.",
+    date: "2026-11-19",
+    readTime: "5 min read",
+    author: "Mehak Agarwal",
+    authorRole: "Founder and Lead Artisan at Cocoon",
+    image: "/products/items/chocolate-bow-handbag.jpg",
+    tags: ["slow fashion", "organic cotton", "handcrafted", "eco\u2011luxury"],
+    excerpt: "Cocoon transforms pure milk\u2011cotton yarn into elegant crochet bags that feel as gentle as a whisper. Each piece tells a story of sustainable craft, from farm to fashion.",
+    metaDescription: "Explore Cocoon\u2019s organic milk\u2011cotton crochet bags\u2014hypoallergenic, handcrafted, and perfect for mindful style.",
+    relatedCategory: "bags",
+    faqs: [{"question": "What makes Cocoon\u2019s milk\u2011cotton bags hypoallergenic?", "answer": "Our bags are made from 100% organic milk cotton grown without synthetic chemicals, ensuring the fibers are naturally gentle and safe for even the most sensitive skin."}, {"question": "How can I care for my crochet bag to ensure longevity?", "answer": "Hand\u2011wash in lukewarm water with a mild plant\u2011based detergent, reshape while damp, and lay flat to dry away from direct sunlight. Avoid harsh chemicals to keep colours vibrant."}],
+    content: `<h2>From Seed to Stitch</h2>
+<p>At Cocoon, every bag begins long before the first loop is pulled. Our journey starts in the verdant fields of Maharashtra, where small‑scale farmers cultivate <strong>organic milk cotton</strong> without synthetic pesticides or GMOs. The fibers are harvested at the peak of softness, then gently carded and spun into yarn that retains the natural breathability of cotton while offering a buttery feel that’s unrivaled by conventional blends.</p>
+<p>Once the yarn arrives at our studio in Jaipur, our artisans—many of whom have inherited crochet techniques passed down through generations— begin the meticulous process of turning thread into treasure. Each stitch is counted, each pattern reviewed, ensuring that the final bag not only looks exquisite but also holds the promise of hypoallergenic comfort for even the most sensitive skin.</p>
+
+<h2>Why Milk Cotton Matters</h2>
+<p>Milk cotton is a hybrid fiber that combines the plushness of cotton with a subtle sheen reminiscent of silk. Its unique structure makes it exceptionally <strong>lightweight yet durable</strong>, perfect for everyday carry. Because the fiber is naturally breathable, it resists the buildup of moisture and odor, a crucial benefit for those who carry cosmetics, gadgets, or baby essentials.</p>
+<ul>
+<li>100% organic – certified by India Organic.</li>
+<li>Hypoallergenic – safe for all ages.</li>
+<li>Biodegradable – returns to the earth after its life cycle.</li>
+<li>Supports fair‑trade farmers – each purchase contributes to sustainable livelihoods.</li>
+</ul>
+
+<h2>Styling the Sustainable Bag</h2>
+<p>Our chocolate‑bow handbag, featured in the image above, is a versatile companion for work, travel, or a casual brunch. Pair it with a matching crochet bandana tucked into the strap for a pop of colour, or drape a soft waist wrap over your shoulders for an effortless boho vibe. Because the yarn is naturally soft, the bag ages gracefully, developing a lived‑in patina that tells your personal story.</p>
+<p>For the eco‑conscious fashionista, the bag serves as a canvas. Mix‑and‑match with our lilac‑mesh headband or a burgundy triangle bandana to create layered looks that celebrate texture and tone. The understated elegance of milk cotton means the accessories never overpower, allowing your personality to shine through.</p>
+
+<h2>Care, Commitment, and Community</h2>
+<p>Maintaining the integrity of your Cocoon piece is simple. Hand‑wash in lukewarm water with a mild, plant‑based detergent, reshape while damp, and lay flat to dry. Avoid harsh chemicals and direct sunlight to preserve colour vibrancy. By caring for your bag, you extend its lifespan and reduce waste—an act of love for both your style and the planet.</p>
+<p>Every purchase also funds our “Threads of Tomorrow” initiative, which provides training for aspiring artisans in rural villages, empowering them with skills that sustain both heritage and income.</p>
+<p><strong>Choosing Cocoon means choosing a future where fashion is gentle, mindful, and beautifully crafted.</strong></p>`
+  },
+  {
     slug: "handcrafted-milk-cotton-legacy",
     title: "Handcrafted Milk\u2011Cotton Legacy: Slow\u2011Fashion Stories from Cocoon",
     subtitle: "Discover how Cocoon\u2019s 100% hypoallergenic organic milk cotton transforms everyday accessories into timeless, sustainable style statements.",
