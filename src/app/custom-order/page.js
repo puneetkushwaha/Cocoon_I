@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { saveCustomizationToSupabase } from "@/lib/supabase";
+import { STORE } from "@/data/store";
 
 export default function CustomOrderPage() {
   const [formData, setFormData] = useState({
@@ -29,9 +31,38 @@ export default function CustomOrderPage() {
     }
     setIsSubmitting(true);
     try {
-      // Create WhatsApp message string
+      // 1. Create structured custom order slip
+      const custItem = {
+        id: "CUST-" + Math.floor(100 + Math.random() * 900),
+        date: new Date().toISOString(),
+        name: formData.name || "Customer",
+        phone: formData.phone || "N/A",
+        email: formData.email || "",
+        productName: formData.productName || formData.category,
+        category: formData.category,
+        colorway: formData.colorway,
+        idea: formData.idea,
+        neededBy: formData.neededBy,
+        budget: formData.budget,
+        socialLink: "",
+        mediaName: "",
+        mediaUrl: null,
+        status: "New"
+      };
+
+      try {
+        const existing = STORE.getCustomizations();
+        STORE.setCustomizations([custItem, ...existing]);
+        await saveCustomizationToSupabase(custItem);
+        STORE.dispatchEmailNotification("custom_inquiry", { inquiry: custItem });
+      } catch (saveErr) {
+        console.warn("Failed to save customization locally/cloud:", saveErr);
+      }
+
+      // 2. Create WhatsApp message string
       const waText = encodeURIComponent(
         `Hi Mehak! I want to commission a custom crochet piece.\n\n` +
+        `• Inquiry ID: #${custItem.id}\n` +
         `• Name: ${formData.name}\n` +
         `• Category: ${formData.category}\n` +
         `• Colorway: ${formData.colorway || "Standard"}\n` +
