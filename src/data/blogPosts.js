@@ -1,6 +1,52 @@
 // Curated Editorial & Styling Guides for Cocoon
 export const BLOG_POSTS = [
   {
+    slug: "organic-milk-cotton-atelier",
+    title: "From Farm to Fiber: The Artistry of Organic Milk Cotton Crochet",
+    subtitle: "Celebrating slow\u2011fashion elegance with hypoallergenic, 100% organic milk cotton accessories hand\u2011crafted in India.",
+    date: "2026-11-27",
+    readTime: "5 min read",
+    author: "Mehak Agarwal",
+    authorRole: "Founder and Lead Artisan at Cocoon",
+    image: "/products/items/chocolate-bow-handbag.jpg",
+    tags: ["Organic", "Milk Cotton", "Handcrafted", "Slow Fashion"],
+    excerpt: "Cocoon\u2019s milk\u2011cotton crochet bags blend heritage craftsmanship with modern sustainability. Discover how each stitch tells a story of ethical fashion and Indian artistry.",
+    metaDescription: "Explore Cocoon\u2019s handcrafted organic milk cotton crochet accessories, where slow fashion meets hypoallergenic comfort and Indian heritage.",
+    relatedCategory: "bags",
+    faqs: [{"question": "What makes Cocoon\u2019s milk cotton different from regular cotton?", "answer": "Cocoon sources 100% organic milk cotton, a luxuriously soft, hypoallergenic fiber grown without pesticides; its fine texture and natural sheen give our crochet pieces a gentle drape that regular cotton can\u2019t match."}, {"question": "How should I care for my hand\u2011crafted milk cotton bag?", "answer": "Hand wash in lukewarm water with a mild detergent, reshape while damp, and lay flat to dry away from direct sunlight. This preserves the yarn\u2019s integrity and the intricate crochet work."}],
+    content: `<h2>Roots of Milk Cotton: From Pasture to Yarn</h2>
+<p>In the rolling fields of Gujarat, dairy farms nurture a unique variety of cotton that absorbs the gentle nutrients of cow‑milk‑enriched soil. This <strong>organic milk cotton</strong> is harvested without synthetic chemicals, yielding fibers that are naturally soft, breathable, and remarkably hypoallergenic. At Cocoon, we partner directly with these farms, ensuring each bale carries the story of its terroir.</p>
+
+<h2>The Crochet Revival: Handcrafting with Purpose</h2>
+<p>When a skein of milk cotton arrives at our studio, the transformation begins. Our artisans, many of whom belong to generations of Indian textile workers, hand‑crochet each bag, bandana, or scrunchie using time‑honored techniques. The process is deliberately slow: a single tote can require 150–200 individual stitches, each loop placed with mindful intention.</p>
+<ul>
+  <li><strong>Selection:</strong> Only the softest, most even yarn is chosen for visible surfaces.</li>
+  <li><strong>Patterning:</strong> Traditional motifs—like the paisley and the lotus—are re‑interpreted in contemporary silhouettes.</li>
+  <li><strong>Finishing:</strong> Edges are reinforced with organic cotton twine, and every piece is inspected for consistency.</li>
+</ul>
+
+<h2>Why Slow Fashion Matters</h2>
+<p>Fast‑fashion cycles encourage disposable clothing, but slow fashion champions durability, transparency, and emotional connection. By investing in a Cocoon piece, you are supporting:</p>
+<ul>
+  <li>Fair wages for skilled artisans.</li>
+  <li>Sustainable farming that protects soil health.</li>
+  <li>A reduced carbon footprint—each item is made to last a lifetime.</li>
+</ul>
+<p>Because milk cotton is naturally resilient, our crochet accessories retain shape even after years of use, becoming heirloom items that can be passed down through generations.</p>
+
+<h2>Styling the Crochet Narrative</h2>
+<p>Our collections are designed for versatility. The <em>Chocolate Bow Handbag</em> pairs effortlessly with a tailored blazer for a polished office look, while the same bag adds a touch of boho elegance to weekend brunch attire. For a pop of color, drape a <em>Sunflower Baguette Shoulder Bag</em> over a monochrome jumpsuit, or knot a <em>Candy Festive Crochet Scrunchie</em> into a high‑ponytail for a playful twist.</p>
+<p>Because the fibers are hypoallergenic, they are ideal for sensitive skin—perfect for children’s hair accessories or for those who experience irritation with synthetic blends.</p>
+
+<h2>From Care to Legacy</h2>
+<p>Maintaining the integrity of milk‑cotton crochet is simple yet essential. Use lukewarm water, avoid harsh detergents, and reshape while damp. Store your pieces in breathable cotton bags (also available in our shop) to prevent moth damage.</p>
+<p>When you choose Cocoon, you are not just buying a product; you are joining a lineage of artisans who believe in the power of mindful creation. Each stitch is a promise—to the earth, to the maker, and to you.</p>
+
+<h2>Looking Ahead</h2>
+<p>Our upcoming line will explore deeper hues inspired by Indian spice markets, while preserving the core values of organic sourcing and handcrafted excellence. Stay tuned for collaborations with local weavers who will weave silk‑blend accents into our beloved milk‑cotton base, expanding the tactile palette without compromising sustainability.</p>
+<p>Embrace the quiet revolution of crochet, where every loop is a step toward a more compassionate, beautiful world.</p>`
+  },
+  {
     slug: "morning-light-milk-cotton-heritage",
     title: "Morning Light: The Art of Milk\u2011Cotton Crochet Bags",
     subtitle: "Celebrating slow\u2011fashion elegance with 100% hypoallergenic organic milk cotton, hand\u2011crafted for timeless style.",
